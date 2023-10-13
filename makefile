@@ -1,24 +1,25 @@
-MAKEFILES = $(shell find . -mindepth 1 -type f -name makefile)
-SUBDIRS  := $(filter-out ./,$(dir $(MAKEFILES)))
+CXX := g++
+CXXFLAGS := -std=c++17 -Wall
 
-CXX = g++
+CHICKINC_SRCS := $(wildcard ChickIncubator/src/*.cpp)
+CHICKINC_OBJS := $(CHICKINC_SRCS:.cpp=.o)
 
-CXXFLAGS = -std=c++17 -Wall
+MAIN_SRCS := $(wildcard src/*.cpp)
+MAIN_OBJS := $(MAIN_SRCS:.cpp=.o)
 
-SRCS := $(wildcard "src/*.cpp")
+TARGET := bin/ChickenIncubator
 
-TARGET = bin/ChickenIncubator
+INCLUDES := $(wildcard ChickIncubator/includes/*.hpp)
 
-INCLUDES := $(wildcard "includes/*.hpp")
+all: ChickIncubator $(TARGET)
 
-SUBOBJS := $(wildcard "*/obj/*.o")
+$(TARGET): $(MAIN_OBJS) $(CHICKINC_OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(MAIN_OBJS) $(CHICKINC_OBJS)
 
-all: $(TARGET)
-	for dir in $(SUBDIRS); do \
-		make -C $$dir all; \
-	done
-$(TARGET): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
+ChickIncubator:
+	make -C ChickIncubator all
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(MAIN_OBJS) $(CHICKINC_OBJS)
+
+.PHONY: all clean ChickIncubator

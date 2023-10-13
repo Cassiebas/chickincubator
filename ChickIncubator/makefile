@@ -1,16 +1,18 @@
-CXX = g++
+CXX := g++
+CXXFLAGS := -std=c++17 -Wall
 
-CXXFLAGS = -std=c++17 -Wall
+SRCS := $(wildcard src/*.cpp)
+OBJS := $(SRCS:.cpp=.o)
+TARGET := ChickenIncubator
 
-SRCS = $(wildcard "src/*.cpp")
+INCLUDES := $(wildcard includes/*.hpp)
 
-TARGET = $(subst .cpp,,$(SRCS))
+all: $(OBJS)
 
-INCLUDES = $(wildcard "includes/*.hpp")
-
-all: $(TARGET)
-$(TARGET): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
+$(OBJS): $(SRCS)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(OBJS)
+
+.PHONY: all clean
