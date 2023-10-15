@@ -1,25 +1,38 @@
-CXX := g++
-CXXFLAGS := -std=c++17 -Wall
+# Define the project name and sources
+PROJECT_NAME = ChickIncubator
+SOURCES = $(wildcard src/*.cpp)
+OBJECTS = $(patsubst src/%.cpp,obj/%.o,$(SOURCES))
 
-CHICKINC_SRCS := $(wildcard ChickIncubator/src/*.cpp)
-CHICKINC_OBJS := $(CHICKINC_SRCS:.cpp=.o)
+# Define compiler and flags
+CXX = g++
+CXXFLAGS = -std=c++17
 
-MAIN_SRCS := $(wildcard src/*.cpp)
-MAIN_OBJS := $(MAIN_SRCS:.cpp=.o)
+# Find all header directories recursively
+HEADER_DIRS := $(shell find . -type d -name includes)
+OBJECT_DIRS := $(patsubst %includes, %obj,$(HEADER_DIRS))
+INCLUDES := $(addprefix -I, $(HEADER_DIRS))
 
-TARGET := bin/ChickenIncubator
+# Define class folders
+CLASS_FOLDERS := $(wildcard */)
+CLASS_TARGETS := $(patsubst %,%/$(%), $(CLASS_FOLDERS))
+CLASS_OBJECTS := $(wildcard $(OBJECT_DIRS)/*.o)
 
-INCLUDES := $(wildcard ChickIncubator/includes/*.hpp)
+# Main target
+all: $(CLASS_TARGETS) $(PROJECT_NAME)
 
-all: ChickIncubator $(TARGET)
+$(CLASS_FOLDERS):
+	$(MAKE) -C $@
 
-$(TARGET): $(MAIN_OBJS) $(CHICKINC_OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(MAIN_OBJS) $(CHICKINC_OBJS)
+$(PROJECT_NAME): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $^ -o bin/$(PROJECT_NAME)
 
-ChickIncubator:
-	make -C ChickIncubator all
+obj/%.o: src/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -f $(TARGET) $(MAIN_OBJS) $(CHICKINC_OBJS)
+	rm -rf bin/$(PROJECT_NAME) $(OBJECTS)
+	for dir in $(CLASS_FOLDERS); do \
+		$(MAKE) -C $$dir clean; \
+	done
 
-.PHONY: all clean ChickIncubator
+.PHONY: all clean

@@ -1,4 +1,4 @@
-#include "../includes/ChickIncubator.hpp"
+#include "ChickIncubator.hpp"
 #include <iostream>
 
 void ChickIncubator::test() {

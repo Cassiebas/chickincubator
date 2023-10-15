@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../ChickIncubator/includes/ChickIncubator.hpp"
+#include "ChickIncubator.hpp"
 
 int main() {
     ChickIncubator incubator;

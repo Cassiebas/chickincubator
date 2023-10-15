@@ -1,18 +1,19 @@
-CXX := g++
-CXXFLAGS := -std=c++17 -Wall
+# Define the class name and sources
+CLASS_NAME = ChickIncubator
+SOURCES = $(wildcard src/*.cpp)
+OBJECTS = $(patsubst src/%.cpp,../obj/%.o,$(SOURCES))
 
-SRCS := $(wildcard src/*.cpp)
-OBJS := $(SRCS:.cpp=.o)
-TARGET := ChickenIncubator
+# Define compiler and flags
+CXX = g++
+CXXFLAGS = -std=c++17 -I./includes
 
-INCLUDES := $(wildcard includes/*.hpp)
+# Main target
+all: $(CLASS_NAME)
 
-all: $(OBJS)
-
-$(OBJS): $(SRCS)
+obj/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS)
+	rm $(OBJECTS)
 
 .PHONY: all clean
