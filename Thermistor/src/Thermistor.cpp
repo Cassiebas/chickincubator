@@ -7,7 +7,28 @@ Thermistor::Thermistor() :
   filename("/dev/i2c-1"),
   address(0x48){
     Open_I2C_ADC();
+    InitializeConfig();
   }
+
+
+void Thermistor::InitializeConfig()
+{
+    config[0] = 1; //config register
+    config[1] = 0b10000100; // 15-8
+    /*  
+    Bits 14-12 input selection:
+      100 ANC0; 101 ANC1; 110 ANC2; 111 ANC3
+    Bit 8 Operational mode of the ADS1115.
+      0 : Continuous conversion mode
+      1 : Power-down single-shot mode
+    */
+    config[2] = 0b10000101; // 7-0
+    /* 
+      Bits 7-5 data rate:
+        default to 100 for 128SPS
+      Bits 4-0  comparator functions see data sheet.
+     */
+}
 
 int Thermistor::Open_I2C_ADC() {
   int file;
