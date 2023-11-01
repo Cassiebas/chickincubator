@@ -5,8 +5,9 @@ Thermistor::Thermistor() :
   b(0.0002347204472978223),
   c(8.563052731505118e-8),
   filename("/dev/i2c-1"),
-  address(0x48),
-  config{0b10000100, 0b00000011} {}
+  address(0x48){
+    Open_I2C_ADC();
+  }
 
 int Thermistor::Open_I2C_ADC() {
   int file;
@@ -20,7 +21,7 @@ int Thermistor::Open_I2C_ADC() {
     return -1;
   }
 
-  if (write(file, config, 2) != 2) {
+  if (write(file, config, 3) != 3) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return -1;
   }
@@ -28,7 +29,7 @@ int Thermistor::Open_I2C_ADC() {
   return file;
 }
 
-void Thermistor::Read_I2C_ADC(int file) {
+void Thermistor::ReadTemperature(int file) {
   // Read the data from the ADC
   char data[2] = {0};
   if (read(file, data, 2) != 2) {
@@ -39,10 +40,7 @@ void Thermistor::Read_I2C_ADC(int file) {
   // Convert the 2byte data to 16-bits
   int16_t adc_value = (data[0] << 8) | data[1];
 
-  // Adjust the ADC value
-  int16_t adjusted_adc_value = adc_value;
-
-  float kelvin = 1 / (a + b * log(adjusted_adc_value) + c * pow(log(adjusted_adc_value), 3));
+  float kelvin = 1 / (a + b * log(adc_value) + c * pow(log(adc_value), 3));
 
   float celsius = kelvin - 273.15;
 
