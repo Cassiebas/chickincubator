@@ -5,13 +5,13 @@
 
 class HeatingElement {
   private:
-    std::string path;
     std::string pin;
+    std::string path;
 
-    void writeGPIO(const std::string &filename, const std::string &value);
+    void writeGPIO(const std::string filename, const std::string value);
 
   public:
-    HeatingElement(const std::string &pin);
+    HeatingElement(const std::string pin);
 
     void startHeating();
 

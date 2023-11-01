@@ -7,13 +7,9 @@
 int main(){
   Thermistor temperature;
   HeatingElement heater(HEATER_GPIO);
-  
-  int i2c_adc_file = temperature.Open_I2C_ADC();
 
   heater.startHeating();
-  while(true){
-    temperature.Read_I2C_ADC(i2c_adc_file);
-  }
+  sleep(3);
   heater.stopHeating();
   return 0;
 }
