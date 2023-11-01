@@ -8,6 +8,9 @@ MAIN_OBJECT = $(patsubst src/%.cpp,obj/%.o,$(MAIN_SOURCE))
 # Find all header directories recursively
 HEADER_DIRS := $(shell find . -type d -name includes)
 INCLUDES := $(addprefix -I, $(HEADER_DIRS))
+LIBS := $(addprefix -l, boost_iostreams)
+LIBS += $(addprefix -l, boost_system)
+LIBS += $(addprefix -l, boost_filesystem)
 
 all: subdirs $(TARGET)
 
@@ -21,11 +24,11 @@ subdirs:
 
 # To link all .o files with the binary we just use obj/* minus the main.o otherwise it will be doubly linked.
 $(TARGET): $(MAIN_OBJECT)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(MAIN_OBJECT) $(filter-out $(MAIN_OBJECT), $(wildcard obj/*.o))
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(MAIN_OBJECT) $(filter-out $(MAIN_OBJECT), $(wildcard obj/*.o)) $(LIBS)
 
 # To compile main.cpp to main.o
 obj/%.o: src/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ $(LIBS)
 
 # Clean
 clean:
