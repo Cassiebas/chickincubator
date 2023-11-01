@@ -81,7 +81,6 @@ void Plotter::ExportAsPNG(const std::string path, const std::string filename, co
             //  "replot\n" <<
              "plot $DATA with lines title '" << lineLabel << "'\n" <<
              "unset output\n";
-
     // std::cout << (std::string)"set xrange [" << DoubleToString(min.first) << ":" << DoubleToString(max.first+1) << "]\nset yrange [" << DoubleToString(min.second) << ":" << DoubleToString(max.second+1) << "]\n";
     // std::cout << "$DATA << EOD\n"; 
     // for (unsigned int i = 1; i < data.size(); i++) { 
