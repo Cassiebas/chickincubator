@@ -6,10 +6,9 @@ Thermistor::Thermistor() :
   c(8.563052731505118e-8),
   filename("/dev/i2c-1"),
   address(0x48){
-    Open_I2C_ADC();
     InitializeConfig();
+    fd = Open_I2C_ADC();
   }
-
 
 void Thermistor::InitializeConfig()
 {
@@ -50,10 +49,10 @@ int Thermistor::Open_I2C_ADC() {
   return file;
 }
 
-void Thermistor::ReadTemperature(int file) {
+void Thermistor::ReadTemperature() {
   // Read the data from the ADC
   char data[2] = {0};
-  if (read(file, data, 2) != 2) {
+  if (read(fd, data, 2) != 2) {
     std::cerr << "Error reading from the i2c bus." << std::endl;
     return;
   }

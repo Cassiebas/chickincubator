@@ -19,6 +19,9 @@ class Thermistor
     // Use the appropriate I2C bus number
     const char *filename;
 
+    // File descriptor to open and read I2C Bus
+    int fd;
+
     // ADC address
     int address;
 
@@ -32,7 +35,7 @@ class Thermistor
     // Open the I2C ADC bus and address
     int Open_I2C_ADC();
     // Read from the I2C ADC address file
-    void ReadTemperature(int file);
+    void ReadTemperature();
 };
 
 #endif
