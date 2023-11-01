@@ -8,6 +8,6 @@ int main() {
     plot.AddPoint({2,2});
     plot.AddPoint({3,3});
     plot.AddPoint({4,4});
-    plot.ExportAsPNG();
+    plot.ExportAsPNG("", "export", "Temperature (°C)", "Time (s)", "T(s)");
     return 0;
 }
