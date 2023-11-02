@@ -8,9 +8,19 @@
 #include <linux/i2c-dev.h>
 #include <math.h>
 
+namespace ADC {
+  enum channel {
+    A0,
+    A1,
+    A2,
+    A3
+  };
+}
+
 class Thermistor
 {
   private:
+    const char channelConfig[4] = {0b01000000, 0b01010000, 0b01100000, 0b01110000};
     // Steinhart coefficients
     double a;
     double b;
@@ -24,19 +34,20 @@ class Thermistor
 
     // ADC address
     int address;
+    ADC::channel channel;
 
     char config[3]; // 16-bit configuration
 
-    void InitializeConfig();
+    void WriteConfig();
 
   public:
-    Thermistor();
+    Thermistor(ADC::channel chosenChannel);
     ~Thermistor();
     
     // Open the I2C ADC bus and address
     int Open_I2C_ADC();
     // Read from the I2C ADC address file
-    void ReadTemperature();
+    double Temperature();
 };
 
 #endif
