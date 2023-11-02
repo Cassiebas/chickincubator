@@ -23,15 +23,16 @@ class Thermistor
     int fd;
 
     // ADC address
-    // int address;
+    int address;
 
-    // char config[3]; // 16-bit configuration
+    char config[3]; // 16-bit configuration
 
     void InitializeConfig();
 
   public:
     Thermistor();
-
+    ~Thermistor();
+    
     // Open the I2C ADC bus and address
     int Open_I2C_ADC();
     // Read from the I2C ADC address file
