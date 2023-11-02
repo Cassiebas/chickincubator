@@ -11,10 +11,11 @@ class Timer {
   std::chrono::duration<double> elapsed_time;
 
   public:
-    void startTimer();
-    void endTimer();
-    double getDuration();
-    double getElapsedTime();
+    void Start();
+    void End();
+    void Stop();
+    double Duration();
+    double Elapsed();
 };
 
 #endif
