@@ -4,17 +4,10 @@
 #include <string>
 #include <unistd.h> 
 
-<<<<<<< Updated upstream
 HeatingElement::HeatingElement(const std::string pinNumber) :
   pin(pinNumber),
   path("/sys/class/gpio/")
-=======
-#define GPIO_PATH "/sys/class/gpio/"
 
-HeatingElement::HeatingElement(std::string pinNumber) :
-  pin(pinNumber),
-  path(std::string(GPIO_PATH) + "gpio" + pin + "/")
->>>>>>> Stashed changes
 {
   // Export the pin
   writeGPIO("export", pin);

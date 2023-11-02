@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall
+CXXFLAGS := -std=c++17 -Wall -Wconversion -Wextra
 
 SRCS := $(wildcard src/*.cpp)
 OBJS := $(patsubst src/%.cpp,../obj/%.o,$(SRCS))

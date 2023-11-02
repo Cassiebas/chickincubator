@@ -12,9 +12,9 @@ class Thermistor
 {
   private:
     // Steinhart coefficients
-    float a;
-    float b;
-    float c;
+    double a;
+    double b;
+    double c;
 
     // Use the appropriate I2C bus number
     const char *filename;
@@ -23,9 +23,9 @@ class Thermistor
     int fd;
 
     // ADC address
-    int address;
+    // int address;
 
-    char config[3]; // 16-bit configuration
+    // char config[3]; // 16-bit configuration
 
     void InitializeConfig();
 
