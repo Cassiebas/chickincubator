@@ -13,14 +13,14 @@ std::mutex dutyCycleMutex;
 unsigned int duty_cycle = 0;
 
 void softPwm(float interval, HeatingElement &heater, Timer &timer) {
-  while(timer.getElapsedTime() < interval) {
+  while(timer.Elapsed() < interval) {
     dutyCycleMutex.lock(); // Acquire the lock
     if(duty_cycle > 0){
       duty_cycle =- duty_cycle;
-      heater.startHeating();
+      heater.Start();
     }
     else{
-      heater.stopHeating();
+      heater.Stop();
     }
     dutyCycleMutex.unlock(); // Release the lock
   }
@@ -43,26 +43,27 @@ int main(){
     plot[0].AddPoint(timer.Elapsed()/60.0, temp[0].Temperature());
     plot[1].AddPoint(timer.Elapsed()/60.0, temp[1].Temperature());
   }
+
   timer.Stop();
   heater.Stop();
+
   std::cout << timer.Duration() << std::endl;
   plot[0].ExportAsPNG("", "A0", "Time (m)", "Temperature (°C)", "T(s)");
   plot[1].ExportAsPNG("", "A1", "Time (m)", "Temperature (°C)", "T(s)");
-  // heater.startHeating();
-  // sleep(3);
+
+
   std::thread threadedPwm(softPwm, interval, std::ref(heater), std::ref(timer));
-  timer.startTimer();
+  timer.Start();
   while(1) {
-    temperature.ReadTemperature();
     //TODO update duty cycle in main code
     {
       // Modify the duty_cycle variable here
     }
 
-    std::cout << timer.getElapsedTime() << std::endl;
+    std::cout << timer.Elapsed() << std::endl;
   }
 
-  timer.endTimer();
-  std::cout << timer.getDuration() << std::endl;
+  timer.End();
+  std::cout << timer.Duration() << std::endl;
   return 0;
 }
