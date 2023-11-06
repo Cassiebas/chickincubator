@@ -6,8 +6,7 @@ HEATING_ELEMENT_OBJ := ../../obj/HeatingElement.o
 THERMISTOR_OBJ := ../../obj/Thermistor.o
 TIMER_OBJ := ../../obj/Timer.o
 HARRY_PLOTTER := ../../obj/HarryPlotter.o
-LOCAL_OBJS := $(patsubst src/%.cpp,../../obj/%.o,$(SRCS))
-OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(HARRY_PLOTTER) $(LOCAL_OBJS)
+OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(HARRY_PLOTTER)
 TARGET := bin/HeatingTest
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
@@ -23,10 +22,10 @@ LIBS += $(addprefix -l, boost_filesystem)
 all: modules $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $^ -o $@ $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SRCS) $^ -o $(TARGET) $(LIBS)
 
-$(LOCAL_OBJS): ../../obj/%.o: src/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+# $(LOCAL_OBJS): ../../obj/%.o: src/%.cpp
+# 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 modules:
 	$(MAKE) -C ../../HeatingElement
