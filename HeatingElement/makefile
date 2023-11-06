@@ -1,11 +1,12 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Wconversion -Wextra
+CXXFLAGS := -std=c++17 -Wall -Wconversion -Wextra -pthread
 
 SRCS := $(wildcard src/*.cpp)
 OBJS := $(patsubst src/%.cpp,../obj/%.o,$(SRCS))
 TARGET := ChickenIncubator
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../Timer/includes))
 
 all: $(OBJS)
 

@@ -80,5 +80,4 @@ double Thermistor::Temperature() {
   // std::cout << "ADC A" << channel << ": " << adc_value << std::endl;
   // std::cout << "Celcius: " << celsius << std::endl;
   return celsius + 20; //offset :(
-
 }
