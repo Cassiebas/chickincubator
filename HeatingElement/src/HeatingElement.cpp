@@ -7,7 +7,6 @@
 HeatingElement::HeatingElement(const std::string pinNumber) :
   pin(pinNumber),
   path("/sys/class/gpio/")
-
 {
   // Export the pin
   writeGPIO("export", pin);

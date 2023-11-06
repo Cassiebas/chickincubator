@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall
+CXXFLAGS := -std=c++17 -Wall -pthread
 
 SRCS := $(wildcard src/*.cpp)
 HEATING_ELEMENT_OBJ := ../../obj/HeatingElement.o
