@@ -5,16 +5,20 @@ SRCS := $(wildcard src/*.cpp)
 HEATING_ELEMENT_OBJ := ../../obj/HeatingElement.o
 THERMISTOR_OBJ := ../../obj/Thermistor.o
 TIMER_OBJ := ../../obj/Timer.o
+HARRY_PLOTTER := ../../obj/HarryPlotter.o
 LOCAL_OBJS := $(patsubst src/%.cpp,../../obj/%.o,$(SRCS))
-OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(LOCAL_OBJS)
+OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(HARRY_PLOTTER) $(LOCAL_OBJS)
 TARGET := bin/HeatingTest
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Thermistor/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Timer/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../HarryPlotter/includes))
 
-LIBS := $()
+LIBS := $(addprefix -l, boost_iostreams)
+LIBS += $(addprefix -l, boost_system)
+LIBS += $(addprefix -l, boost_filesystem)
 
 all: modules $(TARGET)
 
@@ -28,6 +32,7 @@ modules:
 	$(MAKE) -C ../../HeatingElement
 	$(MAKE) -C ../../Thermistor
 	$(MAKE) -C ../../Timer
+	$(MAKE) -C ../../HarryPlotter
 
 clean:
 	rm -f $(TARGET) ../../obj/HeatingElement.o ../../obj/Thermistor.o ../../obj/Timer.o $(LOCAL_OBJS)

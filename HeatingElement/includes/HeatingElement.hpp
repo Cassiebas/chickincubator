@@ -11,11 +11,11 @@ class HeatingElement {
     void writeGPIO(const std::string filename, const std::string value);
 
   public:
-    HeatingElement(const std::string pin);
+    HeatingElement(const std::string pin, const std::string dutyCycle = "100", const std::string period = "1");
 
-    void startHeating();
+    void Start();
 
-    void stopHeating();
+    void Stop();
 };
 
 #endif
