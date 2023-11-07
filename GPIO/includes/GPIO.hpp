@@ -1,46 +1,50 @@
-#ifndef GPIO_HPP
-#define GPIO_HPP
+#ifndef GPIO_H
+#define GPIO_H
 
-#include <string>
+#include <sys/types.h>
+#include <stdint.h>
+
+#define GPIO_1 '1'
+#define GPIO_2 '2'
+#define GPIO_3 '3'
+#define GPIO_4 '4'
+#define GPIO_5 '5'
+#define GPIO_6 '6'
+#define GPIO_7 '7'
+#define GPIO_8 '8'
+#define GPIO_9 '9'
+#define GPIO_10 "10"
+#define GPIO_11 "11"
+#define GPIO_12 "12"
+#define GPIO_13 "13"
+#define GPIO_14 "14"
+#define GPIO_15 "15"
+#define GPIO_16 "16"
+#define GPIO_17 "17"
+#define GPIO_18 "18"
+#define GPIO_19 "19"
+#define GPIO_20 "20"
+#define GPIO_21 "21"
+#define GPIO_22 "22"
+#define GPIO_23 "23"
+#define GPIO_24 "24"
+#define GPIO_25 "25"
 
 class GPIO
 {
   private:
-    int duty_cycle = 0;
-    int period = 0;
-    volatile uint32_t* BCM2835_BASE;
-    volatile uint32_t* GPFSEL0;
-    volatile uint32_t* GPFSEL1;
-    volatile uint32_t* GPFSEL2; 
-    volatile uint32_t* GPFSEL3; 
-    volatile uint32_t* GPFSEL4;
-    volatile uint32_t* GPFSEL5;  
-
-    volatile uint32_t* GPIOSET0;
-    volatile uint32_t* GPIOSET1;
-    
-    volatile uint32_t* GPCLR0;
-    volatile uint32_t* GPCLR1;
-
-    std::string pin;
-    std::string path;
+    const char* path;
+    int fd;
+    ssize_t ret_val;
 
   public:
-    const struct pin_sel_register
-    {
-      uint8_t OUTPUT = 0b001;
-      uint8_t INPUT = 0b000;
-      uint8_t ALT0 = 0b100;
-      uint8_t ALT1 = 0b101;
-      uint8_t ALT2 = 0b110;
-      uint8_t ALT3 = 0b111;
-      uint8_t ALT4 = 0b011;
-      uint8_t ALT5 = 0b010;
-    };
+    GPIO(const char* device_path);
+    ~GPIO();
 
-    GPIO();
-
-    void set(std::string pin, uint8_t bitfield);
+    bool setPinState(const char *gpio_pin, char set_value);
+    bool setPinState(char gpio_pin, char set_value);
+    char readPinState(const char *gpio_pin);
+    char readPinState(char gpio_pin);
 };
 
 #endif

@@ -6,10 +6,14 @@ HEATING_ELEMENT_OBJ := ../../obj/HeatingElement.o
 THERMISTOR_OBJ := ../../obj/Thermistor.o
 TIMER_OBJ := ../../obj/Timer.o
 HARRY_PLOTTER := ../../obj/HarryPlotter.o
-OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(HARRY_PLOTTER)
+PWM := ../../obj/PWM.o
+GPIO := ../../obj/GPIO.o
+OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(HARRY_PLOTTER) $(PWM) $(GPIO)
 TARGET := bin/HeatingTest
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../PWM/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Thermistor/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Timer/includes))
@@ -28,12 +32,14 @@ $(TARGET): $(OBJS)
 # 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 modules:
+	$(MAKE) -C ../../PWM
+	$(MAKE) -C ../../GPIO
 	$(MAKE) -C ../../HeatingElement
 	$(MAKE) -C ../../Thermistor
 	$(MAKE) -C ../../Timer
 	$(MAKE) -C ../../HarryPlotter
 
 clean:
-	rm -f $(TARGET) ../../obj/HeatingElement.o ../../obj/Thermistor.o ../../obj/Timer.o $(LOCAL_OBJS)
+	rm -f $(TARGET) ../../obj/HeatingElement.o ../../obj/Thermistor.o ../../obj/Timer.o ../../obj/PWM.o ../../obj/GPIO.o ../../obj/HarryPlotter.o
 
 .PHONY: all clean
