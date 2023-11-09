@@ -6,6 +6,7 @@ OBJS := $(patsubst src/%.cpp,../obj/%.o,$(SRCS))
 TARGET := ChickenIncubator
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../Timer/includes))
 
 all: $(OBJS)
 
