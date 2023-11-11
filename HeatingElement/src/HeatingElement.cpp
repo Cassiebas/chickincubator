@@ -1,4 +1,4 @@
-#include "../includes/HeatingElement.hpp"
+#include "HeatingElement.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -9,48 +9,25 @@ HeatingElement::HeatingElement(const std::string pin_number) :
   pin(pin_number),
   path("/sys/class/gpio/")
 {
-  // Export the pin
   writeGPIO("export", pin);
   sleep(1);
-  // Set the pin as an output
   writeGPIO("gpio" + pin + "/direction", "out");
+  pwm = new PWM(100, 10, [this]() { this->On(); }, [this]() { this->Off(); }); //pass those methods baby
+
   //make sure heater is off
   Off();
 }
 
-void HeatingElement::ThreadPwm()
-{
-  // duty_cycle = percentage_duty_cycle;
-  while(true) {
-    if (std::fmod(timer.Elapsed(), INTERVAL) < 0.0001) {
-      if(duty_cycle > 0){
-        duty_cycle -= 1;
-        if(!On())
-        {
-          //error
-        }
-      }
-      else{
-        duty_cycle -= 1;
-        if(!Off()){
-          //error
-        }
-        // if (abs(duty_cycle) + percentage_duty_cycle == 100) {
-        //   // duty_cycle = percentage_duty_cycle;
-        // }
-      }
-    }
-  }
-}
-
-void HeatingElement::Start(){
-  heatingThread = std::thread(&HeatingElement::ThreadPwm, this);
+void HeatingElement::Start() {
+  pwm->Start();
 }
 
 void HeatingElement::Stop() {
-  if (heatingThread.joinable()) {
-    heatingThread.join();
-  }
+  pwm->Stop();
+}
+
+void HeatingElement::operator()(unsigned int percentage) {
+  pwm->SetDutyCycle(percentage);
 }
 
 bool HeatingElement::writeGPIO(const std::string filename, const std::string value)
@@ -69,14 +46,16 @@ bool HeatingElement::writeGPIO(const std::string filename, const std::string val
   }
 }
 
-bool HeatingElement::On()
+void HeatingElement::On()
 {
   // Set the pin to LOW to start the heating element
-  return writeGPIO("gpio" + pin + "/value", "1");
+  writeGPIO("gpio" + pin + "/value", "1");
+  // std::cout << "Heater::On()\n";
 }
 
-bool HeatingElement::Off()
+void HeatingElement::Off()
 {
   // Set the pin to HIGH to stop the heating element
-  return writeGPIO("gpio" + pin + "/value", "0");
+  writeGPIO("gpio" + pin + "/value", "0");
+  // std::cout << "Heater::Off()\n";
 }

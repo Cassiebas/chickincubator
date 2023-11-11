@@ -7,6 +7,7 @@ TARGET := ChickenIncubator
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Timer/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../PWM/includes))
 
 all: $(OBJS)
 

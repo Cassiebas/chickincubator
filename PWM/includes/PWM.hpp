@@ -5,18 +5,31 @@
 
 #include <string>
 #include <thread>
+#include <map>
+#include <functional>
 
 class PWM {
   private:
-    int duty_cycle = 0;
-    int period = 0;
-    
-    std::string pin;
-    std::string path;
+    unsigned int dutyCycle;
+    double period;
+    std::function<void()> On;
+    std::function<void()> Off;
 
+    bool running;
+    int dutyCycleCounter;
+    Timer *timer;
+    std::thread PWMThread;
+
+    void OnTick();
   public:
-    PWM(const std::string pin);
+    PWM() : On(nullptr), Off(nullptr) {};
+    PWM(unsigned int dutyCycle, double period, std::function<void()> OnFunction, std::function<void()> OffFunction);
+    ~PWM();
 
+    void Start();
+    void Stop();
+    void SetDutyCycle(const unsigned int dutyCycle);
+    void SetPeriod(const double period);
 };
 
 #endif

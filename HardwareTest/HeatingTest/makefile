@@ -2,6 +2,7 @@ CXX := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra
 
 SRCS := $(wildcard src/*.cpp)
+PWM_OBJ := ../../obj/PWM.o
 HEATING_ELEMENT_OBJ := ../../obj/HeatingElement.o
 THERMISTOR_OBJ := ../../obj/Thermistor.o
 TIMER_OBJ := ../../obj/Timer.o
@@ -28,18 +29,15 @@ all: modules $(TARGET)
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SRCS) $^ -o $(TARGET) $(LIBS)
 
-# $(LOCAL_OBJS): ../../obj/%.o: src/%.cpp
-# 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
 modules:
-	$(MAKE) -C ../../PWM
 	$(MAKE) -C ../../GPIO
+	$(MAKE) -C ../../Timer
+	$(MAKE) -C ../../PWM
 	$(MAKE) -C ../../HeatingElement
 	$(MAKE) -C ../../Thermistor
-	$(MAKE) -C ../../Timer
 	$(MAKE) -C ../../HarryPlotter
 
 clean:
-	rm -f $(TARGET) ../../obj/HeatingElement.o ../../obj/Thermistor.o ../../obj/Timer.o ../../obj/PWM.o ../../obj/GPIO.o ../../obj/HarryPlotter.o
+	rm -f $(TARGET) $(OBJS)
 
 .PHONY: all clean
