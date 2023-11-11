@@ -13,6 +13,7 @@ OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(HARRY_PLOTTER) $
 TARGET := bin/HeatingTest
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../PID/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../PWM/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
