@@ -4,6 +4,9 @@
 #include <sys/types.h>
 #include <stdint.h>
 
+
+#define output 'O'
+#define input 'I'
 #define GPIO_1 '1'
 #define GPIO_2 '2'
 #define GPIO_3 '3'
@@ -33,16 +36,19 @@
 class GPIO
 {
   private:
-    const char* path;
     int fd;
     ssize_t ret_val;
 
   public:
-    GPIO(const char* device_path);
+    GPIO();
     ~GPIO();
 
-    bool setPinState(const char *gpio_pin, char set_value);
-    bool setPinState(char gpio_pin, char set_value);
+    bool setPinState(const char *gpio_pin, char IO_value);
+    bool setPinState(char gpio_pin, char IO_value);
+
+    bool setPinOutput(const char *gpio_pin, char set_value);
+    bool setPinOutput(char gpio_pin, char set_value);
+
     char readPinState(const char *gpio_pin);
     char readPinState(char gpio_pin);
 };

@@ -5,8 +5,7 @@
 #include <unistd.h>
 #include <iostream>
 
-GPIO::GPIO(const char* device_path) : 
-path(device_path)
+GPIO::GPIO()
 {
   fd = open("/dev/my_gpio_driver", O_RDWR);
   if (fd < 0)
@@ -20,7 +19,38 @@ GPIO::~GPIO()
   close(fd);
 }
 
-bool GPIO::setPinState(const char *gpio_pin, char set_value)
+bool GPIO::setPinState(const char *gpio_pin, char IO_value)
+{
+  char buffer[4];
+  sprintf(buffer, "%s%c", gpio_pin, IO_value);
+  // Writing to GPIO driver
+  ret_val = write(fd, buffer, sizeof(buffer));
+  if (ret_val < 0)
+  {
+    printf("Error writing to the device file\n");
+    close(fd);
+    return -1;
+  }
+  return true; // Placeholder return value
+}
+
+bool GPIO::setPinState(char gpio_pin, char IO_value)
+{
+  char buffer[2];
+  buffer[0] = gpio_pin;
+  buffer[1] = IO_value;
+  // Writing to GPIO driver
+  ret_val = write(fd, buffer, sizeof(buffer));
+  if (ret_val < 0)
+  {
+    printf("Error writing to the device file\n");
+    close(fd);
+    return false;
+  }
+  return true; // Placeholder return value
+}
+
+bool GPIO::setPinOutput(const char *gpio_pin, char set_value)
 {
   char buffer[4];
   sprintf(buffer, "%s%c", gpio_pin, set_value);
@@ -35,7 +65,7 @@ bool GPIO::setPinState(const char *gpio_pin, char set_value)
   return true; // Placeholder return value
 }
 
-bool GPIO::setPinState(char gpio_pin, char set_value)
+bool GPIO::setPinOutput(char gpio_pin, char set_value)
 {
   char buffer[2];
   buffer[0] = gpio_pin;

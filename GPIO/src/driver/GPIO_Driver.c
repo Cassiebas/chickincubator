@@ -72,7 +72,7 @@ static ssize_t driver_read(struct file *File, char *user_buffer, size_t count, l
 static ssize_t driver_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs)
 {
   int not_copied, delta, pin_value_int, set_value_int;
-  char set_value = 0;
+  char io_set_value = 0;
   char gpio_pin[3] = {0};
 
   /* Ensure there is at least one byte to copy */
@@ -88,18 +88,29 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
 
   pin_value_int = simple_strtol(gpio_pin, NULL, 10);
   if (count == 2) {
-    // Single character is sent
+    printk("A char was sent\n");
     pin_value_int = gpio_pin[0] - '0';
-    set_value_int = gpio_pin[1] - '0';
+    if (!(gpio_pin[1] == 'O' || gpio_pin[1] == 'I'))
+    {
+      set_value_int = gpio_pin[1] - '0';
+      printk("You are sending an output state:%d \n", set_value_int);
+    }
+    else
+    {
+      io_set_value = gpio_pin[1];
+    }
   }
   else
   {
-    //string is sent
+    printk("A string was sent\n");
     pin_value_int = simple_strtol(gpio_pin, NULL, 10);
-    not_copied += copy_from_user(&set_value, user_buffer + 2, 1);
-    set_value_int = set_value - '0';
+    not_copied += copy_from_user(&io_set_value, user_buffer + 2, 1);
+    if (!(io_set_value == 'O' || io_set_value == 'I'))
+    {
+      set_value_int = io_set_value - '0';
+      printk("You are sending an output state:%d \n", set_value_int);
+    }
   }
-  printk("GPIO Pin: %d: %d", pin_value_int, set_value_int);
 
   // Check if the GPIO pin is already valid and requested
   if (!gpio_is_valid(pin_value_int))
@@ -114,16 +125,32 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
     goto GpioError;
   }
 
-  if (gpio_direction_output(pin_value_int, 0))
+  if (io_set_value == 'I')
   {
-    printk("GPIO pin %d is already set to output!\n", pin_value_int);
-    goto GpioError;
+    if (gpio_direction_input(pin_value_int))
+    {
+      printk("GPIO pin %d is already set to input!\n", pin_value_int);
+      goto GpioError;
+    }
+    printk("GPIO pin %d, set as Input\n", pin_value_int);
+  }
+  else if (io_set_value == 'O')
+  {
+    if (gpio_direction_output(pin_value_int, 0))
+    {
+      printk("GPIO pin %d is already set to output!\n", pin_value_int);
+      goto GpioError;
+    }
+    printk("GPIO pin %d, set as output\n", pin_value_int);
   }
 
 	switch(set_value_int) {
 		case 0:
-      printk("Setting pin output LOW\n");
-			gpio_set_value(pin_value_int, 0);
+        if(!(io_set_value == 'O' || io_set_value == 'I'))
+        {
+          printk("Setting pin output LOW\n");
+          gpio_set_value(pin_value_int, 0);
+        }
 			break;
 		case 1:
     printk("Setting pin output HIGH\n");
@@ -135,7 +162,7 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
 	}
 
   /* Calculate data */
-  delta = min(count, sizeof(gpio_pin) + sizeof(set_value)) - not_copied;
+  delta = min(count, sizeof(gpio_pin) + sizeof(io_set_value)) - not_copied;
 
 GpioError:
 	gpio_free(pin_value_int);
