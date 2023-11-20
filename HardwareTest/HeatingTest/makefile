@@ -7,16 +7,11 @@ HEATING_ELEMENT_OBJ := ../../obj/HeatingElement.o
 THERMISTOR_OBJ := ../../obj/Thermistor.o
 TIMER_OBJ := ../../obj/Timer.o
 HARRY_PLOTTER := ../../obj/HarryPlotter.o
-ROTARY := ../../obj/RotaryEncoder.o
 PWM := ../../obj/PWM.o
-GPIO := ../../obj/GPIO.o
-OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(PWM) $(GPIO) $(ROTARY) $(HARRY_PLOTTER)
+OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(PWM) $(HARRY_PLOTTER)
 TARGET := bin/HeatingTest
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
-INCLUDES += $(addprefix -I, $(wildcard ../../RotaryEncoder/includes))
-INCLUDES += $(addprefix -I, $(wildcard ../../PID/includes))
-INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../PWM/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Thermistor/includes))
@@ -33,8 +28,6 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SRCS) $^ -o $(TARGET) $(LIBS)
 
 modules:
-	$(MAKE) -C ../../RotaryEncoder
-	$(MAKE) -C ../../GPIO
 	$(MAKE) -C ../../Timer
 	$(MAKE) -C ../../PWM
 	$(MAKE) -C ../../HeatingElement
