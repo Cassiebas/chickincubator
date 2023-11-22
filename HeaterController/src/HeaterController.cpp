@@ -22,7 +22,7 @@ void HeaterController::SetHeaterPercent(unsigned int percentage) {
 
 void HeaterController::ControllerStart() {      
     threadRunning = true;
-    timerThread = std::thread(&HeaterController::ThreadCycle, this);
+    controllerThread = std::thread(&HeaterController::ThreadCycle, this);
     timer.Start();
     heater(heaterPercent);
     heater.Start();
@@ -30,8 +30,8 @@ void HeaterController::ControllerStart() {
 
 void HeaterController::ControllerStop() {
     threadRunning = false;
-    if (timerThread.joinable()) {
-        timerThread.join();
+    if (controllerThread.joinable()) {
+        controllerThread.join();
     }
     timer.Stop();
     heater.Stop();

@@ -45,11 +45,11 @@ class PIDController : public HeaterController
     P p;
     I i;
     D d;
-    double error;
-    double ambientTemperature;
+    double error, min, max;
+    double ambientTemp;
 
   public:
-    PIDController(double temperature, double kp, double ki, double kd);
+    PIDController(double temperature, double kp, double ki, double kd, double min = 0, double max = 100);
     double operator()();
     double ToPercentPower(double pidValue);
     void Do() override;

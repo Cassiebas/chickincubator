@@ -18,7 +18,7 @@ class HeaterController {
         Plotter plot[2];
         void ThreadCycle();
         bool threadRunning;
-        std::thread timerThread;
+        std::thread controllerThread;
         unsigned int heaterPercent;
     protected:
         HeatingElement heater = HeatingElement(HEATER_GPIO);

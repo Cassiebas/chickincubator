@@ -29,10 +29,10 @@ double PIDController::D::operator()(double error, double time) {
     return kd * differential;
 }
 
-PIDController::PIDController(double temperature, double kp, double ki, double kd) : p(kp), i(ki), d(kd) {
+PIDController::PIDController(double temperature, double kp, double ki, double kd, double min, double max) : p(kp), i(ki), d(kd), min(min), max(max) {
     SetTemp(temperature);
     std::vector<double> temps = GetTemp();
-    ambientTemperature = (temps.at(0) + temps.at(1)) / 2.0;
+    ambientTemp = (temps.at(0) + temps.at(1)) / 2.0;
 }
 
 double PIDController::operator()() {
@@ -40,19 +40,23 @@ double PIDController::operator()() {
     return p(error) + i(error, GetTime()) + d(error, GetTime());
 }
 
-double PIDController::ToPercentPower(double pidValue) {
-    return (pidValue / abs(setTemp - ambientTemperature)) * 100.0;
+double PIDController::ToPercentPower(double pidValue) {  
+    // double percent = (pidValue / abs(setTemp - ambientTemp)) * 100.0;  
+    double percent = pidValue * 100.0;
+    if (percent < min)
+        percent = min;
+    if (percent > max)
+        percent = max;
+    return percent;
 }
 
 void PIDController::Do() {
     std::vector<double> temps = GetTemp();
-    error = setTemp - ((temps.at(0) + temps.at(1)) / 2.0);
+    error = (setTemp - ((temps.at(0) + temps.at(1)) / 2.0))/(setTemp - ambientTemp); //average temperature over both sensors, then normalize it over setPoint and ambient
     double result = this->operator()();
     std::cout << "PID value: " << result << "\n";
-    if (result > 0) {
-        std::cout << "Controlling heater with: " << ToPercentPower(result) << "\% power \n";
-        heater(ToPercentPower(static_cast<unsigned int>(result))); 
-    }
+    std::cout << "Controlling heater with: " << ToPercentPower(result) << "\% power \n";
+    heater(static_cast<unsigned int>(ToPercentPower(result))); 
 }
 
 void PIDController::Start() {
