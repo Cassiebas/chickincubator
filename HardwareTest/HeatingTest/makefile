@@ -7,6 +7,7 @@ HEATING_ELEMENT_OBJ := ../../obj/HeatingElement.o
 THERMISTOR_OBJ := ../../obj/Thermistor.o
 TIMER_OBJ := ../../obj/Timer.o
 HARRY_PLOTTER := ../../obj/HarryPlotter.o
+Display := ../../obj/Display.o
 PWM := ../../obj/PWM.o
 OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(PWM) $(HARRY_PLOTTER)
 TARGET := bin/HeatingTest

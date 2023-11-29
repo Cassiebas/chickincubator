@@ -1,21 +1,27 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall
+CXXFLAGS := -std=c++17 -Wall -Wextra
 
 SRCS := $(wildcard src/*.cpp)
-OBJS := $(patsubst src/%.cpp,src/%.o,$(SRCS))
-TARGET := DisplayTest
+DISPLAY := ../../obj/Display.o
+OBJS := $(DISPLAY)
+TARGET := bin/DisplayTest
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../Display/includes))
 
-all: $(TARGET)
+# LIBS := $(addprefix -l, boost_iostreams)
+# LIBS += $(addprefix -l, boost_system)
+# LIBS += $(addprefix -l, boost_filesystem)
+
+all: modules $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(SRCS) $^ -o $(TARGET) $(LIBS)
 
-/obj/%.o : src/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+modules:
+	$(MAKE) -C ../../Display
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(TARGET) $(OBJS)
 
 .PHONY: all clean
