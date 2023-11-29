@@ -146,7 +146,7 @@ int I2C_Write(unsigned char *buf, unsigned int len) {
 }
 
 int main() {
-  char *bus = "/dev/i2c-1"; // Het I2C-apparaat
+  char *bus = (char *)"/dev/i2c-1"; // Het I2C-apparaat
   int addr = 0x3C;          // Het I2C-adres van het apparaat
 
   if ((file = open(bus, O_RDWR)) < 0)
@@ -162,7 +162,7 @@ int main() {
   }
 
   SSD1306_DisplayInit();
-  SSD1306_String((unsigned char *)"Test\n");
+  SSD1306_String((unsigned char *)"TestTestTestTestTest\nTestTestTestTestTest\nTestTestTestTestTest\nTestTestTestTestTest\n");
 
   close(file);
   return 0;
@@ -265,7 +265,7 @@ static int SSD1306_DisplayInit(void) {
   SSD1306_Write(true, 0x00); // Horizontal addressing mode
   SSD1306_Write(true, 0xA1); // Set segment remap with column address 127 mapped to segment 0
   SSD1306_Write(true, 0xC8); // Set com output scan direction, scan from com63 to com 0
-  SSD1306_Write(true, 0xDA); // Set com pins hardware configuration
+  SSD1306_Write(true, 0x02); // Set com pins hardware configuration
   SSD1306_Write(true, 0x12); // Alternative com pin configuration, disable com left/right remap
   SSD1306_Write(true, 0x81); // Set contrast control
   SSD1306_Write(true, 0x80); // Set Contrast to 128
@@ -284,7 +284,7 @@ static int SSD1306_DisplayInit(void) {
 }
 
 static void SSD1306_Fill(unsigned char data) {
-  unsigned int total = 128 * 8; // 8 pages x 128 segments x 8 bits of data
+  unsigned int total = 128 * 4; // 8 pages x 128 segments x 8 bits of data
   unsigned int i = 0;
 
   // Fill the Display
