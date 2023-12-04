@@ -1,11 +1,11 @@
 #include "HeaterController.hpp"
 
 HeaterController::HeaterController() {
-
+    log = Log("", "HeaterController.log", true);
 }
 
 HeaterController::HeaterController(double celsius) : setTemp(celsius){
-
+    log = Log("", "HeaterController.log", true);
 }
 
 HeaterController::~HeaterController() {
@@ -13,6 +13,7 @@ HeaterController::~HeaterController() {
 }
 
 void HeaterController::SetTemp(double celsius) {
+    log(Severity::debug, logtag + "SetTemp(" + std::to_string(celsius) + ")");
     setTemp = celsius;
 }
 

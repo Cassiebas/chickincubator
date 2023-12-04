@@ -1,0 +1,6 @@
+[2023-12-04 17:03:19.387066] [0x0000007fadb349c0] [trace] Testing trace... done
+[2023-12-04 17:03:19.388011] [0x0000007fadb349c0] [debug] Testing debug... done
+[2023-12-04 17:03:19.388093] [0x0000007fadb349c0] [info] Testing info... done
+[2023-12-04 17:03:19.388142] [0x0000007fadb349c0] [warning] Testing warning... done
+[2023-12-04 17:03:19.388189] [0x0000007fadb349c0] [error] Testing error... done
+[2023-12-04 17:03:19.388235] [0x0000007fadb349c0] [fatal] Testing fatal... done

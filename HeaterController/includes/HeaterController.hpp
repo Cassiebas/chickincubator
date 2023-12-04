@@ -4,6 +4,7 @@
 #include "HeatingElement.hpp"
 #include "Thermistor.hpp"
 #include "Timer.hpp"
+#include "Log.hpp" 
 #include "HarryPlotter"
 
 #include <chrono>
@@ -22,7 +23,9 @@ class HeaterController {
         unsigned int heaterPercent;
     protected:
         HeatingElement heater = HeatingElement(HEATER_GPIO);
+        std::string logtag = "[HeaterController] ";
         double setTemp;
+        Log log;
     public:
         HeaterController();
         HeaterController(double celsius);

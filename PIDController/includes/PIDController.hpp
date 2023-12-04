@@ -44,6 +44,7 @@ class PIDController : public HeaterController
     Plotter componentPlot;
     double error, min, max;
     double ambientTemp;
+    double pRes, iRes, dRes;
 
   public:
     PIDController(double temperature, double kp, double ki, double kd, double min = 0, double max = 100);

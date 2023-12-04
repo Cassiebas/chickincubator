@@ -29,11 +29,11 @@ PIDController::D::D(double kd) : kd(kd) {
 
 double PIDController::D::operator()(double error, double time) {
     double differential = /*abs(lastTime - time) != 0 ? */abs((double)(lastError - error)) / abs((double)(lastTime - time))/* : 0*/;
-    std::cout << differential <<  " = (" << lastError << " - " << error << ") / (" << lastTime << " - " <<  time << ")";
+    // std::cout << differential <<  " = (" << lastError << " - " << error << ") / (" << lastTime << " - " <<  time << ")";
     differential *= time;
     lastTime = time;
     lastError = error;
-    std::cout << "\t\t\t d::kd : " << kd << " d::diff : " << differential << "\n";
+    // std::cout << "\t\t\t d::kd : " << kd << " d::diff : " << differential << "\n";
     return kd * differential;
 }
 
@@ -45,7 +45,11 @@ PIDController::PIDController(double temperature, double kp, double ki, double kd
 
 double PIDController::operator()() {
     // Sum up the P, I, and D components
-    return p(error) + i(error, GetTime()) + d(error, GetTime());
+    pRes = p(error);
+    iRes = i(error, GetTime());
+    dRes = d(error, GetTime());
+    return pRes + iRes + dRes;
+    // return p(error) + i(error, GetTime()) + d(error, GetTime());
 }
 
 void PIDController::operator()(double Kp, double Ki, double Kd) {
@@ -85,9 +89,9 @@ void PIDController::Do() {
     powerPlot.AddPoint(GetTime()/60.0, ToPercentPower(result), "Heater power (%)");
     powerPlot.ExportToPNG("", "Power", "Time (m)", "Power (%)", "P(t)"); //Line label gets ignored here since there are multiple lines
     system("sudo cp Power.png /var/www/eggcubator/Power.png");
-    componentPlot.AddPoint(GetTime()/60.0, p(error), "P");
-    componentPlot.AddPoint(GetTime()/60.0, i(error, GetTime()), "I");
-    componentPlot.AddPoint(GetTime()/60.0, d(error, GetTime()), "D");
+    componentPlot.AddPoint(GetTime()/60.0, pRes, "P");
+    componentPlot.AddPoint(GetTime()/60.0, iRes, "I");
+    componentPlot.AddPoint(GetTime()/60.0, dRes, "D");
     componentPlot.ExportToPNG("", "components", "Time (m)", "Value", "T(t)"); //Line label gets ignored here since there are multiple lines
     system("sudo cp components.png /var/www/eggcubator/components.png");
     heater(static_cast<unsigned int>(ToPercentPower(result))); 
