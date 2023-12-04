@@ -1,14 +1,27 @@
 #include "Display.hpp"
 
 #include <iostream>
-
+#include <unistd.h>  
 
 int main(){
   Display display;
 
-  unsigned char message[] = "Ik wil kaas.";
+  char line[25] = "Hellow World!";
+  char msg[200] = "alpha\nbravo\ncharlie\ndelta";
 
-  display.PrintString(message);
+  // print text
+  if (msg[0] != 0)
+  {
+    display.oled_write_string(1, msg);
+  }
+
+  sleep(10);
+  display.oled_clear_screen();
+
+  if (line[0] != 0)
+  {
+    display.oled_write_line(1, msg);
+  }  
 
   return 0;
 }

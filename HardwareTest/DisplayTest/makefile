@@ -9,10 +9,6 @@ TARGET := bin/DisplayTest
 INCLUDES := $(addprefix -I, $(wildcard includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Display/includes))
 
-# LIBS := $(addprefix -l, boost_iostreams)
-# LIBS += $(addprefix -l, boost_system)
-# LIBS += $(addprefix -l, boost_filesystem)
-
 all: modules $(TARGET)
 
 $(TARGET): $(OBJS)
