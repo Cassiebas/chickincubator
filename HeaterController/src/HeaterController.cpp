@@ -9,7 +9,7 @@ HeaterController::HeaterController(double celsius) : setTemp(celsius){
 }
 
 HeaterController::~HeaterController() {
-    ControllerStop();
+    // ControllerStop(); //unexpected behavior
 }
 
 void HeaterController::SetTemp(double celsius) {
@@ -35,8 +35,8 @@ void HeaterController::ControllerStop() {
     }
     timer.Stop();
     heater.Stop();
-    plot[0].ExportAsPNG("", "A0", "Time (m)", "Temperature (°C)", "T(s)");
-    plot[1].ExportAsPNG("", "A1", "Time (m)", "Temperature (°C)", "T(s)");
+    plot[0].ExportToPNG("", "A0", "Time (m)", "Temperature (°C)", "T(t)");
+    plot[1].ExportToPNG("", "A1", "Time (m)", "Temperature (°C)", "T(t)");
 }
 
 std::vector<double> HeaterController::GetTemp() {

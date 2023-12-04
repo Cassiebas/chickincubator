@@ -41,7 +41,7 @@ void PWM::Stop() {
 
 void PWM::OnTick() {
   if(running) {
-    if(dutyCycleCounter > 0) {
+    if(dutyCycleCounter >= 0) {
       dutyCycleCounter -= 1;
       On();
     }

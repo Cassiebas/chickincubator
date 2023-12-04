@@ -10,34 +10,28 @@ class PIDController : public HeaterController
   private:
     class P
     {
-      private:
-        double kp;
-
       public:
+        double kp;
         P(double kp);
         double operator()(double error);
     };
 
     class I
     {
-      private:
-        double ki;
+      public:   
         double sum = 0;
         double lastTime = 0;
-
-      public:
+        double ki;
         I(double ki);
         double operator()(double error, double time);
     };
 
     class D
     {
-      private:
-        double kd;
+      public:
         double lastTime = 0;
         double lastError = 0;
-
-      public:
+        double kd;
         D(double kd);
         double operator()(double error, double time);
     };
@@ -45,16 +39,22 @@ class PIDController : public HeaterController
     P p;
     I i;
     D d;
+    Plotter pidPlot;
+    Plotter powerPlot;
+    Plotter componentPlot;
     double error, min, max;
     double ambientTemp;
 
   public:
     PIDController(double temperature, double kp, double ki, double kd, double min = 0, double max = 100);
     double operator()();
+    void operator()(double Kp, double Ki, double Kd);
     double ToPercentPower(double pidValue);
     void Do() override;
     void Start();
     void Stop();
+    void SetTemp(double temp);
+    void ExportConstants();
 };
 
 #endif

@@ -48,14 +48,14 @@ bool HeatingElement::writeGPIO(const std::string filename, const std::string val
 
 void HeatingElement::On()
 {
-  // Set the pin to LOW to start the heating element
+  // Set the pin to HIGH to start the heating element
   writeGPIO("gpio" + pin + "/value", "1");
   // std::cout << "Heater::On()\n";
 }
 
 void HeatingElement::Off()
 {
-  // Set the pin to HIGH to stop the heating element
+  // Set the pin to LOW to stop the heating element
   writeGPIO("gpio" + pin + "/value", "0");
   // std::cout << "Heater::Off()\n";
 }
