@@ -25,10 +25,10 @@
 #define SSD1306_PAGE_MODE 0x02
 #define SSD1306_SETSTARTLINE 0x40
 #define SSD1306_MEMORYMODE 0x20
+#define SSD1306_COMSCANDEC 0xC8
 #define SSD1306_COLUMNADDR 0x21
 #define SSD1306_PAGEADDR   0x22
 #define SSD1306_COMSCANINC 0xC0
-#define SSD1306_COMSCANDEC 0xC8
 #define SSD1306_SEGREMAP 0xA0
 #define SSD1306_CHARGEPUMP 0x8D
 #define SSD1306_EXTERNALVCC 0x1
@@ -49,6 +49,7 @@ static void display_remove(struct i2c_client *client);
 
 static int Write_Data(bool is_cmd, uint8_t *data, size_t size);
 static int OLED_Init(void);
+static int OLED_Resolution(void);
 
 static struct of_device_id my_driver_ids[] = {
   {
@@ -112,9 +113,11 @@ static int Write_Data(bool is_cmd, uint8_t *data, size_t size) {
     control_buffer = 0x40;
   }
 
-  if (i2c_smbus_write_i2c_block_data(display_driver_client, control_buffer, size, data) < 0) {
-    printk("Error writing to the i2c bus.\n");
-    return -1;
+  for(size_t i = 0; i < size; i++){
+    if (i2c_smbus_write_byte_data(display_driver_client, control_buffer, data[i]) < 0) {
+      printk("Error writing to the i2c bus.\n");
+      return -1;
+    }
   }
 
   return 0;
@@ -124,7 +127,7 @@ static int Write_Data(bool is_cmd, uint8_t *data, size_t size) {
  * @brief Configuration bytes for intitial OLED startup
 */
 static int OLED_Init(void) {
-  uint8_t data[26];
+  uint8_t data[28];
   uint8_t i = 0;
 
   data[i] = SSD1306_DISPLAYOFF;
@@ -139,11 +142,13 @@ static int OLED_Init(void) {
   data[i++] = SSD1306_CHARGEPUMP;
   data[i++] = 0x14;
   data[i++] = SSD1306_MEMORYMODE;
-  data[i++] = SSD1306_PAGE_MODE;
+  data[i++] = 0x00;
+  data[i++] = SSD1306_COMSCANDEC;
+  data[i++] = SSD1306_MEMORYMODE;
   data[i++] = SSD1306_SETCOMPINS;
   data[i++] = 0x02;
   data[i++] = SSD1306_SETCONTRAST;
-  data[i++] = 0x7F;
+  data[i++] = 0x8F;
   data[i++] = SSD1306_SETPRECHARGE;
   data[i++] = 0xf1;
   data[i++] = SSD1306_SETVCOMDETECT;
@@ -151,8 +156,8 @@ static int OLED_Init(void) {
   data[i++] = SSD1306_DISPLAYALLON_RESUME;
   data[i++] = 0x00;
   data[i++] = SSD1306_NORMALDISPLAY;
-  data[i++] = SSD1306_DISPLAYON;
   data[i++] = SSD1306_COMM_DISABLE_SCROLL;
+  data[i++] = SSD1306_DISPLAYON;
 
   if(Write_Data(true, data, sizeof(data)) < 0)
   {
@@ -161,6 +166,29 @@ static int OLED_Init(void) {
   return 0;
 }
 
+
+/** 
+ * @brief Resolution bytes for intitial OLED startup
+*/
+static int OLED_Resolution(void) {
+  uint8_t data[7];
+  uint8_t i = 0;
+
+  data[i] = SSD1306_COLUMNADDR;
+  data[i++] = 0;
+  data[i++] = (SSD1306_LCDWIDTH - 1);
+  data[i++] = SSD1306_PAGEADDR;
+  data[i++] = 0;
+  data[i++] = 3;
+
+	for (uint8_t index = 0; index < (SSD1306_LCDWIDTH) * (SSD1306_LCDHEIGHT/2) / 8; index++) {
+		i2c_smbus_write_byte_data(display_driver_client, 0x40, data[i]); 
+		//This sends byte by byte. 
+		//Better to send all buffer without 0x40 first
+		//Should be optimized
+	}
+  return 0;
+}
 /**
  * @brief write to display driver
  */
@@ -241,6 +269,11 @@ static int display_probe(struct i2c_client *client, const struct i2c_device_id *
   if (OLED_Init() > 0)
   {
     printk("Failed to write config bytes to display driver.\n");
+  }
+
+  if (OLED_Resolution() > 0)
+  {
+    printk("Failed to write resolution bytes to display driver.\n");
   }
   return 0;
 }
