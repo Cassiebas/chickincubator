@@ -6,7 +6,7 @@
 int main(){
   Display display;
 
-  char line[25] = "Hellow World!";
+  char line[25] = "H";
   //char msg[200] = "alpha\nbravo\ncharlie\ndelta";
 
   // print text
@@ -16,7 +16,7 @@ int main(){
   // }
 
   // sleep(10);
-  // display.oled_clear_screen();
+  display.oled_clear_screen();
 
   if (line[0] != 0)
   {

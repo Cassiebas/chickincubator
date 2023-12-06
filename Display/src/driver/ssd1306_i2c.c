@@ -22,6 +22,7 @@
 #define SSD1306_SETMULTIPLEX 0xA8
 #define SSD1306_SETLOWCOLUMN 0x00
 #define SSD1306_SETHIGHCOLUMN 0x10
+#define SSD1306_PAGE_MODE 0x02
 #define SSD1306_SETSTARTLINE 0x40
 #define SSD1306_MEMORYMODE 0x20
 #define SSD1306_COLUMNADDR 0x21
@@ -46,7 +47,7 @@ static struct i2c_client *display_driver_client;
 static int display_probe(struct i2c_client *client, const struct i2c_device_id *id);
 static void display_remove(struct i2c_client *client);
 
-static int Write_Data(bool is_cmd, uint8_t data);
+static int Write_Data(bool is_cmd, uint8_t *data, size_t size);
 static int OLED_Init(void);
 
 static struct of_device_id my_driver_ids[] = {
@@ -75,7 +76,8 @@ static struct i2c_driver my_driver = {
 
 static struct proc_dir_entry *proc_file;
 
-static int Write_Data(bool is_cmd, uint8_t data) {
+static int Write_Data(bool is_cmd, uint8_t *data, size_t size) {
+  uint8_t control_buffer;
   /*
   ** First byte is always control byte. Data is followed after that.
   **
@@ -96,21 +98,25 @@ static int Write_Data(bool is_cmd, uint8_t data) {
   ** Please refer the datasheet for more information.
   **
   */
-  u8 buf[2];
+  if (size == 0) {
+    printk("Error: Data size is zero.\n");
+    return -1;
+  }
+
   if (is_cmd == true)
   {
-    buf[0] = 0x00;
+    control_buffer = 0x00;
   }
   else
   {
-    buf[0] = 0x40;
+    control_buffer = 0x40;
   }
-  buf[1] = data;
 
-  if (i2c_smbus_write_i2c_block_data(display_driver_client, 0x00, 2, buf) < 0) {
+  if (i2c_smbus_write_i2c_block_data(display_driver_client, control_buffer, size, data) < 0) {
     printk("Error writing to the i2c bus.\n");
     return -1;
   }
+
   return 0;
 }
 
@@ -118,32 +124,37 @@ static int Write_Data(bool is_cmd, uint8_t data) {
  * @brief Configuration bytes for intitial OLED startup
 */
 static int OLED_Init(void) {
-  int fault = 0;
+  uint8_t data[26];
+  uint8_t i = 0;
 
-  fault |= Write_Data(true, SSD1306_DISPLAYOFF);
-  fault |= Write_Data(true, SSD1306_SETDISPLAYCLOCKDIV);
-  fault |= Write_Data(true, 0x80);
-  fault |= Write_Data(true, SSD1306_SETMULTIPLEX);
-  fault |= Write_Data(true, 31);
-  fault |= Write_Data(true, SSD1306_SETDISPLAYOFFSET);
-  fault |= Write_Data(true, 0x0);
-  fault |= Write_Data(true, SSD1306_CHARGEPUMP);
-  fault |= Write_Data(true, 0x14);
-  fault |= Write_Data(true, SSD1306_SETCOMPINS);
-  fault |= Write_Data(true, 0x02);
-  fault |= Write_Data(true, SSD1306_SETCONTRAST);
-  fault |= Write_Data(true, 0x7F);
-  fault |= Write_Data(true, SSD1306_SETPRECHARGE);
-  fault |= Write_Data(true, 0xf1);
-  fault |= Write_Data(true, SSD1306_SETVCOMDETECT);
-  fault |= Write_Data(true, 0x40);
-  fault |= Write_Data(true, SSD1306_DISPLAYALLON_RESUME);
-  fault |= Write_Data(true, 0x00);
-  fault |= Write_Data(true, SSD1306_NORMALDISPLAY);
-  fault |= Write_Data(true, SSD1306_DISPLAYON);
-  fault |= Write_Data(true, SSD1306_COMM_DISABLE_SCROLL);
+  data[i] = SSD1306_DISPLAYOFF;
+  data[i++] = SSD1306_NORMALDISPLAY;
+  data[i++] = SSD1306_SETDISPLAYCLOCKDIV;
+  data[i++] = 0x80;
+  data[i++] = SSD1306_SETMULTIPLEX;
+  data[i++] = 31;
+  data[i++] = SSD1306_SETDISPLAYOFFSET;
+  data[i++] = 0;
+  data[i++] = SSD1306_SETSTARTLINE;
+  data[i++] = SSD1306_CHARGEPUMP;
+  data[i++] = 0x14;
+  data[i++] = SSD1306_MEMORYMODE;
+  data[i++] = SSD1306_PAGE_MODE;
+  data[i++] = SSD1306_SETCOMPINS;
+  data[i++] = 0x02;
+  data[i++] = SSD1306_SETCONTRAST;
+  data[i++] = 0x7F;
+  data[i++] = SSD1306_SETPRECHARGE;
+  data[i++] = 0xf1;
+  data[i++] = SSD1306_SETVCOMDETECT;
+  data[i++] = 0x40;
+  data[i++] = SSD1306_DISPLAYALLON_RESUME;
+  data[i++] = 0x00;
+  data[i++] = SSD1306_NORMALDISPLAY;
+  data[i++] = SSD1306_DISPLAYON;
+  data[i++] = SSD1306_COMM_DISABLE_SCROLL;
 
-  if(fault < 0)
+  if(Write_Data(true, data, sizeof(data)) < 0)
   {
     return -1;
   }
@@ -177,6 +188,12 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
   // Copy data from user space to kernel space
   not_copied = copy_from_user(buffer, user_buffer, count);
 
+  for (size_t i = 0; i < count; ++i)
+  {
+    printk("0x%02X ", buffer[i]);  // Print each byte in hexadecimal format with leading zeros
+  }
+  printk("\n");  // Add a newline at the end for better readability
+
   // Check for copy errors
   if (not_copied != 0) {
     return -EINVAL;
@@ -184,13 +201,8 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
 
   is_cmd = (buffer[0] == 0x00 ? 1 : 0);
 
-  // Process each byte and call Write_Data
-  for (size_t i = 1; i < count; ++i)
-  {
-    // Assuming your Write_Data function takes a single byte as an argument
-    if(Write_Data(is_cmd, buffer[i] < 0)){
-      printk("Error writing received data: %s \n", buffer);
-    }
+  if(Write_Data(is_cmd, buffer, sizeof(buffer))){
+    printk("Error writing received data: %s \n", buffer);
   }
 
   // Free the dynamically allocated memory

@@ -56,15 +56,13 @@ class Display
     static const uint16_t MAX_BUFFER_SIZE = 1024;
     
     uint8_t data_buf[MAX_BUFFER_SIZE];
-    uint8_t max_lines = 0;
-    uint8_t max_columns = 0;
+    uint8_t max_lines = SSD1306_128_32_LINES;
+    uint8_t max_columns = SSD1306_128_32_COLUMNS;
     uint8_t global_x = 0;
     uint8_t global_y = 0;
 
     int fd;
     const static uint8_t FONT_SIZE = 5;
-    const static uint8_t SSD1306_MAX_SEG = 128;
-    const static uint8_t SSD1306_MAX_LINE = 3;
     const static unsigned char font[][FONT_SIZE];
 
   public:
