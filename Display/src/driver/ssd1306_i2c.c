@@ -49,7 +49,6 @@ static void display_remove(struct i2c_client *client);
 
 static int Write_Data(bool is_cmd, uint8_t *data, size_t size);
 static int OLED_Init(void);
-static int OLED_Resolution(void);
 
 static struct of_device_id my_driver_ids[] = {
   {
@@ -127,66 +126,37 @@ static int Write_Data(bool is_cmd, uint8_t *data, size_t size) {
  * @brief Configuration bytes for intitial OLED startup
 */
 static int OLED_Init(void) {
-  uint8_t data[28];
-  uint8_t i = 0;
-
-  data[i] = SSD1306_DISPLAYOFF;
-  data[i++] = SSD1306_NORMALDISPLAY;
-  data[i++] = SSD1306_SETDISPLAYCLOCKDIV;
-  data[i++] = 0x80;
-  data[i++] = SSD1306_SETMULTIPLEX;
-  data[i++] = 31;
-  data[i++] = SSD1306_SETDISPLAYOFFSET;
-  data[i++] = 0;
-  data[i++] = SSD1306_SETSTARTLINE;
-  data[i++] = SSD1306_CHARGEPUMP;
-  data[i++] = 0x14;
-  data[i++] = SSD1306_MEMORYMODE;
-  data[i++] = 0x00;
-  data[i++] = SSD1306_COMSCANDEC;
-  data[i++] = SSD1306_MEMORYMODE;
-  data[i++] = SSD1306_SETCOMPINS;
-  data[i++] = 0x02;
-  data[i++] = SSD1306_SETCONTRAST;
-  data[i++] = 0x8F;
-  data[i++] = SSD1306_SETPRECHARGE;
-  data[i++] = 0xf1;
-  data[i++] = SSD1306_SETVCOMDETECT;
-  data[i++] = 0x40;
-  data[i++] = SSD1306_DISPLAYALLON_RESUME;
-  data[i++] = 0x00;
-  data[i++] = SSD1306_NORMALDISPLAY;
-  data[i++] = SSD1306_COMM_DISABLE_SCROLL;
-  data[i++] = SSD1306_DISPLAYON;
+  uint8_t data[] = {
+    SSD1306_DISPLAYOFF,
+    SSD1306_SETDISPLAYCLOCKDIV,
+    0x80, // Recommended value, you may adjust this
+    SSD1306_SETMULTIPLEX,
+    0x1F, // 128x32 display, so multiplex value is 31 (0x1F)
+    SSD1306_SETDISPLAYOFFSET,
+    0x0,
+    SSD1306_SETSTARTLINE,
+    SSD1306_CHARGEPUMP,
+    0x14, // Enable charge pump during display on
+    SSD1306_MEMORYMODE,
+    SSD1306_PAGE_MODE,
+    SSD1306_SETCOMPINS,
+    0x02, // 128x32 display, so COM pin configuration is 0x02
+    SSD1306_SETCONTRAST,
+    0x7F, // You may adjust contrast value
+    SSD1306_SETPRECHARGE,
+    0xF1, // Recommended value
+    SSD1306_SETVCOMDETECT,
+    0x40, // You may adjust this value
+    SSD1306_DISPLAYALLON_RESUME,
+    SSD1306_NORMALDISPLAY,
+    SSD1306_DISPLAYON,
+    SSD1306_COMM_DISABLE_SCROLL
+  };
 
   if(Write_Data(true, data, sizeof(data)) < 0)
   {
     return -1;
   }
-  return 0;
-}
-
-
-/** 
- * @brief Resolution bytes for intitial OLED startup
-*/
-static int OLED_Resolution(void) {
-  uint8_t data[7];
-  uint8_t i = 0;
-
-  data[i] = SSD1306_COLUMNADDR;
-  data[i++] = 0;
-  data[i++] = (SSD1306_LCDWIDTH - 1);
-  data[i++] = SSD1306_PAGEADDR;
-  data[i++] = 0;
-  data[i++] = 3;
-
-	for (uint8_t index = 0; index < (SSD1306_LCDWIDTH) * (SSD1306_LCDHEIGHT/2) / 8; index++) {
-		i2c_smbus_write_byte_data(display_driver_client, 0x40, data[i]); 
-		//This sends byte by byte. 
-		//Better to send all buffer without 0x40 first
-		//Should be optimized
-	}
   return 0;
 }
 /**
@@ -269,11 +239,6 @@ static int display_probe(struct i2c_client *client, const struct i2c_device_id *
   if (OLED_Init() > 0)
   {
     printk("Failed to write config bytes to display driver.\n");
-  }
-
-  if (OLED_Resolution() > 0)
-  {
-    printk("Failed to write resolution bytes to display driver.\n");
   }
   return 0;
 }

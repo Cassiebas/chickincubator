@@ -50,6 +50,8 @@
 #define SSD1306_128_32_COLUMNS      128
 #define SSD1306_128_32_LINES        32
 
+#define MAX_PAGES                   4
+
 class Display
 {
   private:

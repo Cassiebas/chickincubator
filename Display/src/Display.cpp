@@ -221,69 +221,26 @@ uint8_t Display::oled_clear_line(uint8_t row)
   return static_cast<uint8_t>(result);
 }
 
-uint8_t Display::oled_clear_screen()
-{
-  uint8_t returnCode = 0;
-  uint8_t i;
-  
-  for (i = 0; i < (max_lines / 8); i++)
-  {
-    returnCode += oled_clear_line(i);
+uint8_t Display::oled_clear_screen() {
+  // Set the column range to cover the entire display
+  oled_set_X(0);
+  oled_set_X(max_columns - 1);
+
+  // Set the page range to cover the entire display
+  oled_set_page(0, 3);
+
+  // Clear each pixel by sending 0x00 to the display
+  uint8_t clear_data[] = {SSD1306_COMM_CONTROL_BYTE, 0x00};
+
+  for (uint8_t page = 0; page < MAX_PAGES; ++page) {
+    for (uint8_t col = 0; col < max_columns; ++col) {
+      ssize_t result = write(fd, clear_data, 2);
+      if (result == -1) {
+        perror("Error writing to kernel");
+        return 1;  // Or another appropriate error code
+      }
+    }
   }
-  
-  return returnCode;
+
+  return 0; // Successfully cleared the display
 }
-
-// void Display::PrintChar(unsigned char c) {
-//   uint8_t data_byte;
-//   uint8_t temp = 0;
-//   /*
-//   ** If the character is greater than segment len or we got new line charcter
-//   ** then move the cursor to the new line
-//   */ 
-//   if( (( CursorPos + FONT_SIZE ) >= SSD1306_MAX_SEG ) || ( c == '\n' ))
-//   {
-//     //Placeholder for next line function
-//   }
-//   // print charcters other than new line
-//   if( c != '\n' )
-//   {
-//     /*
-//     ** In our font array (font), space starts in 0th index.
-//     ** But in ASCII table, Space starts from 32 (0x20).
-//     ** So we need to match the ASCII table with our font table.
-//     ** We can subtract 32 (0x20) in order to match with our font table.
-//     */
-//     c -= 0x20;  //or c -= ' ';
-//     do
-//     {
-//       data_byte= font[c][temp]; // Get the data to be displayed from LookUptable
-//       Write(false, data_byte);  // write data to the OLED
-//       CursorPos++;
-      
-//       temp++;
-      
-//     } while ( temp < FONT_SIZE);
-//     Write(false, 0x00);         //Display the data
-//     CursorPos++;
-//   }
-// }
-
-// void Display::PrintString(unsigned char *str) {
-
-//   while(*str)
-//   {
-//     PrintChar(*str++);
-//   }
-// }
-
-// void Display::Fill(unsigned char data) {
-//   unsigned int total = 128 * 7; // 4 pages x 128 segments x 4 bits of data
-//   unsigned int i = 0;
-
-//   // Fill the Display
-//   for (i = 0; i < total; i++)
-//   {
-//     Write(false, data);
-//   }
-// }

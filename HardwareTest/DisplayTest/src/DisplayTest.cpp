@@ -6,7 +6,7 @@
 int main(){
   Display display;
 
-  char line[25] = "H";
+  char line[25] = "Hoi";
   //char msg[200] = "alpha\nbravo\ncharlie\ndelta";
 
   // print text
