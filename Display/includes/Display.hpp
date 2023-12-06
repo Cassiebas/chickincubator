@@ -53,13 +53,15 @@
 class Display
 {
   private:
-    int fd;
-    static uint8_t data_buf[1024];
+    static const uint16_t MAX_BUFFER_SIZE = 1024;
+    
+    uint8_t data_buf[MAX_BUFFER_SIZE];
     uint8_t max_lines = 0;
     uint8_t max_columns = 0;
     uint8_t global_x = 0;
     uint8_t global_y = 0;
 
+    int fd;
     const static uint8_t FONT_SIZE = 5;
     const static uint8_t SSD1306_MAX_SEG = 128;
     const static uint8_t SSD1306_MAX_LINE = 3;
@@ -79,12 +81,10 @@ class Display
 
     //uint8_t oled_display_flip(uint8_t flip);
 
-    uint8_t oled_write_line(uint8_t size, char* ptr);
-    uint8_t oled_write_string(uint8_t size, char* ptr);
+    uint8_t oled_write_line(uint8_t size, const char* ptr);
+    uint8_t oled_write_string(uint8_t size, const char* ptr);
     uint8_t oled_clear_line(uint8_t row);
     uint8_t oled_clear_screen();
-    uint8_t oled_set_col(uint8_t start, uint8_t end);
-    uint8_t oled_set_page(uint8_t start, uint8_t end);
 
     void PrintChar(unsigned char c);
     void PrintString(unsigned char *str);
