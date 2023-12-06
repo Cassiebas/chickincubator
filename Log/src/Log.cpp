@@ -1,21 +1,17 @@
 #include "Log.hpp"
 
-Log::Log(const std::string path, const std::string filename, const bool showAllSeverities) {
-    logger::register_simple_formatter_factory<Severity, char>("Severity");
+Log::Log(const std::string path, const std::string filename, const std::string tag, const bool showAllSeverities) {
+    auto backend = boost::make_shared<backend_type>(
+        kw::file_name = path + file + "_%N.log",
+        kw::rotation_size = 10 * 1024 * 1024,
+        kw::time_based_rotation = logger::sinks::file::rotation_at_time_point(0, 0, 0),
+        kw::auto_flush = true);
 
-    logger::add_file_log
-    (
-        keywords::file_name = path + filename,
-        keywords::format = "[%TimeStamp%] [%ThreadID%] [%Severity%] %Message%"
-    );
-    if (!showAllSeverities) {
-        logger::core::get()->set_filter
-        (
-            logger::trivial::severity >= logger::trivial::info
-        );
-    }
+    auto sink = boost::make_shared<sink_type>(backend);
+    sink->set_formatter(logger::parse_formatter(g_format));
+    sink->set_filter(tag_attr == tag_);
 
-    logger::add_common_attributes();
+    logger::core::get()->add_sink(sink);
 }
 
 Log::~Log() {

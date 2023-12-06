@@ -28,7 +28,7 @@ PIDController::D::D(double kd) : kd(kd) {
 }
 
 double PIDController::D::operator()(double error, double time) {
-    double differential = /*abs(lastTime - time) != 0 ? */abs((double)(lastError - error)) / abs((double)(lastTime - time))/* : 0*/;
+    double differential = /*abs(lastTime - time) != 0 ? */(error - lastError) / (time - lastTime)/* : 0*/;
     // std::cout << differential <<  " = (" << lastError << " - " << error << ") / (" << lastTime << " - " <<  time << ")";
     differential *= time;
     lastTime = time;
@@ -38,6 +38,9 @@ double PIDController::D::operator()(double error, double time) {
 }
 
 PIDController::PIDController(double temperature, double kp, double ki, double kd, double min, double max) : p(kp), i(ki), d(kd), min(min), max(max) {
+    log = Log("", "PIDController.log", true);
+    logtag = "[PIDController] ";
+    logNamespace = "PIDController::";
     SetTemp(temperature);
     std::vector<double> temps = GetTemp();
     ambientTemp = (temps.at(0) + temps.at(1)) / 2.0;
@@ -48,6 +51,7 @@ double PIDController::operator()() {
     pRes = p(error);
     iRes = i(error, GetTime());
     dRes = d(error, GetTime());
+    log(Severity::trace, logtag + " " + logNamespace + "operator()() called");
     return pRes + iRes + dRes;
     // return p(error) + i(error, GetTime()) + d(error, GetTime());
 }

@@ -1,11 +1,11 @@
 #include "HeaterController.hpp"
 
 HeaterController::HeaterController() {
-    log = Log("", "HeaterController.log", true);
+    // log = Log("", "HeaterController.log", true);
 }
 
 HeaterController::HeaterController(double celsius) : setTemp(celsius){
-    log = Log("", "HeaterController.log", true);
+    // log = Log("", "HeaterController.log", true);
 }
 
 HeaterController::~HeaterController() {
@@ -13,11 +13,12 @@ HeaterController::~HeaterController() {
 }
 
 void HeaterController::SetTemp(double celsius) {
-    log(Severity::debug, logtag + "SetTemp(" + std::to_string(celsius) + ")");
+    // log(Severity::trace, logtag + " " + logNamespace + "SetTemp(" + std::to_string(celsius) + ")");
     setTemp = celsius;
 }
 
 void HeaterController::SetHeaterPercent(unsigned int percentage) {
+    // log(Severity::trace, logtag + " " + logNamespace + "SetHeaterPercent(" + std::to_string(percentage) + ")");
     heaterPercent = percentage;
 }
 
@@ -27,6 +28,7 @@ void HeaterController::ControllerStart() {
     timer.Start();
     heater(heaterPercent);
     heater.Start();
+    // log(Severity::trace, logtag + " " + logNamespace + "ControllerStart()");
 }
 
 void HeaterController::ControllerStop() {
@@ -38,6 +40,7 @@ void HeaterController::ControllerStop() {
     heater.Stop();
     plot[0].ExportToPNG("", "A0", "Time (m)", "Temperature (°C)", "T(t)");
     plot[1].ExportToPNG("", "A1", "Time (m)", "Temperature (°C)", "T(t)");
+    // log(Severity::trace, logtag + " " + logNamespace + "ControllerStop()");
 }
 
 std::vector<double> HeaterController::GetTemp() {
