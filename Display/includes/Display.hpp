@@ -70,7 +70,8 @@ class Display
   public:
     Display();
     ~Display();
-
+    
+    uint8_t oled_default_config(void);
     uint8_t oled_onoff(uint8_t onoff);
     uint8_t oled_horizontal_flip(uint8_t flip);
     uint8_t oled_set_col(uint8_t start, uint8_t end);

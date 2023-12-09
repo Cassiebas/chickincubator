@@ -16,12 +16,9 @@ int main(){
   // }
 
   // sleep(10);
+  display.oled_horizontal_flip(1);
   display.oled_clear_screen();
 
-  if (line[0] != 0)
-  {
-    display.oled_write_line(0x00, line);
-  }  
 
   return 0;
 }

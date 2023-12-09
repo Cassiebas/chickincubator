@@ -13,7 +13,7 @@
 
 Display::Display()
 {
-  fd = open("/proc/SSD1306", O_RDWR);
+  fd = open("/dev/i2c-1", O_RDWR);
   if (fd < 0)
   {
     printf("Error opening the device driver\n");
@@ -23,6 +23,52 @@ Display::Display()
 Display::~Display() 
 {
   close(fd);
+}
+
+uint8_t Display::oled_default_config(void)
+{
+  max_lines = SSD1306_128_32_LINES;
+  max_columns = SSD1306_128_32_COLUMNS;
+  global_x = 0;
+  global_y = 0;
+  
+  uint16_t i = 0;
+  data_buf[i++] = SSD1306_COMM_CONTROL_BYTE;  //command control byte
+  data_buf[i++] = SSD1306_COMM_DISPLAY_OFF;   //display off
+  data_buf[i++] = SSD1306_COMM_DISP_NORM;     //Set Normal Display (default)
+  data_buf[i++] = SSD1306_COMM_CLK_SET;       //SETDISPLAYCLOCKDIV
+  data_buf[i++] = 0x80;                       // the suggested ratio 0x80
+  data_buf[i++] = SSD1306_COMM_MULTIPLEX;     //SSD1306_SETMULTIPLEX
+  data_buf[i++] = SSD1306_128_32_COLUMNS - 1; // height is 32 or 64 (always -1)
+  data_buf[i++] = SSD1306_COMM_VERT_OFFSET;   //SETDISPLAYOFFSET
+  data_buf[i++] = 0;                          //no offset
+  data_buf[i++] = SSD1306_COMM_START_LINE;    //SETSTARTLINE
+  data_buf[i++] = SSD1306_COMM_CHARGE_PUMP;   //CHARGEPUMP
+  data_buf[i++] = 0x14;                       //turn on charge pump
+  data_buf[i++] = SSD1306_COMM_MEMORY_MODE;   //MEMORYMODE
+  data_buf[i++] = SSD1306_PAGE_MODE;          // page mode
+  data_buf[i++] = SSD1306_COMM_HORIZ_NORM;    //SEGREMAP  Mirror screen horizontally (A0)
+  data_buf[i++] = SSD1306_COMM_SCAN_NORM;     //COMSCANDEC Rotate screen vertically (C0)
+  data_buf[i++] = SSD1306_COMM_COM_PIN;       //HARDWARE PIN 
+  data_buf[i++] = 0x02;                       // for 32 lines                    
+  data_buf[i++] = SSD1306_COMM_CONTRAST;      //SETCONTRAST
+  data_buf[i++] = 0x7f;                       // default contract value
+  data_buf[i++] = SSD1306_COMM_PRECHARGE;     //SETPRECHARGE
+  data_buf[i++] = 0xf1;                       // default precharge value
+  data_buf[i++] = SSD1306_COMM_DESELECT_LV;   //SETVCOMDETECT                
+  data_buf[i++] = 0x40;                       // default deselect value
+  data_buf[i++] = SSD1306_COMM_RESUME_RAM;    //DISPLAYALLON_RESUME
+  data_buf[i++] = SSD1306_COMM_DISP_NORM;     //NORMALDISPLAY
+  data_buf[i++] = SSD1306_COMM_DISPLAY_ON;    //DISPLAY ON             
+  data_buf[i++] = SSD1306_COMM_DISABLE_SCROLL;//Stop scroll
+  
+  printf("Writing Line to Kernel \n");
+  ssize_t result = write(fd, data_buf, i);
+  if (result == -1) {
+    perror("Error writing to kernel");
+    return 1;  // Or another appropriate error code
+  }
+  return static_cast<uint8_t>(result);
 }
 
 uint8_t Display::oled_onoff(uint8_t onoff)
@@ -113,6 +159,24 @@ uint8_t Display::oled_set_Y(uint8_t y)
   return static_cast<uint8_t>(result);
 }
 
+uint8_t Display::oled_horizontal_flip(uint8_t flip)
+{
+  data_buf[0] = SSD1306_COMM_CONTROL_BYTE;
+  if (flip == 0)
+    data_buf[1] = SSD1306_COMM_HORIZ_NORM;
+  else
+    data_buf[1] = SSD1306_COMM_HORIZ_FLIP;
+
+  printf("Writing Line to Kernel \n");
+  ssize_t result = write(fd, data_buf, 2);
+  if (result == -1) {
+    perror("Error writing to kernel");
+    return 1;  // Or another appropriate error code
+  }
+  return static_cast<uint8_t>(result);
+}
+
+
 uint8_t Display::oled_write_line(uint8_t size, const char* ptr) {
   uint16_t i = 0;
   uint16_t index = 0;
@@ -131,7 +195,7 @@ uint8_t Display::oled_write_line(uint8_t size, const char* ptr) {
   } else
     return 1;
 
-  data_buf[i] = SSD1306_DATA_CONTROL_BYTE;
+  data_buf[i++] = SSD1306_DATA_CONTROL_BYTE;
 
   // font table range in ASCII table is from 0x20(space) to 0x7e(~)
   while (ptr[index] != 0 && i <= MAX_BUFFER_SIZE) {
@@ -202,13 +266,13 @@ uint8_t Display::oled_write_string(uint8_t size, const char* ptr) {
 
 uint8_t Display::oled_clear_line(uint8_t row)
 {
-  uint8_t i;
+  uint8_t i =0;
   if (row >= (max_lines / 8))
     return 1;
     
   oled_set_X(0);
   oled_set_Y(row);
-  data_buf[0] = SSD1306_DATA_CONTROL_BYTE;
+  data_buf[i] = SSD1306_DATA_CONTROL_BYTE;
   for (i = 0; i < max_columns; i++)
     data_buf[i+1] = 0x00;
       
@@ -222,25 +286,13 @@ uint8_t Display::oled_clear_line(uint8_t row)
 }
 
 uint8_t Display::oled_clear_screen() {
-  // Set the column range to cover the entire display
-  oled_set_X(0);
-  oled_set_X(max_columns - 1);
-
+  uint8_t returnCode = 0;
   // Set the page range to cover the entire display
   oled_set_page(0, 3);
 
-  // Clear each pixel by sending 0x00 to the display
-  uint8_t clear_data[] = {SSD1306_COMM_CONTROL_BYTE, 0x00};
-
-  for (uint8_t page = 0; page < MAX_PAGES; ++page) {
-    for (uint8_t col = 0; col < max_columns; ++col) {
-      ssize_t result = write(fd, clear_data, 2);
-      if (result == -1) {
-        perror("Error writing to kernel");
-        return 1;  // Or another appropriate error code
-      }
+  for (uint8_t page = 0; page <= MAX_PAGES; ++page) {
+      returnCode += oled_clear_line(page);
     }
-  }
 
-  return 0; // Successfully cleared the display
+  return returnCode; // Successfully cleared the display
 }
