@@ -13,10 +13,19 @@
 
 Display::Display()
 {
-  fd = open("/dev/i2c-1", O_RDWR);
+  const char *device_path = "/dev/i2c-1";
+  const int i2c_address = 0x3C;
+  fd = open(device_path, O_RDWR);
   if (fd < 0)
   {
     printf("Error opening the device driver\n");
+  }
+  // Set the I2C slave address
+  if (ioctl(fd, I2C_SLAVE, i2c_address) < 0)
+  {
+    perror("Error setting I2C slave address");
+    close(fd);
+    return;
   }
 }
 
