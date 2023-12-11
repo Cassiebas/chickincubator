@@ -49,19 +49,25 @@
 
 #define SSD1306_128_32_COLUMNS      128
 #define SSD1306_128_32_LINES        32
+#define SSD1306_128_64_LINES        64
 
+#define NUM_ROWS_PER_PAGE           8
 #define MAX_PAGES                   4
 
 class Display
 {
   private:
-    static const uint16_t MAX_BUFFER_SIZE = 1024;
-    
-    uint8_t data_buf[MAX_BUFFER_SIZE];
-    uint8_t max_lines = SSD1306_128_32_LINES;
-    uint8_t max_columns = SSD1306_128_32_COLUMNS;
+    static constexpr uint8_t max_columns = SSD1306_128_32_COLUMNS;
+    static constexpr uint8_t max_lines = SSD1306_128_32_LINES;
     uint8_t global_x = 0;
     uint8_t global_y = 0;
+
+    // Array of bytes for a single page
+    using PageBuffer = uint8_t[max_columns];
+    // Array of pages to model the entire display
+    using FrameBuffer = PageBuffer[max_lines];
+
+    FrameBuffer framebuffer;
 
     int fd;
     const static uint8_t FONT_SIZE = 5;
@@ -73,22 +79,26 @@ class Display
     
     uint8_t oled_default_config(void);
     uint8_t oled_onoff(uint8_t onoff);
-    uint8_t oled_horizontal_flip(uint8_t flip);
+    
     uint8_t oled_set_col(uint8_t start, uint8_t end);
     uint8_t oled_set_page(uint8_t start, uint8_t end);
 
     uint8_t oled_set_X(uint8_t x);
     uint8_t oled_set_Y(uint8_t y);
 
-    //uint8_t oled_display_flip(uint8_t flip);
+    uint8_t oled_horizontal_flip(uint8_t flip);
+    uint8_t oled_display_flip(uint8_t flip);
 
     uint8_t oled_write_line(uint8_t size, const char* ptr);
     uint8_t oled_write_string(uint8_t size, const char* ptr);
     uint8_t oled_clear_line(uint8_t row);
+    uint8_t oled_set_line(uint8_t row);
+    uint8_t oled_white_screen();
     uint8_t oled_clear_screen();
 
-    void PrintChar(unsigned char c);
-    void PrintString(unsigned char *str);
+    void oled_send_buffer(const uint8_t* buffer, unsigned long length);
+    void oled_draw_pixel(uint8_t col, uint8_t row, uint8_t pixel);
+    void update(void);
 };
 
 #endif // DISPLAY_HPP

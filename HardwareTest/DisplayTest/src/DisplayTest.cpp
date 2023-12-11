@@ -6,19 +6,18 @@
 int main(){
   Display display;
 
-  char line[25] = "Hoi";
-  //char msg[200] = "alpha\nbravo\ncharlie\ndelta";
+  display.oled_draw_pixel(1, 0, 1);
+  display.oled_draw_pixel(2, 0, 1);
+  display.oled_draw_pixel(3, 0, 1);
+  display.oled_draw_pixel(4, 0, 1);
 
-  // print text
-  // if (msg[0] != 0)
-  // {
-  //   display.oled_write_string(1, msg);
-  // }
-
-  // sleep(10);
-  display.oled_horizontal_flip(1);
-  display.oled_clear_screen();
-
-
+  display.update();
+  sleep(10);
+  display.oled_draw_pixel(4, 10, 1);
+  display.oled_draw_pixel(4, 10, 1);
+  display.oled_draw_pixel(4, 10, 1);
+  display.oled_draw_pixel(4, 10, 1);
+  display.update();
+  sleep(10);
   return 0;
 }
