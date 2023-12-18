@@ -166,6 +166,7 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
 {
   int is_cmd, not_copied;
   char *buffer;
+  printk("driver_write() called!\n");
 
   /* Ensure there is at least one byte to copy */
   if (count < 2)

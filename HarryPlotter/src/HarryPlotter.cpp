@@ -65,13 +65,11 @@ std::string Plotter::DoubleToString(double value) {
     return str;
 }
 
-void Plotter::ExportToCSV(const std::string filename, const std::string lineLabel) {
-
-    // Create a data file
+void Plotter::ExportToCSV(const std::string path, const std::string filename, const std::string lineLabel) {
     std::vector<std::vector<double>> allData;
     std::vector<double> rowData;
     std::vector<std::string> lineNames;
-    std::ofstream file(filename + ".csv");
+    std::ofstream file(path + filename + ".csv");
     if (!singularLine.empty()) {
         data[lineLabel] = singularLine; //std::map<std::string, std::vector<std::pair<double, double>>> data
     }
@@ -88,66 +86,20 @@ void Plotter::ExportToCSV(const std::string filename, const std::string lineLabe
     }
     for (std::vector<double> dataRow : allData) {
         for (double dataField : dataRow) {
-            file << dataField << " ";
+            file << dataField << ",";
         }
         file << "\n";
     }
-    // for (std::pair<std::string, line> linePair : data) {
-    //     std::string lineName = linePair.first;
-    //     for (unsigned int i = 0; i < data[lineName].size(); i++) { 
-    //         file << DoubleToString(data[lineName].at(i).first) << " " << DoubleToString(data[lineName].at(i).second) << "\n";
-    //             // << DoubleToString(data[lineName].at(i).first) << " " << DoubleToString(data[lineName].at(i).second) << "\n";
-    //     }
-    // Add an empty line to separate the datasets
     file << std::endl;
-    // }
-
-    // Close the data file
     file.close();
 
 }
-
-//ExportToHTML doesn't work
-void Plotter::ExportToHTML(const std::string path, const std::string filename, const std::string xLabel, const std::string yLabel, const std::string lineLabel, const point resolution) {
-    Gnuplot plot;
-    std::stringstream plotString;
-    std::vector<std::string> lineNames;
-    ExportToCSV(filename, lineLabel);
-    if (!singularLine.empty()) {
-        data[lineLabel] = singularLine; //std::map<std::string, std::vector<std::pair<double, double>>> data
-    }
-    for (std::pair<std::string, line> linePair : data) {
-        lineNames.push_back(linePair.first);
-        std::cout << "Linename : " << linePair.first << "\n";
-    }
-    plotString << "set xrange [" << DoubleToString(abs(max.first - min.first) > 0 ? min.first : 0) << ":" << DoubleToString(max.first) 
-               << "]\nset yrange [" << DoubleToString(min.second - (abs(max.second - min.second) > 0 ? abs(max.second - min.second) * 0.1 : max.second * 0.01)) 
-                             << ":" << DoubleToString(max.second + (abs(max.second - min.second) > 0 ? abs(max.second - min.second) * 0.1 : max.second * 0.01))  << "]\n"
-               << "set xlabel '" << xLabel << "'\n"
-               << "set ylabel '" << yLabel << "'\n"
-               << "set terminal canvas\n" 
-               << "set output '" << path << filename << ".html'\n"
-               << "plot ";
-    unsigned int column = 2;
-    for (unsigned int i = 0; i < lineNames.size(); i++) {
-        plotString << "'" << filename << ".csv'" << "using 1:" << column++ << " with lines title '" << lineNames.at(i) << "'"; //, '' using 1:3 with lines title 'Double'\n";
-        if (i != lineNames.size()-1) {
-            plotString << ",";
-        }
-        else {
-            plotString << "\n";
-        }
-    }
-    plotString << "unset output\n";
-    // std::cout << plotString.str() << "\n";
-    plot << plotString.str();
-} 
 
 void Plotter::ExportToPNG(const std::string path, const std::string filename, const std::string xLabel, const std::string yLabel, const std::string lineLabel, const point resolution) {
     Gnuplot plot;
     std::stringstream plotString;
     std::vector<std::string> lineNames;
-    ExportToCSV(filename, lineLabel);
+    ExportToCSV(path + "csv/", filename, lineLabel);
     if (!singularLine.empty()) {
         data[lineLabel] = singularLine; //std::map<std::string, std::vector<std::pair<double, double>>> data
     }
@@ -162,11 +114,12 @@ void Plotter::ExportToPNG(const std::string path, const std::string filename, co
                << "set xlabel '" << xLabel << "'\n"
                << "set ylabel '" << yLabel << "'\n"
                << "set term 'pngcairo'\n" 
+               << "set datafile separator ','\n"
                << "set output '" << path << filename << ".png'\n";
         plotString << "plot ";
         unsigned int column = 2;
         for (unsigned int i = 0; i < lineNames.size(); i++) {
-            plotString << "'" << filename << ".csv'" << "using 1:" << column++ << " with lines title '" << lineNames.at(i) << "'"; //, '' using 1:3 with lines title 'Double'\n";
+            plotString << "'" << path << "csv/" << filename << ".csv'" << "using 1:" << column++ << " with lines title '" << lineNames.at(i) << "'"; //, '' using 1:3 with lines title 'Double'\n";
             if (i != lineNames.size()-1) {
                 plotString << ",";
             }

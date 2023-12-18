@@ -3,7 +3,7 @@
 #include <fstream>
 #include <cmath>
 
-PIDController::P::P(double kp) : kp(kp) {
+PIDController::P::P(double kp, Log &log) : kp(kp), log(log) {
 
 }
 
@@ -11,7 +11,7 @@ double PIDController::P::operator()(double error) {
     return kp * error;
 }
 
-PIDController::I::I(double ki) : ki(ki) {
+PIDController::I::I(double ki, Log &log) : ki(ki), log(log) {
 
 }
 
@@ -23,24 +23,29 @@ double PIDController::I::operator()(double error, double time) {
     return  ki * result;
 }
 
-PIDController::D::D(double kd) : kd(kd) {
+PIDController::D::D(double kd, Log &log) : kd(kd), log(log) {
 
 }
 
 double PIDController::D::operator()(double error, double time) {
-    double differential = /*abs(lastTime - time) != 0 ? */(error - lastError) / (time - lastTime)/* : 0*/;
+    if (lastTime == 0) {
+        lastTime = time;
+        lastError = error;
+        return 0; //skip first call because there is no delta
+    }
+    double differential = (error - lastError) / (time - lastTime);
+    log(Severity::debug, "Differential = (" + std::to_string(lastError) + " - " + std::to_string(error) + ") / (" + std::to_string(lastTime) + " - " +  std::to_string(time) + ")   = " + std::to_string(differential));
     // std::cout << differential <<  " = (" << lastError << " - " << error << ") / (" << lastTime << " - " <<  time << ")";
-    differential *= time;
+    // differential *= abs(time - lastTime);
     lastTime = time;
     lastError = error;
     // std::cout << "\t\t\t d::kd : " << kd << " d::diff : " << differential << "\n";
     return kd * differential;
 }
 
-PIDController::PIDController(double temperature, double kp, double ki, double kd, double min, double max) : p(kp), i(ki), d(kd), min(min), max(max) {
-    log = Log("", "PIDController.log", true);
-    logtag = "[PIDController] ";
-    logNamespace = "PIDController::";
+PIDController::PIDController(double temperature, double kp, double ki, double kd, double min, double max) 
+    : p(kp, log), i(ki, log), d(kd, log), min(min), max(max), log(Log("../logs/", "eggcubator.log", "PIDController", true))
+{
     SetTemp(temperature);
     std::vector<double> temps = GetTemp();
     ambientTemp = (temps.at(0) + temps.at(1)) / 2.0;
@@ -51,7 +56,7 @@ double PIDController::operator()() {
     pRes = p(error);
     iRes = i(error, GetTime());
     dRes = d(error, GetTime());
-    log(Severity::trace, logtag + " " + logNamespace + "operator()() called");
+    log(Severity::info, "P: " + std::to_string(pRes) + " I: " + std::to_string(iRes) + " D: " + std::to_string(dRes));
     return pRes + iRes + dRes;
     // return p(error) + i(error, GetTime()) + d(error, GetTime());
 }
@@ -88,16 +93,16 @@ void PIDController::Do() {
     // pidPlot.AddPoint(GetTime()/60.0, ToPercentPower(result), "Heater (%)");
     pidPlot.AddPoint(GetTime()/60.0, setTemp, "Tset (°C)");
     pidPlot.AddPoint(GetTime()/60.0, (temps.at(0) + temps.at(1)) / 2.0, "Tavg (°C)");
-    pidPlot.ExportToPNG("", "PID", "Time (m)", "Temperature (°C)", "T(t)"); //Line label gets ignored here since there are multiple lines
-    system("sudo cp PID.png /var/www/eggcubator/PID.png");
+    pidPlot.ExportToPNG("plots/", "Temperature", "Time (min)", "Temperature (°C)", "T(t)"); //Line label gets ignored here since there are multiple lines
+    system("sudo cp plots/Temperature.png /var/www/eggcubator/Temperature.png");
     powerPlot.AddPoint(GetTime()/60.0, ToPercentPower(result), "Heater power (%)");
-    powerPlot.ExportToPNG("", "Power", "Time (m)", "Power (%)", "P(t)"); //Line label gets ignored here since there are multiple lines
-    system("sudo cp Power.png /var/www/eggcubator/Power.png");
+    powerPlot.ExportToPNG("plots/", "Power", "Time (min)", "Power (%)", "P(t)"); //Line label gets ignored here since there are multiple lines
+    system("sudo cp plots/Power.png /var/www/eggcubator/Power.png");
     componentPlot.AddPoint(GetTime()/60.0, pRes, "P");
     componentPlot.AddPoint(GetTime()/60.0, iRes, "I");
     componentPlot.AddPoint(GetTime()/60.0, dRes, "D");
-    componentPlot.ExportToPNG("", "components", "Time (m)", "Value", "T(t)"); //Line label gets ignored here since there are multiple lines
-    system("sudo cp components.png /var/www/eggcubator/components.png");
+    componentPlot.ExportToPNG("plots/", "Components", "Time (min)", "Value", "T(t)"); //Line label gets ignored here since there are multiple lines
+    system("sudo cp plots/Components.png /var/www/eggcubator/Components.png");
     heater(static_cast<unsigned int>(ToPercentPower(result))); 
 }
 
@@ -107,7 +112,7 @@ void PIDController::Start() {
 
 void PIDController::Stop() {
     ControllerStop();
-    pidPlot.ExportToPNG("", "PID", "Time (m)", "Temperature (°C)", "T(t)"); //Line label gets ignored here since there are multiple lines
+    pidPlot.ExportToPNG("plots/", "Temperature", "Time (min)", "Temperature (°C)", "T(t)"); //Line label gets ignored here since there are multiple lines
 }
 
 void PIDController::SetTemp(double temp) {

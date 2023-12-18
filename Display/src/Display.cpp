@@ -164,25 +164,29 @@ void Display::oled_draw_pixel(uint8_t col, uint8_t row, uint8_t pixel)
   uint8_t global_page = global_y / NUM_ROWS_PER_PAGE;
 
   // Get the page the row exists at in the framebuffer
-  PageBuffer& page = framebuffer[global_page];
+  uint8_t* page = frameBuffer[global_page];
 
   // Get the row within the page (0-7)
   const uint8_t page_row = global_y % NUM_ROWS_PER_PAGE;
 
   // Set the corresponding bit to set the pixel
-  page[global_x] = static_cast<uint8_t>((page[global_x] & ~(1 << page_row)) | (pixel << page_row));
+  page[global_x] = (page[global_x] & ~(1 << page_row)) | (pixel << page_row);
 }
 
 void Display::update(void)
 {
   oled_set_col(0, 127);
   oled_set_page(0, 3);
-  oled_send_buffer(&framebuffer[0][0], sizeof(framebuffer));
+  oled_send_buffer(*frameBuffer, sizeof(frameBuffer));
 }
 
 // Send a data buffer GDDRAM
 void Display::oled_send_buffer(const uint8_t* buffer, unsigned long length)
 {
+  uint8_t control_byte = SSD1306_DATA_CONTROL_BYTE;
+  printf("Writing framebuffer to kernel\n");
+  
+  write(fd, &control_byte, 1);
   write(fd, buffer, length);
 }
 
@@ -310,51 +314,88 @@ uint8_t Display::oled_write_string(uint8_t size, const char* ptr) {
   return returnCode;
 }
 
+// uint8_t Display::oled_clear_line(uint8_t row)
+// {
+//   std::vector<uint8_t> data_buf;
+
+//   uint8_t i =0;
+//   if (row >= max_lines)
+//     return 1;
+    
+//   // oled_set_X(0);
+//   // oled_set_Y(row);
+
+//   data_buf.push_back(SSD1306_DATA_CONTROL_BYTE);
+//   for (i = 0; i <= max_columns; i++)
+//     data_buf.push_back(0x00);
+      
+//   printf("Writing Line to Kernel. Clean Line \n");
+//   ssize_t result = write(fd, data_buf.data(), 1 + max_columns);
+//   if (result == -1) {
+//     perror("Error writing to kernel");
+//     return 1;  // Or another appropriate error code
+//   }
+//   return static_cast<uint8_t>(result);
+// }
+
+// uint8_t Display::oled_set_line(uint8_t row)
+// {
+//   std::vector<uint8_t> data_buf;
+
+//   uint8_t i =0;
+//   if (row >= max_lines)
+//     return 1;
+    
+//   // oled_set_X(0);
+//   // oled_set_Y(row);
+//   data_buf.push_back(SSD1306_DATA_CONTROL_BYTE);
+//   for (i = 0; i <= max_columns; i++)
+//     data_buf.push_back(0xFF);
+      
+//   printf("Writing Line to Kernel. Set Line\n");
+//   ssize_t result = write(fd, data_buf.data(), 1 + max_columns);
+//   if (result == -1) {
+//     perror("Error writing to kernel");
+//     return 1;  // Or another appropriate error code
+//   }
+//   return static_cast<uint8_t>(result);
+// }
+
 uint8_t Display::oled_clear_line(uint8_t row)
 {
-  std::vector<uint8_t> data_buf;
-
-  uint8_t i =0;
   if (row >= max_lines)
     return 1;
-    
-  oled_set_X(0);
-  oled_set_Y(row);
 
-  data_buf.push_back(SSD1306_DATA_CONTROL_BYTE);
-  for (i = 0; i <= max_columns; i++)
-    data_buf.push_back(0x00);
-      
-  printf("Writing Line to Kernel. Clean Line \n");
-  ssize_t result = write(fd, data_buf.data(), 1 + max_columns);
-  if (result == -1) {
-    perror("Error writing to kernel");
-    return 1;  // Or another appropriate error code
+  // Get the page the row exists at in the framebuffer
+  uint8_t* page = frameBuffer[row];
+
+  // Clear the entire line
+  for (uint8_t i = 0; i < max_columns; ++i) {
+    page[i] = 0x00;
   }
-  return static_cast<uint8_t>(result);
+
+  update();
+
+  return 0;
 }
 
 uint8_t Display::oled_set_line(uint8_t row)
 {
-  std::vector<uint8_t> data_buf;
-
-  uint8_t i =0;
   if (row >= max_lines)
     return 1;
-    
-  oled_set_X(0);
-  oled_set_Y(row);
-  data_buf.push_back(SSD1306_DATA_CONTROL_BYTE);
-  for (i = 0; i <= max_columns; i++)
-    data_buf.push_back(0xFF);
-      
-  printf("Writing Line to Kernel. Set Line\n");
-  ssize_t result = write(fd, data_buf.data(), 1 + max_columns);
-  if (result == -1) {
-    perror("Error writing to kernel");
-    return 1;  // Or another appropriate error code
+
+  // Get the page the row exists at in the framebuffer
+  uint8_t* page = frameBuffer[row];
+
+  // Set the entire line
+  for (uint8_t i = 0; i < max_columns; ++i) {
+    page[i] = 0xFF;
   }
-  return static_cast<uint8_t>(result);
+
+  // Optionally update the display
+  update();
+
+  return 0;
 }
 
 uint8_t Display::oled_clear_screen()

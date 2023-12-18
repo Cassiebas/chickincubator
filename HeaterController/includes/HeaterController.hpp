@@ -23,8 +23,6 @@ class HeaterController {
         unsigned int heaterPercent;
     protected:
         HeatingElement heater = HeatingElement(HEATER_GPIO);
-        std::string logtag = "[HeaterController]";
-        std::string logNamespace = "HeaterController::";
         double setTemp;
         Log log;
     public:

@@ -12,7 +12,8 @@ class PIDController : public HeaterController
     {
       public:
         double kp;
-        P(double kp);
+        Log &log;
+        P(double kp, Log &log);
         double operator()(double error);
     };
 
@@ -22,7 +23,8 @@ class PIDController : public HeaterController
         double sum = 0;
         double lastTime = 0;
         double ki;
-        I(double ki);
+        Log &log;
+        I(double ki, Log &log);
         double operator()(double error, double time);
     };
 
@@ -32,7 +34,8 @@ class PIDController : public HeaterController
         double lastTime = 0;
         double lastError = 0;
         double kd;
-        D(double kd);
+        Log &log;
+        D(double kd, Log &log);
         double operator()(double error, double time);
     };
 
@@ -45,6 +48,7 @@ class PIDController : public HeaterController
     double error, min, max;
     double ambientTemp;
     double pRes, iRes, dRes;
+    Log log;
 
   public:
     PIDController(double temperature, double kp, double ki, double kd, double min = 0, double max = 100);

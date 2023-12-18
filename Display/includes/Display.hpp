@@ -62,12 +62,8 @@ class Display
     uint8_t global_x = 0;
     uint8_t global_y = 0;
 
-    // Array of bytes for a single page
-    using PageBuffer = uint8_t[max_columns];
     // Array of pages to model the entire display
-    using FrameBuffer = PageBuffer[max_lines];
-
-    FrameBuffer framebuffer;
+    uint8_t frameBuffer[max_lines][max_columns];
 
     int fd;
     const static uint8_t FONT_SIZE = 5;

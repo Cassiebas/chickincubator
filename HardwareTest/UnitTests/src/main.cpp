@@ -1,1 +1,0 @@
-// To test rotary encoder or motor driver or diplay.
