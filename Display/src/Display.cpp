@@ -13,7 +13,8 @@
 
 Display::Display(ssd1306_i2c_t *oled_ptr) : oled(oled_ptr)
 {
-  if (ssd1306_i2c_display_initialize(oled) < 0) {
+  if (ssd1306_i2c_display_initialize(oled) < 0)
+  {
     printf("ERROR: Failed to initialize the display. Check if it is connected !\n");
     ssd1306_i2c_close(oled);
   }
@@ -22,11 +23,46 @@ Display::Display(ssd1306_i2c_t *oled_ptr) : oled(oled_ptr)
 
 Display::~Display()
 {
-  if(oled)
+  if (oled)
     ssd1306_i2c_close(oled);
 }
 
-ssd1306_i2c_t* ssd1306_i2c_open(
+ssd1306_framebuffer_t *ssd1306_framebuffer_create(uint8_t width, uint8_t height)
+{
+  if (width == 0 || height == 0)
+  {
+    printf("ERROR: Width: %zd Height: %zd cannot be zero\n", width, height);
+    return NULL;
+  }
+  ssd1306_framebuffer_t *fbp = (ssd1306_framebuffer_t *)calloc(1, sizeof(ssd1306_framebuffer_t));
+  if (!fbp)
+  {
+    printf("ERROR: Failed to allocate memory of size %zu bytes\n", sizeof(*fbp));
+    return NULL;
+  }
+  int rc = 0;
+  do
+  {
+    fbp->width = width;
+    fbp->height = height;
+    fbp->len = sizeof(uint8_t) * (fbp->width * fbp->height) / 8;
+    fbp->buffer = (uint8_t *)calloc(1, fbp->len);
+    if (!fbp->buffer)
+    {
+      printf("ERROR: Failed to allocate memory of size %zu bytes\n", fbp->len);
+      fbp->buffer = NULL;
+      rc = -1;
+      break;
+    }
+  } while (0);
+  if (rc < 0)
+  {
+    fbp = NULL;
+  }
+  return fbp;
+}
+
+ssd1306_i2c_t *ssd1306_i2c_open(
     const char *dev, // name of the device such as /dev/i2c-1. cannot be NULL
     uint8_t addr,    // I2C address of the device. valid values: 0 (default) or 0x3c or 0x3d
     uint8_t width,   // OLED display width. valid values: 0 (default) or 128
@@ -167,7 +203,7 @@ void ssd1306_i2c_close(ssd1306_i2c_t *oled)
 }
 
 size_t Display::ssd1306_i2c_internal_get_cmd_bytes(ssd1306_i2c_cmd_t cmd,
-                                                 uint8_t *data, size_t dlen, uint8_t *cmdbuf, size_t cmd_buf_max)
+                                                   uint8_t *data, size_t dlen, uint8_t *cmdbuf, size_t cmd_buf_max)
 {
   size_t sz = 2; // default
   if (!cmdbuf || cmd_buf_max < 16 || (data != NULL && dlen == 0))
@@ -525,7 +561,7 @@ int Display::ssd1306_i2c_run_cmd(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uin
     for (size_t idx = 0; idx < cmd_sz; ++idx)
     {
       printf("%c0x%02x%c", (idx == 0) ? '[' : ' ',
-              cmd_buf[idx], (idx == (cmd_sz - 1)) ? ']' : ',');
+             cmd_buf[idx], (idx == (cmd_sz - 1)) ? ']' : ',');
     }
     printf(" to device fd %d\n", oled->fd);
     return -1;
@@ -534,13 +570,13 @@ int Display::ssd1306_i2c_run_cmd(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uin
   for (size_t idx = 0; idx < cmd_sz; ++idx)
   {
     printf("%c0x%02x%c", (idx == 0) ? '[' : ' ',
-            cmd_buf[idx], (idx == (cmd_sz - 1)) ? ']' : ',');
+           cmd_buf[idx], (idx == (cmd_sz - 1)) ? ']' : ',');
   }
   printf(" to device fd %d\n", oled->fd);
   return 0;
 }
 
-int Display::ssd1306_i2c_display_update(ssd1306_i2c_t *oled)
+int Display::ssd1306_i2c_display_update(ssd1306_i2c_t *oled, const ssd1306_framebuffer_t *fbp)
 {
   if (!oled || oled->fd < 0 || !oled->gddram_buffer || oled->gddram_buffer_len == 0)
   {
@@ -559,12 +595,22 @@ int Display::ssd1306_i2c_display_update(ssd1306_i2c_t *oled)
     return -1;
   }
   oled->gddram_buffer[0] = 0x40; // Co: 0 D/C#: 1 0b01000000
+  // if the framebuffer pointer is provided, we copy it to GDDRAM, otherwise
+  // we just display the GDDRAM
+  if (fbp) {
+    // invalid data in pointer
+    if (!(fbp->buffer) || fbp->len == 0 || (fbp->len != (oled->gddram_buffer_len - 1))) {
+      printf("ERROR: Invalid ssd1306 framebuffer object\n");
+      return -1;
+    }
+    memcpy(&(oled->gddram_buffer[1]), fbp->buffer, fbp->len);
+  }
   // the rest is framebuffer data for the GDDRAM as in section 8.1.5.2
   ssize_t nb = write(oled->fd, oled->gddram_buffer, oled->gddram_buffer_len);
   if (nb < 0)
   {
     printf("ERROR: Failed to write %zu bytes of screen buffer to device fd %d \n",
-            oled->gddram_buffer_len, oled->fd);
+           oled->gddram_buffer_len, oled->fd);
     return -1;
   }
   printf("INFO: Wrote %zd bytes of screen buffer to device fd %d\n", nb, oled->fd);
@@ -576,7 +622,7 @@ int Display::ssd1306_i2c_display_clear(ssd1306_i2c_t *oled)
   if (oled != NULL && oled->gddram_buffer != NULL && oled->gddram_buffer_len > 0)
   {
     memset(oled->gddram_buffer, 0, sizeof(uint8_t) * oled->gddram_buffer_len);
-    return ssd1306_i2c_display_update(oled);
+    return ssd1306_i2c_display_update(oled, NULL);
   }
   else
   {
@@ -585,16 +631,54 @@ int Display::ssd1306_i2c_display_clear(ssd1306_i2c_t *oled)
   }
 }
 
-int Display::ssd1306_i2c_display_fill(ssd1306_i2c_t *oled)
+int Display::ssd1306_framebuffer_put_pixel(ssd1306_framebuffer_t *fbp,
+                                  uint8_t x, uint8_t y, bool color, uint8_t rotation_flag)
 {
-  if (oled != NULL && oled->gddram_buffer != NULL && oled->gddram_buffer_len > 0)
+  uint8_t w = fbp->width;
+  uint8_t h = fbp->height;
+  // based on the page arrangement in GDDRAM as per the datasheet
+  if (x >= 0 && x < w && y >= 0 && y < h)
   {
-    memset(oled->gddram_buffer, 255, sizeof(uint8_t) * oled->gddram_buffer_len);
-    return ssd1306_i2c_display_update(oled);
+    switch (rotation_flag)
+    {
+      uint8_t tmp;
+    case 1: // 90deg rotation
+      tmp = x;
+      x = y;
+      y = tmp; // swap x&y
+      x = w - x - 1;
+      break;
+    case 2: // 180deg rotation
+      x = w - x - 1;
+      y = h - y - 1;
+      break;
+    case 3: // -90deg rotation
+      tmp = x;
+      x = y;
+      y = tmp; // swap x&y
+      y = h - y - 1;
+      break;
+    default:
+      break; // no rotation
+    }
   }
   else
   {
-    printf("ERROR: Invalid OLED object. Failed to clear display\n");
     return -1;
   }
+  if (color)
+  {
+    fbp->buffer[x + (y / 8) * w] |= (1 << (y & 7));
+  }
+  else
+  {
+    fbp->buffer[x + (y / 8) * w] &= ~(1 << (y & 7));
+  }
+  return 0;
+}
+
+int Display::ssd1306_framebuffer_clear(ssd1306_framebuffer_t *fbp)
+{
+  memset(fbp->buffer, 0, fbp->len);
+  return 0;
 }
