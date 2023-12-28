@@ -4,38 +4,33 @@
 #include <unistd.h>  
 
 int main(){
+  Display display;
 
-  const char *filename = "/dev/i2c-1";
-  const int i2c_address = 0x3C;
+  ssd1306_i2c_t *oled = display.get_oled_data();
+  ssd1306_framebuffer_t *frameBuff = display.get_framebuffer_data();
 
-  ssd1306_i2c_t *oled = ssd1306_i2c_open(filename, i2c_address, 128, 32);
-  ssd1306_framebuffer_t *fbp = ssd1306_framebuffer_create(oled->width, oled->height);
+  display.framebuffer_clear(frameBuff);
 
+  display.framebuffer_put_pixel(frameBuff, 0, 0, true);
+  display.framebuffer_put_pixel(frameBuff, frameBuff->width - 1, 0, true);
+  display.framebuffer_put_pixel(frameBuff, 0, frameBuff->height - 1, true);
+  display.framebuffer_put_pixel(frameBuff, frameBuff->width - 1, frameBuff->height - 1, true);
+  display.framebuffer_put_pixel(frameBuff, 9, 10, true);
 
-  Display display(oled);
-  
-  display.ssd1306_framebuffer_clear(fbp);
-
-  display.ssd1306_framebuffer_put_pixel(fbp, 0, 0, true);
-  display.ssd1306_framebuffer_put_pixel(fbp, fbp->width - 1, 0, true);
-  display.ssd1306_framebuffer_put_pixel(fbp, 0, fbp->height - 1, true);
-  display.ssd1306_framebuffer_put_pixel(fbp, fbp->width - 1, fbp->height - 1, true);
-  display.ssd1306_framebuffer_put_pixel(fbp, 9, 10, true);
-
-  display.ssd1306_i2c_display_update(oled, fbp);
+  ssd1306_i2c_display_update(oled, frameBuff);
   sleep(3);
-  display.ssd1306_framebuffer_clear(fbp);
-  display.ssd1306_framebuffer_put_pixel(fbp, 0, 0, false);
-  display.ssd1306_framebuffer_put_pixel(fbp, fbp->width - 1, 0, false);
-  display.ssd1306_framebuffer_put_pixel(fbp, 0, fbp->height - 1, false);
-  display.ssd1306_framebuffer_put_pixel(fbp, fbp->width - 1, fbp->height - 1, false);
-  display.ssd1306_framebuffer_put_pixel(fbp, 9, 10, false);
-  display.ssd1306_i2c_display_update(oled, fbp);
-  display.ssd1306_framebuffer_clear(fbp);
+  display.framebuffer_clear(frameBuff);
+  display.framebuffer_put_pixel(frameBuff, 0, 0, false);
+  display.framebuffer_put_pixel(frameBuff, frameBuff->width - 1, 0, false);
+  display.framebuffer_put_pixel(frameBuff, 0, frameBuff->height - 1, false);
+  display.framebuffer_put_pixel(frameBuff, frameBuff->width - 1, frameBuff->height - 1, false);
+  display.framebuffer_put_pixel(frameBuff, 9, 10, false);
+  ssd1306_i2c_display_update(oled, frameBuff);
+  display.framebuffer_clear(frameBuff);
   sleep(3);
   
-  display.ssd1306_framebuffer_clear(fbp);
-  display.ssd1306_i2c_display_clear(oled);
+  display.framebuffer_clear(frameBuff);
+  ssd1306_i2c_display_clear(oled);
 
   return 0;
 }

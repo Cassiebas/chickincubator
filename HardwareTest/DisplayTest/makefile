@@ -3,11 +3,11 @@ CXXFLAGS := -std=c++17 -Wall -Wextra
 
 SRCS := $(wildcard src/*.cpp)
 DISPLAY := ../../obj/Display.o
-OBJS := $(DISPLAY)
+SSD1306 := ../../obj/SSD1306.o
+OBJS := $(DISPLAY) $(SSD1306)
 TARGET := bin/DisplayTest
 
-INCLUDES := $(addprefix -I, $(wildcard includes))
-INCLUDES += $(addprefix -I, $(wildcard ../../Display/includes))
+INCLUDES := $(addprefix -I, $(wildcard ../../Display/includes))
 
 all: modules $(TARGET)
 
