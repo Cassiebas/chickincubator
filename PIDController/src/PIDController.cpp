@@ -94,15 +94,18 @@ void PIDController::Do() {
     pidPlot.AddPoint(GetTime()/60.0, setTemp, "Tset (°C)");
     pidPlot.AddPoint(GetTime()/60.0, (temps.at(0) + temps.at(1)) / 2.0, "Tavg (°C)");
     pidPlot.ExportToPNG("plots/", "Temperature", "Time (min)", "Temperature (°C)", "T(t)"); //Line label gets ignored here since there are multiple lines
-    system("sudo cp plots/Temperature.png /var/www/eggcubator/Temperature.png");
+    system("sudo rm -f /var/www/eggcubator/Temperature.png");
+    system("sudo mv plots/Temperature.png /var/www/eggcubator/Temperature.png");
     powerPlot.AddPoint(GetTime()/60.0, ToPercentPower(result), "Heater power (%)");
     powerPlot.ExportToPNG("plots/", "Power", "Time (min)", "Power (%)", "P(t)"); //Line label gets ignored here since there are multiple lines
-    system("sudo cp plots/Power.png /var/www/eggcubator/Power.png");
+    system("sudo rm -f /var/www/eggcubator/Power.png");
+    system("sudo mv plots/Power.png /var/www/eggcubator/Power.png");
     componentPlot.AddPoint(GetTime()/60.0, pRes, "P");
     componentPlot.AddPoint(GetTime()/60.0, iRes, "I");
     componentPlot.AddPoint(GetTime()/60.0, dRes, "D");
     componentPlot.ExportToPNG("plots/", "Components", "Time (min)", "Value", "T(t)"); //Line label gets ignored here since there are multiple lines
-    system("sudo cp plots/Components.png /var/www/eggcubator/Components.png");
+    system("sudo rm -f /var/www/eggcubator/Components.png");
+    system("sudo mv plots/Components.png /var/www/eggcubator/Components.png");
     heater(static_cast<unsigned int>(ToPercentPower(result))); 
 }
 

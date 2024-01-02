@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra
+CXXFLAGS := -std=c++17 -Wall -Wextra -pthread
 
 SRCS := $(wildcard src/*.cpp)
 MOTOR_OBJ := ../../obj/Motor.o

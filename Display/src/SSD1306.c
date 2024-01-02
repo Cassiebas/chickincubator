@@ -4,6 +4,7 @@
 #include <sys/ioctl.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <string.h>
 
 
 ssd1306_i2c_t *ssd1306_i2c_open(

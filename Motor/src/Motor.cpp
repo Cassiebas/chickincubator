@@ -33,7 +33,7 @@ void Motor::WriteConfig()
   }
 
   data[0] = configBits["CONTROL"]; //CONTROL registry
-  data[1] = configBits["5v"] | configBits["brake"]; //5v and brakes
+  data[1] = configBits["3.3v"] | configBits["brake"]; //3.3v and brakes
   if (write(fd, data, 2) != 2) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return;
@@ -57,7 +57,7 @@ int Motor::Open_I2C() {
 
 bool Motor::Forward() {
   data[0] = configBits["CONTROL"]; //CONTROL registry
-  data[1] = configBits["5v"] | configBits["forward"]; //5v and brakes
+  data[1] = configBits["3.3v"] | configBits["forward"]; //3.3v and brakes
   if (write(fd, data, 2) != 2) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return false;
@@ -67,7 +67,7 @@ bool Motor::Forward() {
 
 bool Motor::Backward() {
   data[0] = configBits["CONTROL"]; //CONTROL registry
-  data[1] = configBits["5v"] | configBits["backward"]; //5v and brakes
+  data[1] = configBits["3.3v"] | configBits["backward"]; //3.3v and brakes
   if (write(fd, data, 2) != 2) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return false;
@@ -77,7 +77,7 @@ bool Motor::Backward() {
 
 bool Motor::Brake() {
   data[0] = configBits["CONTROL"]; //CONTROL registry
-  data[1] = configBits["5v"] | configBits["brake"]; //5v and brakes
+  data[1] = configBits["3.3v"] | configBits["brake"]; //3.3v and brakes
   if (write(fd, data, 2) != 2) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return false;
@@ -87,7 +87,7 @@ bool Motor::Brake() {
 
 bool Motor::Coast() {
   data[0] = configBits["CONTROL"]; //CONTROL registry
-  data[1] = configBits["5v"] | configBits["coast"]; //5v and brakes
+  data[1] = configBits["3.3v"] | configBits["coast"]; //3.3v and brakes
   if (write(fd, data, 2) != 2) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return false;

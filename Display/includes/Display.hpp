@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <cstddef>
+#include <vector>
+#include <string>
 
 #include "SSD1306.h"
 
@@ -19,7 +21,10 @@ class Display
   public:
     Display();
     ~Display();
-
+    bool Draw(std::vector<std::vector<bool>> buffer, uint8_t x = 0, uint8_t y = 0);
+    bool Print(std::string message, uint8_t x = 0, uint8_t y = 0);
+    int draw_char(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char character);
+    // bool Print(std::string message, uint8_t x = 0, uint8_t y = 0);
     // fill the display (calls ssd1306_i2c_display_update() internally)
     // int ssd1306_i2c_display_fill(ssd1306_i2c_t *oled);
 
