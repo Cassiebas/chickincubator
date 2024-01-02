@@ -115,10 +115,11 @@ int Display::draw_char(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char ch
 //   ssd1306_i2c_display_update(oled, fbp);
 // }
 
-bool Display::Print(std::string message, uint8_t x, uint8_t y) {
+void Display::Print(std::string message, uint8_t x, uint8_t y) {
   uint8_t x_ = x, y_ = y;
   for(char &c : message) {
-    draw_char(fbp, x_ += 9, y_, c);
+    draw_char(fbp, x_, y_, c);
+    x_ += 9;
     if (x_ >= 128 - 9) {
       x_ = x;
       y_ += 9;
