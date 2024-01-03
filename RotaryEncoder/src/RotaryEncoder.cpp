@@ -20,15 +20,15 @@ void RotaryEncoder::RotaryThreadFunction()
   gpio.SetMode(GPIO_9, INPUT);
   uint8_t sequence = 0x00;
   while (threadRunning) {
-    A = gpio.Get(GPIO_11);
-    B = gpio.Get(GPIO_9);
+    A = (uint8_t)gpio.Get(GPIO_11);
+    B = (uint8_t)gpio.Get(GPIO_9);
     // if (A != prevA || B != prevB) {
     sequence <<= 1;
     sequence |= (uint8_t)A;
     sequence <<= 1;
     sequence |= (uint8_t)B;
     // }
-    Button = gpio.Get(GPIO_10);
+    Button = (uint8_t)gpio.Get(GPIO_10);
     left = false;
     right = false;
     buttonPressed = false;
@@ -77,20 +77,21 @@ bool RotaryEncoder::IsLeft() const {
   return left; 
 }
 
-  void RotaryEncoder::operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress) {
-    this->onLeft = onLeft;
-    this->onRight = onRight;
-    this->onButtonPress = onButtonPress;
-  }
+void RotaryEncoder::operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress) {
+  this->onLeft = onLeft;
+  this->onRight = onRight;
+  this->onButtonPress = onButtonPress;
+}
 
-  void RotaryEncoder::SetOnLeft(std::function<void()> onLeft) {
-    this->onLeft = onLeft;
-  }
+void RotaryEncoder::SetOnLeft(std::function<void()> onLeft) {
+  this->onLeft = onLeft;
+}
 
-  void RotaryEncoder::SetOnRight(std::function<void()> onRight) {
-    this->onRight = onRight;
-  }
+void RotaryEncoder::SetOnRight(std::function<void()> onRight) {
+  this->onRight = onRight;
+}
 
-  void RotaryEncoder::SetOnButtonPress(std::function<void()> onButtonPress) {
-    this->onButtonPress = onButtonPress;
-  }
+void RotaryEncoder::SetOnButtonPress(std::function<void()> onButtonPress) {
+  this->onButtonPress = onButtonPress;
+}
+
