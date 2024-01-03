@@ -48,15 +48,19 @@ int Display::PutPixel(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, bool pix
   uint8_t w = fbp->width;
   uint8_t h = fbp->height;
   // based on the page arrangement in GDDRAM as per the datasheet
-  if (!(x >= 0 && x < w && y >= 0 && y < h))
+  if (!(x < w && y < h))
     return -1;
+
+  // Calculate the index in the buffer based on the page arrangement in GDDRAM
+  uint8_t bufferIndex = (uint8_t)(x + (y / 8) * w);
+
   if (pixelState)
   {
-    fbp->buffer[x + (y / 8) * w] |= (1 << (y & 7));
+    fbp->buffer[bufferIndex] |= (uint8_t)(1 << (y & 7));
   }
   else
   {
-    fbp->buffer[x + (y / 8) * w] &= ~(1 << (y & 7));
+    fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7));
   }
   return 0;
 }
@@ -84,7 +88,7 @@ int Display::DrawChar(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char cha
   uint8_t h = fbp->height;
 
   // Check if the coordinates are within bounds
-  if (x >= 0 && x < w && y >= 0 && y < h)
+  if (x < w && y < h)
   {
     const std::vector<uint8_t> pixelData = font8x8.at(character);
 

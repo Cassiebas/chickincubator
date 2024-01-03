@@ -553,7 +553,7 @@ int RunCommand(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uint8_t *data, size_t
     return -1;
   }
 
-  size_t nb = write(oled->fd, cmd_buf, cmd_sz);
+  ssize_t nb = write(oled->fd, cmd_buf, cmd_sz);
   if (nb < 0)
   {
     printf("ERROR: Failed to write cmd ");
@@ -579,7 +579,7 @@ ssd1306_framebuffer_t *CreateBuffer(uint8_t width, uint8_t height)
 {
   if (width == 0 || height == 0)
   {
-    printf("ERROR: Width: %zd Height: %zd cannot be zero\n", width, height);
+    printf("ERROR: Width: %d Height: %d cannot be zero\n", width, height);
     return NULL;
   }
   ssd1306_framebuffer_t *fbp = (ssd1306_framebuffer_t *)calloc(1, sizeof(ssd1306_framebuffer_t));
