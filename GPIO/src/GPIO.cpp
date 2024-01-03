@@ -7,7 +7,7 @@
 
 GPIO::GPIO()
 {
-  fd = open("/dev/my_gpio_driver", O_RDWR); //TODO: should be done in c++ style to get support for namespaces
+  fd = open("/dev/gpio_driver_egg_incubator", O_RDWR); //TODO: should be done in c++ style to get support for namespaces
   if (fd < 0)
   {
     printf("Error opening the device driver\n");

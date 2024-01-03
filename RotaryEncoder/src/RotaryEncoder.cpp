@@ -3,7 +3,7 @@
 
 RotaryEncoder::RotaryEncoder() : threadRunning(true), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true))
 {
-  rotaryThread = std::thread(&RotaryEncoder::rotaryThreadFunction, this);
+  rotaryThread = std::thread(&RotaryEncoder::RotaryThreadFunction, this);
 }
 
 RotaryEncoder::~RotaryEncoder()
@@ -24,9 +24,9 @@ void RotaryEncoder::RotaryThreadFunction()
     B = gpio.Get(GPIO_9);
     // if (A != prevA || B != prevB) {
     sequence <<= 1;
-    sequence |= A;
+    sequence |= (uint8_t)A;
     sequence <<= 1;
-    sequence |= B;
+    sequence |= (uint8_t)B;
     // }
     Button = gpio.Get(GPIO_10);
     left = false;
@@ -56,12 +56,12 @@ void RotaryEncoder::RotaryThreadFunction()
       buttonPressed = true;
       onButtonPress();
       log(Severity::info, "Rotary encoder is pressed.");
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
     prevA = A;
     prevB = B;
-    std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
-    std::cout << "sequence : "  << std::to_string(sequence) << "\n";
+    // std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
+    // std::cout << "sequence : "  << std::to_string(sequence) << "\n";
   }
 }
 
@@ -91,6 +91,6 @@ bool RotaryEncoder::IsLeft() const {
     this->onRight = onRight;
   }
 
-  void RotaryEncoder::setOnButtonPress(std::function<void()> onButtonPress) {
+  void RotaryEncoder::SetOnButtonPress(std::function<void()> onButtonPress) {
     this->onButtonPress = onButtonPress;
   }

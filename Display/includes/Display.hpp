@@ -23,11 +23,12 @@ class Display
     ~Display();
     int Draw(std::vector<std::vector<bool>> buffer, uint8_t x = 0, uint8_t y = 0);
     int Print(std::string message, uint8_t x = 0, uint8_t y = 0);
-    int DrawChar(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char character);
+    int DrawChar(uint8_t x, uint8_t y, char character);
+    int Update();
 
-    int PutPixel(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, bool pixelState);
+    int PutPixel(uint8_t x, uint8_t y, bool pixelState);
 
-    int ClearBuffer(ssd1306_framebuffer_t *fbp);
+    int Clear();
 
     ssd1306_i2c_t* GetOledData();
     ssd1306_framebuffer_t* GetBufferData();
