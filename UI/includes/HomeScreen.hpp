@@ -1,14 +1,17 @@
 #ifndef HOMESCREEN_HPP
 #define HOMESCREEN_HPP
 
-class HomeScreen {
-    private:
+#include "Display.hpp"
 
-    public:
-        HomeScreen();
-        ~HomeScreen();
-        void Update();
-    
+class HomeScreen
+{
+  private:
+    Display display;
+
+  public:
+    HomeScreen();
+    ~HomeScreen();
+    void Update();
 };
 
 #endif

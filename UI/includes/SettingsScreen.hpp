@@ -3,14 +3,15 @@
 
 #include "Display.hpp"
 
-class SettingsScreen {
-    private:
-        Display display;
-    public:
-        SettingsScreen();
-        ~SettingsScreen();
-        void Update();
-    
+class SettingsScreen
+{
+  private:
+    Display display;
+
+  public:
+    SettingsScreen();
+    ~SettingsScreen();
+    void Update();
 };
 
 #endif
