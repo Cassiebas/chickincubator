@@ -13,22 +13,22 @@ RotaryEncoder::~RotaryEncoder()
   }
 }
 
-void RotaryEncoder::rotaryThreadFunction()
+void RotaryEncoder::RotaryThreadFunction()
 {
   GPIO gpio;
-  gpio.setMode(GPIO_11, INPUT);
-  gpio.setMode(GPIO_9, INPUT);
+  gpio.SetMode(GPIO_11, INPUT);
+  gpio.SetMode(GPIO_9, INPUT);
   uint8_t sequence = 0x00;
   while (threadRunning) {
-    A = gpio.get(GPIO_11) - '0';
-    B = gpio.get(GPIO_9) - '0';
+    A = gpio.Get(GPIO_11);
+    B = gpio.Get(GPIO_9);
     // if (A != prevA || B != prevB) {
     sequence <<= 1;
     sequence |= A;
     sequence <<= 1;
     sequence |= B;
     // }
-    Button = gpio.get(GPIO_10) - '0';
+    Button = gpio.Get(GPIO_10);
     left = false;
     right = false;
     buttonPressed = false;
@@ -60,25 +60,20 @@ void RotaryEncoder::rotaryThreadFunction()
     }
     prevA = A;
     prevB = B;
-    // log(Severity::info, "A : " + std::to_string(A));
-    // log(Severity::info, "B : " + std::to_string(B));
-    // log(Severity::info, "prevA : " + std::to_string(prevA));
-    // log(Severity::info, "prevB : " + std::to_string(prevB));
-    // log(Severity::info, "sequence : " + std::to_string(sequence));
     std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
     std::cout << "sequence : "  << std::to_string(sequence) << "\n";
   }
 }
 
-bool RotaryEncoder::isButtonPressed() const {
+bool RotaryEncoder::IsButtonPressed() const {
   return buttonPressed; 
 }
 
-bool RotaryEncoder::isRight() const {
+bool RotaryEncoder::IsRight() const {
   return right; 
 }
 
-bool RotaryEncoder::isLeft() const {
+bool RotaryEncoder::IsLeft() const {
   return left; 
 }
 
@@ -88,11 +83,11 @@ bool RotaryEncoder::isLeft() const {
     this->onButtonPress = onButtonPress;
   }
 
-  void RotaryEncoder::setOnLeft(std::function<void()> onLeft) {
+  void RotaryEncoder::SetOnLeft(std::function<void()> onLeft) {
     this->onLeft = onLeft;
   }
 
-  void RotaryEncoder::setOnRight(std::function<void()> onRight) {
+  void RotaryEncoder::SetOnRight(std::function<void()> onRight) {
     this->onRight = onRight;
   }
 

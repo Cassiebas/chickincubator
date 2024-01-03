@@ -19,13 +19,12 @@ GPIO::~GPIO()
   close(fd);
 }
 
-bool GPIO::setMode(const char *gpio_pin, char IO_value)
+bool GPIO::SetMode(const std::string &gpioPin, char ioValue)
 {
-  char buffer[4];
-  sprintf(buffer, "%s%c", gpio_pin, IO_value);
+  std::string buffer = gpioPin + ioValue;
   // Writing to GPIO driver
-  ret_val = write(fd, buffer, sizeof(buffer));
-  if (ret_val < 0)
+  retVal = write(fd, buffer.data(), buffer.size());
+  if (retVal < 0)
   {
     printf("Error writing to the device file\n");
     close(fd);
@@ -34,60 +33,47 @@ bool GPIO::setMode(const char *gpio_pin, char IO_value)
   return true; // Placeholder return value
 }
 
-bool GPIO::setMode(char gpio_pin, char IO_value)
+bool GPIO::SetMode(char gpioPin, char ioValue)
 {
-  char buffer[2];
-  buffer[0] = gpio_pin;
-  buffer[1] = IO_value;
+  return SetMode(std::string(1, gpioPin), ioValue);
+}
+
+bool GPIO::Set(const std::string &gpioPin, bool setValue)
+{
+  std::string buffer = gpioPin + (setValue ? "1" : "0");
+
   // Writing to GPIO driver
-  ret_val = write(fd, buffer, sizeof(buffer));
-  if (ret_val < 0)
+  retVal = write(fd, buffer.c_str(), buffer.size());
+  if (retVal < 0)
   {
-    printf("Error writing to the device file\n");
-    close(fd);
-    return false;
+      std::cerr << "Error writing to the device file" << std::endl;
+      close(fd);
+      return false;
   }
-  return true; // Placeholder return value
+  return true;
 }
 
-bool GPIO::set(const char *gpio_pin, char set_value) //TODO: change this to bool set_value, change pin to int.
+bool GPIO::Set(char gpioPin, bool setValue)
 {
-  char buffer[4];
-  sprintf(buffer, "%s%c", gpio_pin, set_value);
-  // Writing to GPIO driver
-  ret_val = write(fd, buffer, sizeof(buffer));
-  if (ret_val < 0)
-  {
-    printf("Error writing to the device file\n");
-    close(fd);
-    return -1;
-  }
-  return true; // Placeholder return value
+  return Set(std::string(1, gpioPin), setValue);
 }
 
-bool GPIO::set(char gpio_pin, char set_value) //for when gpio_pin is passed as '' (char not char *)
-{
-  char *tmp = &gpio_pin;
-  return set(tmp, set_value);
-}
-
-char GPIO::get(const char *gpio_pin)
+int GPIO::Get(const std::string &gpioPin)
 {
   // Reading from the device file
-  char read_buffer[3];
-  sprintf(read_buffer, "%s", gpio_pin);
-  ret_val = read(fd, read_buffer, sizeof(read_buffer));
-  if (ret_val < 0)
+  std::string read_buffer = gpioPin;
+  retVal = read(fd, read_buffer.data(), read_buffer.size());
+  if (retVal < 0)
   {
     printf("Error reading from the device file\n");
     close(fd);
     return -1;
   }
-  return read_buffer[0];
+  return std::stoi(read_buffer);
 }
 
-char GPIO::get(char gpio_pin)
+int GPIO::Get(char gpioPin)
 {
-  char *tmp = &gpio_pin;
-  return get(tmp);
+  char *tmp = &gpioPin;
+  return Get(tmp);
 }

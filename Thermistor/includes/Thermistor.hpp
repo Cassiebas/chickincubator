@@ -45,7 +45,7 @@ class Thermistor
     ~Thermistor();
     
     // Open the I2C ADC bus and address
-    int Open_I2C_ADC();
+    int OpenADC();
     // Read from the I2C ADC address file
     double Temperature();
 };

@@ -42,10 +42,10 @@ const std::vector<std::vector<bool>> drawing = {
 int main(){
   Display display;
 
-  ssd1306_i2c_t *oled = display.get_oled_data();
-  ssd1306_framebuffer_t *frameBuff = display.get_framebuffer_data();
+  ssd1306_i2c_t *oled = display.GetOledData();
+  ssd1306_framebuffer_t *frameBuff = display.GetBufferData();
 
-  display.framebuffer_clear(frameBuff);
+  display.ClearBuffer(frameBuff);
 
   display.Draw(drawing);
   sleep(5);
@@ -56,8 +56,8 @@ int main(){
   display.Print("TESTESTTETSETSTESTESTESTESESTTESTESTESTTESTESTESTESTESTESTESTSETESTESTESTESTESTESTESTSETESTETESTETESTESTESTSETETESSTETESTESTESTESTESTESTESTSEETTESESTESTESTSETESTESTESTESTESTESTESTESTESTESTSETEST");
   sleep(5);
 
-  display.framebuffer_clear(frameBuff);
-  ssd1306_i2c_display_clear(oled);
+  display.ClearBuffer(frameBuff);
+  ClearDisplay(oled);
 
   return 0;
 }

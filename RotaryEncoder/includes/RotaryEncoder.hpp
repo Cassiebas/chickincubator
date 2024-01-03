@@ -26,14 +26,14 @@ class RotaryEncoder {
     RotaryEncoder();
     ~RotaryEncoder();
     // Accessor functions for variables
-    bool isLeft() const; 
-    bool isRight() const; 
-    bool isButtonPressed() const;
+    bool IsLeft() const; 
+    bool IsRight() const; 
+    bool IsButtonPressed() const;
 
     void operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress);
-    void setOnLeft(std::function<void()> onLeft);
-    void setOnRight(std::function<void()> onRight);
-    void setOnButtonPress(std::function<void()> onButtonPress);
+    void SetOnLeft(std::function<void()> onLeft);
+    void SetOnRight(std::function<void()> onRight);
+    void SetOnButtonPress(std::function<void()> onButtonPress);
 };
 
 #endif

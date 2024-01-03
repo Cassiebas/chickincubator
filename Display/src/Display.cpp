@@ -16,42 +16,41 @@ Display::Display()
 {
   const char *filename = "/dev/i2c-1";
   const int i2c_address = 0x3C;
-  oled = ssd1306_i2c_open(filename, i2c_address, 128, 32);
-  if (ssd1306_i2c_display_initialize(oled) < 0)
+  oled = OpenSSD1306(filename, i2c_address, 128, 32);
+  if (InitializeDisplay(oled) < 0)
   {
     printf("ERROR: Failed to initialize the display. Check if it is connected !\n");
-    ssd1306_i2c_close(oled);
+    CloseSSD1306(oled);
   }
   //Create framebuffer to send data with
-  fbp = ssd1306_framebuffer_create(oled->width, oled->height);
+  fbp = CreateBuffer(oled->width, oled->height);
   sleep(3);
 }
 
 Display::~Display()
 {
   if (oled)
-    ssd1306_i2c_close(oled);
+    CloseSSD1306(oled);
 }
 
-ssd1306_i2c_t* Display::get_oled_data()
+ssd1306_i2c_t* Display::GetOledData()
 {
   return oled;
 }
 
-ssd1306_framebuffer_t* Display::get_framebuffer_data()
+ssd1306_framebuffer_t* Display::GetBufferData()
 {
   return fbp;
 }
 
-int Display::framebuffer_put_pixel(ssd1306_framebuffer_t *fbp,
-                                  uint8_t x, uint8_t y, bool color, uint8_t rotation_flag)
+int Display::PutPixel(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, bool pixelState)
 {
   uint8_t w = fbp->width;
   uint8_t h = fbp->height;
   // based on the page arrangement in GDDRAM as per the datasheet
   if (!(x >= 0 && x < w && y >= 0 && y < h))
     return -1;
-  if (color)
+  if (pixelState)
   {
     fbp->buffer[x + (y / 8) * w] |= (1 << (y & 7));
   }
@@ -62,24 +61,24 @@ int Display::framebuffer_put_pixel(ssd1306_framebuffer_t *fbp,
   return 0;
 }
 
-int Display::framebuffer_clear(ssd1306_framebuffer_t *fbp)
+int Display::ClearBuffer(ssd1306_framebuffer_t *fbp)
 {
-  memset(fbp->buffer, 0, fbp->len);
+  std::fill(fbp->buffer, fbp->buffer + fbp->len, 0);
   return 0;
 }
 
-bool Display::Draw(std::vector<std::vector<bool>> buffer, uint8_t x, uint8_t y) {
+int Display::Draw(std::vector<std::vector<bool>> buffer, uint8_t x, uint8_t y) {
   if (buffer.size() == 0)
-    return false;
+    return -1;
   for (unsigned int y_ = y; y_ < buffer.size() + y && y_ < buffer.size(); y_++) {
     for (unsigned int x_ = x; x_ < buffer.at(0).size() + x && x_ < buffer.at(0).size(); x_++) {
-      framebuffer_put_pixel(fbp, (uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
+      PutPixel(fbp, (uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
     }
   }
-  ssd1306_i2c_display_update(oled, fbp);
+  return UpdateDisplay(oled, fbp);
 }
 
-int Display::draw_char(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char character)
+int Display::DrawChar(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char character)
 {
   uint8_t w = fbp->width;
   uint8_t h = fbp->height;
@@ -94,36 +93,27 @@ int Display::draw_char(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char ch
     {
       for (uint8_t col = 0; col < 8; ++col)
       {
-        framebuffer_put_pixel(fbp, col + x, row + y, pixelData[col] & (1 << row));
+        PutPixel(fbp, col + x, row + y, pixelData[col] & (1 << row));
       }
     }
-
-    return 0;
   }
   else
   {
     return -1; // Coordinates out of bounds
   }
+  
+  return UpdateDisplay(oled, fbp);
 }
 
-// bool Display::Draw(std::vector<uint8_t> buffer, uint8_t x, uint8_t y) {
-//   if (buffer.size() == 0)
-//     return false;
-//   for (unsigned int i_ = i; i_ < buffer.size() + i && i_ < buffer.size(); i_++) {
-//       framebuffer_put_pixel(fbp, (uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
-//   }
-//   ssd1306_i2c_display_update(oled, fbp);
-// }
-
-void Display::Print(std::string message, uint8_t x, uint8_t y) {
+int Display::Print(std::string message, uint8_t x, uint8_t y) {
   uint8_t x_ = x, y_ = y;
   for(char &c : message) {
-    draw_char(fbp, x_, y_, c);
+    DrawChar(fbp, x_, y_, c);
     x_ += 9;
     if (x_ >= 128 - 9) {
       x_ = x;
       y_ += 9;
     }
   }
-  ssd1306_i2c_display_update(oled, fbp);
+  return UpdateDisplay(oled, fbp);
 }

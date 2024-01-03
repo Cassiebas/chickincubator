@@ -21,20 +21,16 @@ class Display
   public:
     Display();
     ~Display();
-    bool Draw(std::vector<std::vector<bool>> buffer, uint8_t x = 0, uint8_t y = 0);
-    void Print(std::string message, uint8_t x = 0, uint8_t y = 0);
-    int draw_char(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char character);
-    // bool Print(std::string message, uint8_t x = 0, uint8_t y = 0);
-    // fill the display (calls ssd1306_i2c_display_update() internally)
-    // int ssd1306_i2c_display_fill(ssd1306_i2c_t *oled);
+    int Draw(std::vector<std::vector<bool>> buffer, uint8_t x = 0, uint8_t y = 0);
+    int Print(std::string message, uint8_t x = 0, uint8_t y = 0);
+    int DrawChar(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char character);
 
-    int framebuffer_put_pixel(ssd1306_framebuffer_t *fbp,
-                                      uint8_t x, uint8_t y, bool color, uint8_t rotation_flag = 0);
+    int PutPixel(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, bool pixelState);
 
-    int framebuffer_clear(ssd1306_framebuffer_t *fbp);
+    int ClearBuffer(ssd1306_framebuffer_t *fbp);
 
-    ssd1306_i2c_t* get_oled_data();
-    ssd1306_framebuffer_t* get_framebuffer_data();
+    ssd1306_i2c_t* GetOledData();
+    ssd1306_framebuffer_t* GetBufferData();
 };
 
 #endif // DISPLAY_HPP

@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <stdint.h>
+#include <string>
 
 #define OUTPUT 'O'
 #define INPUT 'I'
@@ -36,20 +37,22 @@ class GPIO
 {
   private:
     int fd;
-    ssize_t ret_val;
+    ssize_t retVal;
 
   public:
     GPIO();
     ~GPIO();
+    // Set GPIO IO state
+    bool SetMode(const std::string &gpioPin, char ioValue);
+    bool SetMode(char gpioPin, char ioValue);
+    
+    // Set GPIO Input state
+    bool Set(const std::string &gpioPin, bool setValue); 
+    bool Set(char gpioPin, bool setValue);
 
-    bool setMode(const char *gpio_pin, char IO_value);
-    bool setMode(char gpio_pin, char IO_value);
-
-    bool set(const char *gpio_pin, char set_value); //TODO: look into how to name this write :/
-    bool set(char gpio_pin, char set_value);
-
-    char get(const char *gpio_pin);
-    char get(char gpio_pin);
+    // Get GPIO state
+    int Get(const std::string &gpioPin);
+    int Get(char gpioPin);
 };
 
 #endif

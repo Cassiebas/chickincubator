@@ -35,37 +35,36 @@ extern "C" {
 #endif
 
     // ssd1306 has 1:1 correspondence between pixel to bit
-    ssd1306_framebuffer_t *ssd1306_framebuffer_create(
+    ssd1306_framebuffer_t *CreateBuffer(
         uint8_t width, // width of the screen in pixels
         uint8_t height // height of the screen in pixels
     );
 
-    ssd1306_i2c_t *ssd1306_i2c_open( // open the device for read/write
-        const char *dev,             // name of the device such as /dev/i2c-1. cannot be NULL
-        uint8_t daddr,               // I2C address of the device. valid values: 0 (default) or 0x3c or 0x3d
-        uint8_t width,               // OLED display width. valid values: 0 (default) or 128
-        uint8_t height               // OLED display height. valid values: 0 (default) or 32 or 64
+    ssd1306_i2c_t *OpenSSD1306(       // open the device for read/write
+        const char *dev,              // name of the device such as /dev/i2c-1. cannot be NULL
+        uint8_t daddr,                // I2C address of the device. valid values: 0 (default) or 0x3c or 0x3d
+        uint8_t width,                // OLED display width. valid values: 0 (default) or 128
+        uint8_t height                // OLED display height. valid values: 0 (default) or 32 or 64
     );
 
-    void ssd1306_i2c_close(ssd1306_i2c_t *oled); // free object and close fd
+    void CloseSSD1306(ssd1306_i2c_t *oled); // free object and close fd
 
-    size_t ssd1306_i2c_internal_get_cmd_bytes(ssd1306_i2c_cmd_t cmd,
-                                                    uint8_t *data, size_t dlen, uint8_t *cmdbuf, size_t cmd_buf_max);
+    size_t GetCommand(ssd1306_i2c_cmd_t cmd, uint8_t *data, size_t dlen, uint8_t *cmdbuf, size_t cmd_buf_max);
 
-    int ssd1306_i2c_run_cmd(ssd1306_i2c_t *oled,   // the ssd1306_i2c_t object
+    int RunCommand(ssd1306_i2c_t *oled,   // the ssd1306_i2c_t object
                             ssd1306_i2c_cmd_t cmd, // command to run on the display
                             uint8_t *data,         // optional command data, if any, otherwise use 0 or NULL
                             size_t dlen            // length of the data bytes. max is 6 per datasheet.
     );
 
     // clear the display (calls ssd1306_i2c_display_update() internally)
-    int ssd1306_i2c_display_clear(ssd1306_i2c_t *oled);
+    int ClearDisplay(ssd1306_i2c_t *oled);
 
     // Update the display by sending the framebuffer
-    int ssd1306_i2c_display_update(ssd1306_i2c_t *oled, const ssd1306_framebuffer_t *fbp);
+    int UpdateDisplay(ssd1306_i2c_t *oled, const ssd1306_framebuffer_t *fbp);
 
     // initialize the display before use
-    int ssd1306_i2c_display_initialize(ssd1306_i2c_t *oled);
+    int InitializeDisplay(ssd1306_i2c_t *oled);
 
 #ifdef __cplusplus
 }

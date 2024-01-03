@@ -7,7 +7,7 @@
 #include <string.h>
 
 
-ssd1306_i2c_t *ssd1306_i2c_open(
+ssd1306_i2c_t *OpenSSD1306(
     const char *dev, // name of the device such as /dev/i2c-1. cannot be NULL
     uint8_t addr,    // I2C address of the device. valid values: 0 (default) or 0x3c or 0x3d
     uint8_t width,   // OLED display width. valid values: 0 (default) or 128
@@ -117,13 +117,13 @@ ssd1306_i2c_t *ssd1306_i2c_open(
   } while (0);
   if (rc < 0)
   {
-    ssd1306_i2c_close(oled);
+    CloseSSD1306(oled);
     oled = NULL;
   }
   return oled;
 }
 
-void ssd1306_i2c_close(ssd1306_i2c_t *oled)
+void CloseSSD1306(ssd1306_i2c_t *oled)
 {
   if (oled)
   {
@@ -147,10 +147,7 @@ void ssd1306_i2c_close(ssd1306_i2c_t *oled)
   }
 }
 
-
-
-size_t ssd1306_i2c_internal_get_cmd_bytes(ssd1306_i2c_cmd_t cmd,
-                                                   uint8_t *data, size_t dlen, uint8_t *cmdbuf, size_t cmd_buf_max)
+size_t GetCommand(ssd1306_i2c_cmd_t cmd, uint8_t *data, size_t dlen, uint8_t *cmdbuf, size_t cmd_buf_max)
 {
   size_t sz = 2; // default
   if (!cmdbuf || cmd_buf_max < 16 || (data != NULL && dlen == 0))
@@ -376,7 +373,7 @@ size_t ssd1306_i2c_internal_get_cmd_bytes(ssd1306_i2c_cmd_t cmd,
   return sz;
 }
 
-int ssd1306_i2c_display_initialize(ssd1306_i2c_t *oled)
+int InitializeDisplay(ssd1306_i2c_t *oled)
 {
   int rc = 0;
   uint8_t data;
@@ -388,93 +385,93 @@ int ssd1306_i2c_display_initialize(ssd1306_i2c_t *oled)
   do
   {
     // power off the display before doing anything
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_POWER_OFF, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_POWER_OFF, 0, 0);
     if (rc < 0)
       break;
     // force horizontal memory addressing
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_MEM_ADDR_HORIZ, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_MEM_ADDR_HORIZ, 0, 0);
     if (rc < 0)
       break;
     // these instructions are from the software configuration section 15.2.3 in
     // the datasheet
     // Set MUX Ratio 0xA8, 0x3F
     data = oled->height - 1;
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_MUX_RATIO, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_MUX_RATIO, &data, 1);
     if (rc < 0)
       break;
     // Set display offset 0xD3, 0x00
     data = 0x00;
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_DISP_OFFSET, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_DISP_OFFSET, &data, 1);
     if (rc < 0)
       break;
     // set display start line 0x40
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_DISP_START_LINE, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_DISP_START_LINE, 0, 0);
     if (rc < 0)
       break;
     // set segment remap 0xA0/0xA1
     data = 0x01;
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_SEG_REMAP, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_SEG_REMAP, &data, 1);
     if (rc < 0)
       break;
     // set com output scan direction 0xC0/0xC8
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_COM_SCAN_DIRXN_INVERT, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_COM_SCAN_DIRXN_INVERT, 0, 0);
     if (rc < 0)
       break;
     // set com pins hardware config 0xDA, 0x02
     data = (oled->height == 32) ? 0x02 : 0x12;
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_COM_PIN_CFG, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_COM_PIN_CFG, &data, 1);
     if (rc < 0)
       break;
     // set contrast control 0x81, 0xFF
     data = 0xFF;
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_DISP_CONTRAST, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_DISP_CONTRAST, &data, 1);
     if (rc < 0)
       break;
     // disable entire display on 0xA4
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_DISP_DISABLE_ENTIRE_ON, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_DISP_DISABLE_ENTIRE_ON, 0, 0);
     if (rc < 0)
       break;
     // set normal display 0xA6
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_DISP_NORMAL, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_DISP_NORMAL, 0, 0);
     if (rc < 0)
       break;
     // set osc frequency 0xD5, 0x80
     data = 0x80; // RESET 0b10000000
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_DISP_CLOCK_DIVFREQ, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_DISP_CLOCK_DIVFREQ, &data, 1);
     if (rc < 0)
       break;
     // set precharge period 0xD9, 0xF1
     data = 0xF1;
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_PRECHARGE_PERIOD, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_PRECHARGE_PERIOD, &data, 1);
     if (rc < 0)
       break;
     // set Vcomh Deselect 0xDB 0x30
     data = 0x30;
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_VCOMH_DESELECT, &data, 1);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_VCOMH_DESELECT, &data, 1);
     if (rc < 0)
       break;
     // enable charge pump regulator 0x8D, 0x14
     // charge pump has to be followed by a power on. section 15.2.1 in datasheet
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_ENABLE_CHARGE_PUMP, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_ENABLE_CHARGE_PUMP, 0, 0);
     if (rc < 0)
       break;
     // power display on 0xAF
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_POWER_ON, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_POWER_ON, 0, 0);
     if (rc < 0)
       break;
     // deactivate scrolling
-    rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_SCROLL_DEACTIVATE, 0, 0);
+    rc |= RunCommand(oled, SSD1306_I2C_CMD_SCROLL_DEACTIVATE, 0, 0);
     if (rc < 0)
       break;
     // clear the screen
-    rc |= ssd1306_i2c_display_clear(oled);
+    rc |= ClearDisplay(oled);
     if (rc < 0)
       break;
   } while (0);
   return rc;
 }
 
-int ssd1306_i2c_display_update(ssd1306_i2c_t *oled, const ssd1306_framebuffer_t *fbp)
+int UpdateDisplay(ssd1306_i2c_t *oled, const ssd1306_framebuffer_t *fbp)
 {
   if (!oled || oled->fd < 0 || !oled->gddram_buffer || oled->gddram_buffer_len == 0)
   {
@@ -483,10 +480,10 @@ int ssd1306_i2c_display_update(ssd1306_i2c_t *oled, const ssd1306_framebuffer_t 
   }
   int rc = 0;
   uint8_t x[2] = {0, oled->width - 1};
-  rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_COLUMN_ADDR, x, 2);
+  rc |= RunCommand(oled, SSD1306_I2C_CMD_COLUMN_ADDR, x, 2);
   x[0] = 0;
   x[1] = (oled->height / 8) - 1; // number of pages
-  rc |= ssd1306_i2c_run_cmd(oled, SSD1306_I2C_CMD_PAGE_ADDR, x, 2);
+  rc |= RunCommand(oled, SSD1306_I2C_CMD_PAGE_ADDR, x, 2);
   if (rc != 0)
   {
     printf("WARN: Unable to update display, exiting from earlier errors\n");
@@ -515,12 +512,12 @@ int ssd1306_i2c_display_update(ssd1306_i2c_t *oled, const ssd1306_framebuffer_t 
   return 0;
 }
 
-int ssd1306_i2c_display_clear(ssd1306_i2c_t *oled)
+int ClearDisplay(ssd1306_i2c_t *oled)
 {
   if (oled != NULL && oled->gddram_buffer != NULL && oled->gddram_buffer_len > 0)
   {
     memset(oled->gddram_buffer, 0, sizeof(uint8_t) * oled->gddram_buffer_len);
-    return ssd1306_i2c_display_update(oled, NULL);
+    return UpdateDisplay(oled, NULL);
   }
   else
   {
@@ -529,7 +526,7 @@ int ssd1306_i2c_display_clear(ssd1306_i2c_t *oled)
   }
 }
 
-int ssd1306_i2c_run_cmd(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uint8_t *data, size_t dlen)
+int RunCommand(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uint8_t *data, size_t dlen)
 {
   if (!oled || oled->fd < 0)
   {
@@ -549,8 +546,7 @@ int ssd1306_i2c_run_cmd(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uint8_t *dat
   }
   uint8_t cmd_buf[16] = {0};
   const size_t cmd_buf_max = 16;
-  size_t cmd_sz = ssd1306_i2c_internal_get_cmd_bytes(cmd, data, dlen,
-                                                     cmd_buf, cmd_buf_max);
+  size_t cmd_sz = GetCommand(cmd, data, dlen, cmd_buf, cmd_buf_max);
   if (cmd_sz == 0 || cmd_sz > cmd_buf_max)
   {
     printf("WARN: Unknown cmd given %d\n", cmd);
@@ -579,7 +575,7 @@ int ssd1306_i2c_run_cmd(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uint8_t *dat
   return 0;
 }
 
-ssd1306_framebuffer_t *ssd1306_framebuffer_create(uint8_t width, uint8_t height)
+ssd1306_framebuffer_t *CreateBuffer(uint8_t width, uint8_t height)
 {
   if (width == 0 || height == 0)
   {

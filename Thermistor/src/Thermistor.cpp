@@ -8,7 +8,7 @@ Thermistor::Thermistor(ADC::channel chosenChannel) :
   address(0x48),
   channel(chosenChannel)
 {
-  fd = Open_I2C_ADC();
+  fd = OpenADC();
   WriteConfig();
 }
 
@@ -44,7 +44,7 @@ void Thermistor::WriteConfig()
   usleep(0.5*1000000);
 }
 
-int Thermistor::Open_I2C_ADC() {
+int Thermistor::OpenADC() {
   int file = open(filename, O_RDWR);
   if (file < 0) {
     std::cerr << "Failed to open the bus." << std::endl;
@@ -70,14 +70,8 @@ double Thermistor::Temperature() {
 
   // Convert the 2byte data to 16-bits
   int adc_value = (data[0] * 256 + data[1]);
-  // if (adc_value > 32767)
-  // {
-  //   adc_value -= 65535;
-  // }
+
   double celsius = 1 / (a + b * log(adc_value) + c * pow(log(adc_value), 3)) - 273.15;
 
-  // Print the resistance value
-  // std::cout << "ADC A" << channel << ": " << adc_value << std::endl;
-  // std::cout << "Celcius: " << celsius << std::endl;
   return celsius + 20; //offset :(
 }
