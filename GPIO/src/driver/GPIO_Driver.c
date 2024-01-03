@@ -16,7 +16,7 @@ static dev_t my_device_nr;
 static struct class *my_class;
 static struct cdev my_device;
 
-#define DRIVER_NAME "my_gpio_driver"
+#define DRIVER_NAME "gpio_driver_egg_incubator"
 #define DRIVER_CLASS "MyModuleClass"
 
 /**
