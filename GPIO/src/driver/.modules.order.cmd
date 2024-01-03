@@ -1,0 +1,1 @@
+cmd_/home/pi/eggBreeder/chickincubator/GPIO/src/driver/modules.order := {   echo /home/pi/eggBreeder/chickincubator/GPIO/src/driver/GPIO_Driver.ko; :; } > /home/pi/eggBreeder/chickincubator/GPIO/src/driver/modules.order

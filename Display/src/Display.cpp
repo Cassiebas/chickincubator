@@ -43,7 +43,7 @@ ssd1306_framebuffer_t* Display::GetBufferData()
   return fbp;
 }
 
-int Display::PutPixel(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, bool pixelState)
+int Display::PutPixel(uint8_t x, uint8_t y, bool pixelState)
 {
   uint8_t w = fbp->width;
   uint8_t h = fbp->height;
@@ -65,7 +65,7 @@ int Display::PutPixel(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, bool pix
   return 0;
 }
 
-int Display::ClearBuffer(ssd1306_framebuffer_t *fbp)
+int Display::Clear()
 {
   std::fill(fbp->buffer, fbp->buffer + fbp->len, 0);
   return 0;
@@ -76,13 +76,13 @@ int Display::Draw(std::vector<std::vector<bool>> buffer, uint8_t x, uint8_t y) {
     return -1;
   for (unsigned int y_ = y; y_ < buffer.size() + y && y_ < buffer.size(); y_++) {
     for (unsigned int x_ = x; x_ < buffer.at(0).size() + x && x_ < buffer.at(0).size(); x_++) {
-      PutPixel(fbp, (uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
+      PutPixel((uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
     }
   }
-  return UpdateDisplay(oled, fbp);
+  return 0;
 }
 
-int Display::DrawChar(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char character)
+int Display::DrawChar(uint8_t x, uint8_t y, char character)
 {
   uint8_t w = fbp->width;
   uint8_t h = fbp->height;
@@ -97,7 +97,7 @@ int Display::DrawChar(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char cha
     {
       for (uint8_t col = 0; col < 8; ++col)
       {
-        PutPixel(fbp, col + x, row + y, pixelData[col] & (1 << row));
+        PutPixel(col + x, row + y, pixelData[col] & (1 << row));
       }
     }
   }
@@ -106,18 +106,22 @@ int Display::DrawChar(ssd1306_framebuffer_t *fbp, uint8_t x, uint8_t y, char cha
     return -1; // Coordinates out of bounds
   }
   
-  return UpdateDisplay(oled, fbp);
+  return 0;
 }
 
 int Display::Print(std::string message, uint8_t x, uint8_t y) {
   uint8_t x_ = x, y_ = y;
   for(char &c : message) {
-    DrawChar(fbp, x_, y_, c);
+    DrawChar(x_, y_, c);
     x_ += 9;
     if (x_ >= 128 - 9) {
       x_ = x;
       y_ += 9;
     }
   }
+  return 0;
+}
+
+int Display::Update() {
   return UpdateDisplay(oled, fbp);
 }

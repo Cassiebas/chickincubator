@@ -1,0 +1,1 @@
+cmd_/home/pi/eggBreeder/chickincubator/GPIO/src/driver/GPIO_Driver.ko := ld -r -EL  -maarch64elf -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/pi/eggBreeder/chickincubator/GPIO/src/driver/GPIO_Driver.ko /home/pi/eggBreeder/chickincubator/GPIO/src/driver/GPIO_Driver.o /home/pi/eggBreeder/chickincubator/GPIO/src/driver/GPIO_Driver.mod.o;  true

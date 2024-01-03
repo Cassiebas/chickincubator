@@ -10,8 +10,8 @@
 
 class RotaryEncoder {
   private:
-    uint8_t A, B, Button;
-    uint8_t prevA, prevB;
+    int A, B, Button;
+    int prevA, prevB;
     bool threadRunning;
     std::function<void()> onLeft;
     std::function<void()> onRight;
