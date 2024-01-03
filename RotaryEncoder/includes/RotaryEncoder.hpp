@@ -20,7 +20,7 @@ class RotaryEncoder {
     bool left, right, buttonPressed;
     Log log;
 
-    void rotaryThreadFunction();
+    void RotaryThreadFunction();
 
   public:
     RotaryEncoder();
