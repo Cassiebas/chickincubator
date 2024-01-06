@@ -2,17 +2,18 @@ CXX := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra
 
 SRCS := $(wildcard src/*.cpp)
-ONOFFCONTROLLER_OBJ := ../../obj/OnOffController.o
-TIMER_OBJ := ../../obj/Timer.o
-PWM_OBJ := ../../obj/PWM.o
-HEATINGELEMENT_OBJ := ../../obj/HeatingElement.o
-THERMISTOR_OBJ := ../../obj/Thermistor.o
-PLOTTER_OBJ := ../../obj/HarryPlotter.o
-HEATERCONTROLLER_OBJ := ../../obj/HeaterController.o
-OBJS := $(ONOFFCONTROLLER_OBJ) $(TIMER_OBJ) $(PWM_OBJ) $(HEATINGELEMENT_OBJ) $(THERMISTOR_OBJ) $(PLOTTER_OBJ) $(HEATERCONTROLLER_OBJ)
+OBJS := ../../obj/OnOffController.o
+OBJS += ../../obj/Log.o
+OBJS += ../../obj/Timer.o
+OBJS += ../../obj/PWM.o
+OBJS += ../../obj/HeatingElement.o
+OBJS += ../../obj/Thermistor.o
+OBJS += ../../obj/HarryPlotter.o
+OBJS += ../../obj/HeaterController.o
 TARGET := bin/OnOffTest
 
-INCLUDES := $(addprefix -I, $(wildcard ../../HeaterController/includes))
+INCLUDES := $(addprefix -I, $(wildcard ../../Log/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../HeaterController/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../OnOffController/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../PWM/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Timer/includes))
@@ -20,9 +21,14 @@ INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HarryPlotter/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Thermistor/includes))
 
-LIBS := $(addprefix -l, boost_iostreams)
+LIBS := -DBOOST_LOG_DYN_LINK
+LIBS += $(addprefix -l, boost_iostreams)
 LIBS += $(addprefix -l, boost_system)
+LIBS += $(addprefix -l, boost_thread)
 LIBS += $(addprefix -l, boost_filesystem)
+LIBS += $(addprefix -p, thread)
+LIBS += $(addprefix -l, boost_log)
+LIBS += $(addprefix -l, boost_log_setup)
 
 all: modules $(TARGET)
 
@@ -31,6 +37,7 @@ $(TARGET): $(OBJS)
 
 modules:
 	$(MAKE) -C ../../Timer
+	$(MAKE) -C ../../Log
 	$(MAKE) -C ../../PWM
 	$(MAKE) -C ../../HeatingElement
 	$(MAKE) -C ../../Thermistor

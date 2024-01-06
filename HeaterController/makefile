@@ -6,12 +6,12 @@ OBJS := $(patsubst src/%.cpp,../obj/%.o,$(SRCS))
 TARGET := ChickenIncubator
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../Log/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../PWM/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Timer/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../HarryPlotter/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Thermistor/includes))
-INCLUDES += $(addprefix -I, $(wildcard ../Log/includes))
 
 LIBS := -DBOOST_LOG_DYN_LINK
 LIBS += $(addprefix -l, boost_iostreams)
