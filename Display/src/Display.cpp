@@ -14,7 +14,7 @@
 
 Display::Display()
 {
-  const char *filename = "/dev/i2c-1";
+  const char *filename = "/proc/SSD1306";
   const int i2c_address = 0x3C;
   oled = OpenSSD1306(filename, i2c_address, 128, 32);
   if (InitializeDisplay(oled) < 0)
@@ -47,12 +47,13 @@ int Display::PutPixel(uint8_t x, uint8_t y, bool pixelState)
 {
   uint8_t w = fbp->width;
   uint8_t h = fbp->height;
+
   // based on the page arrangement in GDDRAM as per the datasheet
   if (!(x < w && y < h))
     return -1;
 
   // Calculate the index in the buffer based on the page arrangement in GDDRAM
-  uint8_t bufferIndex = (uint8_t)(x + (y / 8) * w);
+  int bufferIndex = (int)(x + (y / 8) * w);
 
   if (pixelState)
   {

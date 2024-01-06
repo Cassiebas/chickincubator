@@ -104,13 +104,13 @@ static int write_config(void);
 
 static struct of_device_id my_driver_ids[] = {
     {
-        .compatible = "brightlight,motor",
+        .compatible = "motor,pim479",
     },
     {/* sentinel */}};
 MODULE_DEVICE_TABLE(of, my_driver_ids);
 
 static struct i2c_device_id motor[] = {
-    {"motor", 0},
+    {"pim479", 0},
     {},
 };
 MODULE_DEVICE_TABLE(i2c, motor);
@@ -120,7 +120,7 @@ static struct i2c_driver my_driver = {
     .remove = motor_remove,
     .id_table = motor,
     .driver = {
-        .name = "motor",
+        .name = "pim479",
         .of_match_table = my_driver_ids,
     },
 };

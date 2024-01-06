@@ -8,8 +8,8 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 
-			my_adc: my_adc@60 {
-				compatible = "brightlight,myadc";
+			pim479: pim479@60 {
+				compatible = "motor,pim479";
 				reg = <0x60>;
 				status = "okay";
 			};

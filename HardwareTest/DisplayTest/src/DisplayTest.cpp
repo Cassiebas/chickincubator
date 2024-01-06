@@ -42,22 +42,20 @@ const std::vector<std::vector<bool>> drawing = {
 int main(){
   Display display;
 
-  ssd1306_i2c_t *oled = display.GetOledData();
-  ssd1306_framebuffer_t *frameBuff = display.GetBufferData();
-
-  display.ClearBuffer(frameBuff);
-
   display.Draw(drawing);
+  display.Update();
   sleep(5);
   
   display.Print("Hello world!");
+  display.Update();
   sleep(5);
+ 
 
   display.Print("TESTESTTETSETSTESTESTESTESESTTESTESTESTTESTESTESTESTESTESTESTSETESTESTESTESTESTESTESTSETESTETESTETESTESTESTSETETESSTETESTESTESTESTESTESTESTSEETTESESTESTESTSETESTESTESTESTESTESTESTESTESTESTSETEST");
+  display.Update();
   sleep(5);
 
-  display.ClearBuffer(frameBuff);
-  ClearDisplay(oled);
-
+  display.Clear();
+  display.Update();
   return 0;
 }

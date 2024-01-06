@@ -5,8 +5,8 @@ all: module dt
 
 module:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
-dt: Moter_overlay.dts
-	dtc -@ -I dts -O dtb -o Moter_overlay.dtbo Moter_overlay.dts
+dt: motor.dts
+	dtc -@ -I dts -O dtb -o motor.dtbo motor.dts
 clean:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
-	rm -rf Moter_overlay.dtbo
+	rm -rf motor.dtbo
