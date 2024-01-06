@@ -6,6 +6,7 @@ OBJS := $(patsubst src/%.cpp,../obj/%.o,$(SRCS))
 TARGET := ChickenIncubator
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../Log/includes))
 
 LIBS := -DBOOST_LOG_DYN_LINK
 LIBS += $(addprefix -l, boost_iostreams)

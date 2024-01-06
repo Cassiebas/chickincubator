@@ -1,0 +1,6 @@
+{
+    "PID" : [30,0.1,2666],
+    "setTemperature" : 37.5,
+    "turnAngle" : 360,
+    "turnInterval" : 0.1
+}
