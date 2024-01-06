@@ -18,7 +18,7 @@ struct motor_config
 
 static const struct motor_config config_registers[] = {
   {"CONTROL", 0x00},
-  {"5v", 0b11111100},
+  {"3.3v", 0b10100100},
   {"forward", 0b00000001},
   {"backward", 0b00000010},
   {"brake", 0b00000011},
@@ -133,16 +133,16 @@ static int write_config(void)
 
   config_data[0] = config_registers[6].value; // FAULT registry
   config_data[1] = config_registers[7].value; // clear
-  if (i2c_smbus_write_i2c_block_data(motor_driver_client, 0x00, 2, config_data) < 0)
+  if (i2c_master_send(motor_driver_client, config_data, 2) < 0)
   {
     printk("Error writing to the i2c bus.\n");
     return -1;
   }
 
   config_data[0] = config_registers[0].value;                             // CONTROL registry
-  config_data[1] = config_registers[1].value | config_registers[4].value; // 5v and brakes
+  config_data[1] = config_registers[1].value | config_registers[4].value; // 3.3v and brakes
 
-  if (i2c_smbus_write_i2c_block_data(motor_driver_client, 0x00, 2, config_data) < 0)
+  if (i2c_master_send(motor_driver_client, config_data, 2) < 0)
   {
     printk("Error writing to the i2c bus.\n");
     return -1;
@@ -156,49 +156,76 @@ static int write_config(void)
  */
 static ssize_t my_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs)
 {
-  char command[10];
-  char pwm_str[5];
-  int percentage, to_write, index;
-  u8 voltage;
+  char pwm_str[3];
+  int percentage, index;
 
-    // Copy user buffer data to kernel buffer
-  if (copy_from_user(command, user_buffer, 7) != 0)
+  u8 voltage;
+  u8 data[2] = {0x00, 0x00};
+  // Dynamically allocate memory for command
+  char *command = kmalloc(count + 1, GFP_KERNEL);
+  // Check if allocation was successful
+  if (!command)
   {
-    printk("Error copying data from user space.\n");
-    return -EFAULT;
+      printk("Error allocating memory for command.\n");
+      return -ENOMEM;
+  }
+  
+  // Copy user buffer data to kernel buffer until the first whitespace
+  size_t i;
+  for (i = 0; i < count && !isspace(user_buffer[i]); ++i)
+  {
+    if (copy_from_user(&command[i], &user_buffer[i], 1) != 0)
+    {
+      printk("Error copying data from user space.\n");
+      kfree(command);  // Free the allocated memory
+      return -EFAULT;
+    }
   }
 
   // Null-terminate the command string
-  command[7] = '\0';
+  command[i] = '\0';
 
   // Extract the PWM value from the user buffer
-  if (copy_from_user(pwm_str, user_buffer + 7, 3) != 0)
+  if (copy_from_user(pwm_str, command + 1, 3) != 0)
   {
     printk("Error copying data from user space.\n");
     return -EFAULT;
   }
-
   // Null-terminate the PWM string
   pwm_str[3] = '\0';
 
-  // Convert PWM string to an integer
-  percentage = simple_strtol(pwm_str, NULL, 10);
-
-  index = (percentage_scale * percentage);
-
-  voltage = voltage_data[index - 1].binary_value;
+  // Convert PWM string to an integer if available
+  if (strlen(pwm_str) > 0)
+  {
+    percentage = simple_strtol(pwm_str, NULL, 10);
+    index = (percentage_scale * percentage);
+    voltage = voltage_data[index - 1].binary_value;
+  }
+  else
+  {
+    // No PWM value provided, set default values
+    percentage = 0;  
+    voltage = 0;     
+  }
 
   printk("Motor command: %s, voltage selected: %d\n", command, voltage);
-
-  if (strcmp(user_buffer, config_registers[2].name) == 0)
+  //Forward
+  if (strcasecmp(command, config_registers[2].name) == 0)
   { 
-    to_write = voltage | config_registers[2].value;
-    i2c_smbus_write_byte(motor_driver_client, to_write);
+    data[1] = voltage | config_registers[2].value;
+    i2c_master_send(motor_driver_client, data, sizeof(data));
   }
-  else if (strcmp(user_buffer, config_registers[3].name) == 0)
+  //Backward
+  else if (strcasecmp(command, config_registers[3].name) == 0)
   {
-    to_write = voltage | config_registers[2].value;
-    i2c_smbus_write_byte(motor_driver_client, to_write);
+    data[1] = voltage | config_registers[3].value;
+    i2c_master_send(motor_driver_client, data, sizeof(data));
+  }
+  //Brake
+  else if (strcasecmp(command, config_registers[4].name) == 0)
+  {
+    data[1] = config_registers[4].value;
+    i2c_master_send(motor_driver_client, data, sizeof(data));
   }
   else
   {
@@ -206,6 +233,7 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
     return -EINVAL;
   }
 
+  kfree(command);
   return count;
 }
 
@@ -239,14 +267,14 @@ static int motor_probe(struct i2c_client *client, const struct i2c_device_id *id
   motor_driver_client = client;
 
   /* Creating procfs file */
-  proc_file = proc_create("mymotor", 0666, NULL, &fops);
+  proc_file = proc_create("motor", 0666, NULL, &fops);
   if (proc_file == NULL)
   {
-    printk("dt_motor_i2c - Error creating /proc/mymotor\n");
+    printk("dt_motor_i2c - Error creating /proc/motor\n");
     return -ENOMEM;
   }
 
-  if (write_config() > 0)
+  if (write_config() < 0)
   {
     printk("Failed to write config bytes to motor driver.\n");
   }

@@ -92,7 +92,6 @@ ssd1306_i2c_t *OpenSSD1306(
     oled->fd = open(dev, O_RDWR);
     if (oled->fd < 0)
     {
-
       printf("ERROR: Failed to open %s in read/write mode\n", dev);
       rc = -1;
       break;
