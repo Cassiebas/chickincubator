@@ -158,7 +158,7 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
 {
   int percentage, index;
 
-  u8 voltage;
+  u8 voltage = 0;
   u8 data[2] = {0x00, 0x00};
 
   int command = user_buffer[0] - '0';
@@ -188,17 +188,19 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
   //   voltage = 0;     
   // }
 
-  printk("Motor command: %s, voltage selected: %d\n", command, voltage);
   //Forward
   // Use a switch statement based on the command number
   switch (command) {
     case 0:  // Forward
+      printk("Motor going Forward: %d, voltage selected: %d\n", command, voltage);
       data[1] = config_registers[2].value; // | voltage
       break;
     case 1:  // Backward
+      printk("Motor going Backward: %d, voltage selected: %d\n", command, voltage);
       data[1] = config_registers[3].value; // | voltage
       break;
     case 2:  // Brake
+      printk("Motor Braking: %d, voltage selected: %d\n", command, voltage);
       data[1] = config_registers[4].value;
       break;
     default:
