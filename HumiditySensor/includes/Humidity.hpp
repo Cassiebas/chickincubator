@@ -1,5 +1,5 @@
-#ifndef MOTOR_HPP
-#define MOTOR_HPP
+#ifndef HUMIDITY_HPP
+#define HUMIDITY_HPP
 
 #include <iostream>
 #include <unistd.h>
@@ -7,20 +7,19 @@
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
-class Motor
+class Humidity
 {
   private:
     // Use the appropriate I2C bus number
     const char *filename;
     int fd;
-    int address;
+
+    unsigned int humidity;
 
   public:
-    Motor();
-    ~Motor();  
-    bool Forward();
-    bool Backward();
-    bool Brake();
-    // bool Coast();
+    Humidity();
+    ~Humidity();  
+    unsigned int Read();
 };
+
 #endif
