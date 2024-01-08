@@ -6,6 +6,10 @@ Settings::Settings() {
     Read();
 }
 
+Settings::Settings(std::string path) : filePath(path) {
+    Read();
+}
+
 Settings::~Settings() {
     Write();
 }

@@ -16,6 +16,7 @@ class Settings {
         std::string filePath = DEFAULT_SETTINGS_PATH;
     public:
         Settings();
+        Settings(std::string path);
         ~Settings();
         void Read();
         void Write();
