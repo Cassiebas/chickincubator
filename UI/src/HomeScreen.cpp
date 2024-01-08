@@ -13,3 +13,15 @@ void HomeScreen::Update()
   display.Clear();
   display.Update();
 }
+
+void HomeScreen::OnButtonPressed() {
+
+}
+
+void HomeScreen::OnLeft() {
+
+}
+
+void HomeScreen::OnRight() {
+
+}

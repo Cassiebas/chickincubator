@@ -19,10 +19,10 @@ class Settings {
         ~Settings();
         void Read();
         void Write();
-        template <typename T>
-        void Set(std::string settingName, T value);
-        template <typename T>
-        T Get(std::string settingName);
+        template <typename T> void Set(std::string settingName, T value);
+        template <typename T> void Set(std::string settingName, std::vector<T> values);
+        template <typename T> void Get(std::string settingName, T& value);
+        template <typename T> void Get(std::string settingName, std::vector<T>& values);
 };
 
 #endif

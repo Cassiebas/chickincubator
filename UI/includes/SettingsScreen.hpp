@@ -11,6 +11,9 @@ class SettingsScreen
   public:
     SettingsScreen();
     ~SettingsScreen();
+    void OnButtonPressed();
+    void OnLeft();
+    void OnRight();
     void Update();
 };
 
