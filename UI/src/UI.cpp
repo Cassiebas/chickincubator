@@ -37,7 +37,51 @@ void UI::ThreadCycle()
   }
 }
 
-void UI::SwitchScreen(Screen screen)
+void UI::OnButtonPressed()
 {
-  currentScreen = screen;
+  switch (currentScreen)
+  {
+    case SETTINGS:
+      homeScreen.OnButtonPressed();
+      settingsScreen.Update();
+      break;
+    case HOME:
+      homeScreen.OnButtonPressed();
+      homeScreen.Update();
+      break;
+    default:
+      break;
+  }
+}
+
+void UI::OnRight() {
+  switch (currentScreen)
+  {
+    case SETTINGS:
+      settingsScreen.OnRight();
+      settingsScreen.Update();
+      break;
+    case HOME:
+      homeScreen.OnRight();
+      homeScreen.Update();
+      break;
+    default:
+      break;
+  }
+}
+
+void UI::OnLeft() {
+  switch (currentScreen)
+  {
+    case SETTINGS:
+      settingsScreen.OnLeft();
+      settingsScreen.Update();
+      break;
+    case HOME:
+      homeScreen.OnLeft();
+      homeScreen.Update();
+      break;
+    default:
+      break;
+  }
 }

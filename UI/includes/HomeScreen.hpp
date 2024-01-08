@@ -11,6 +11,9 @@ class HomeScreen
   public:
     HomeScreen();
     ~HomeScreen();
+    void OnButtonPressed();
+    void OnLeft();
+    void OnRight();
     void Update();
 };
 
