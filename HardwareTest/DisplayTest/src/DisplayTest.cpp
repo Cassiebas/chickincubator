@@ -39,22 +39,33 @@ const std::vector<std::vector<bool>> drawing = {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
-int main(){
-  Display display;
+int main() {
+  Display display1;
+  Display display2;
+  Display display3;
 
-  display.Draw(drawing);
-  display.Update();
-  sleep(5);
-  
-  display.Print("Hello world!");
-  display.Update();
-  sleep(5);
-
-  display.Print("TESTESTTETSETSTESTESTESTESESTTESTESTESTTESTESTESTESTESTESTESTSETESTESTESTESTESTESTESTSETESTETESTETESTESTESTSETETESSTETESTESTESTESTESTESTESTSEETTESESTESTESTSETESTESTESTESTESTESTESTESTESTESTSETEST");
-  display.Update();
+  // Display 1: Draw a simple shape
+  display1.Draw(drawing);
+  display1.Update();
   sleep(5);
 
-  display.Clear();
-  display.Update();
+  // Display 2: Print "Hello World!"
+  display2.Print("Hello world!");
+  display2.Update();
+  sleep(5);
+
+  // Display 3: Print a long test string
+  display3.Print("TESTESTTETSETSTESTESTESTESESTTESTESTESTTESTESTESTESTESTESTESTSETESTESTESTESTESTESTESTSETESTETESTETESTESTESTSETETESSTETESTESTESTESTESTESTESTSEETTESESTESTESTSETESTESTESTESTESTESTESTESTESTESTESTSETEST");
+  display3.Update();
+  sleep(5);
+
+  // Clear all displays
+  display1.Clear();
+  display1.Update();
+  display2.Clear();
+  display2.Update();
+  display3.Clear();
+  display3.Update();
+
   return 0;
 }
