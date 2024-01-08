@@ -160,7 +160,7 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
   //int percentage, index;
   char received[6] = {0};
 
-  u8 voltage = 0;
+  u8 voltage = voltage_data[35].binary_value;
   u8 data[2] = {0x00, 0x00};
 
   /* Copy data from user_buffer */
@@ -208,11 +208,11 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
   switch (command) {
     case 0:  // Forward
       printk("Motor going Forward: %d, voltage selected: %hhd\n", command, voltage);
-      data[1] = config_registers[2].value; // | voltage
+      data[1] = config_registers[2].value| voltage;
       break;
     case 1:  // Backward
       printk("Motor going Backward: %d, voltage selected: %hhd\n", command, voltage);
-      data[1] = config_registers[3].value; // | voltage
+      data[1] = config_registers[3].value | voltage;
       break;
     case 2:  // Brake
       printk("Motor Braking: %d\n", command);
@@ -222,13 +222,19 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
       printk("Invalid command number. Please enter 0, 1, or 2.\n");
       return -EINVAL;
   }
+
   if (i2c_master_send(motor_driver_client, data, 2) < 0)
   {
     printk("Error writing to the i2c bus.\n");
     return -1;
   }
 
-  return not_copied;
+  if (not_copied) {
+    printk("Error copying data from user space.\n");
+    return -EFAULT;
+  }
+
+  return count;
 }
 
 // /**
