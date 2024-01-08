@@ -2,7 +2,7 @@
 #include <string.h>
 
 Motor::Motor() :
-  filename("/dev/motor"),
+  filename("/proc/motor"),
   address(0x60)
 {
   fd = open(filename, O_RDWR);

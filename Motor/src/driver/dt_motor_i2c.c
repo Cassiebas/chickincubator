@@ -156,17 +156,25 @@ static int write_config(void)
  */
 static ssize_t my_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs)
 {
-  int percentage, index;
+  int not_copied, command;
+  //int percentage, index;
+  char received[6] = {0};
 
   u8 voltage = 0;
   u8 data[2] = {0x00, 0x00};
 
-  int command = user_buffer[0] - '0';
-  // Check if allocation was successful
-  if (!command)
+  /* Copy data from user_buffer */
+  not_copied = copy_from_user(received, user_buffer, count);
+  if (count < 1)
   {
-    printk("Error allocating memory for command.\n");
-    return -ENOMEM;
+    printk("Invalid input: at least 1 byte required!\n");
+    return -EINVAL; // Return an error code
+  }
+
+  // Seperate the two values
+  if (sscanf(received, "%d %hhd", &command, &voltage) != 2) {
+    printk("Error parsing command and value.\n");
+    return -EINVAL;
   }
 
   // char pwm[4]; 
@@ -208,7 +216,7 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
       return -EINVAL;
   }
 
-  return count;
+  return not_copied;
 }
 
 // /**
