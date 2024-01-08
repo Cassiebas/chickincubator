@@ -7,7 +7,6 @@ class HomeScreen
 {
   private:
     Display display;
-
   public:
     HomeScreen();
     ~HomeScreen();

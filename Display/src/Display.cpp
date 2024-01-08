@@ -13,7 +13,8 @@
 #include <cstring>
 
 Display::Display():
-  filename("/proc/SSD1306"),
+  filename("/dev/i2c-1"),
+  // filename("/proc/SSD1306"),
   i2c_address(0x3C)
 {
   oled = OpenSSD1306(filename, i2c_address, 128, 32);
@@ -22,19 +23,22 @@ Display::Display():
     printf("ERROR: Failed to initialize the display. Check if it is connected !\n");
     CloseSSD1306(oled);
   }
-  //Create framebuffer to send data with
-  fbp = CreateBuffer(oled->width, oled->height);
-  sleep(3);
+  if (oled) {
+    //Create framebuffer to send data with
+    fbp = CreateBuffer(oled->width, oled->height);
+    CloseSSD1306(oled);
+  }
 }
 
 Display::~Display()
 {
-  if (oled)
-    CloseSSD1306(oled);
+
 }
 
 ssd1306_i2c_t* Display::GetOledData()
 {
+  oled = OpenSSD1306(filename, i2c_address, 128, 32);
+  CloseSSD1306(oled);
   return oled;
 }
 
@@ -61,7 +65,9 @@ int Display::PutPixel(uint8_t x, uint8_t y, bool pixelState)
   }
   else
   {
-    fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7));
+    // if (!((fbp->buffer[bufferIndex] & (uint8_t)(1 << (y & 7))) == (uint8_t)(1 << (y & 7)))) { //if chosen pixel is already off
+    fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7)); //0b11101111
+    // }
   }
   return 0;
 }

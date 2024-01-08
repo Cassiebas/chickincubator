@@ -19,7 +19,7 @@ UI::~UI()
 
 void UI::ThreadCycle()
 {
-  while (threadRunning)
+  if (threadRunning)
   {
     switch (currentScreen)
     {
@@ -44,7 +44,7 @@ void UI::OnButtonPress()
   switch (currentScreen)
   {
     case SETTINGS:
-      homeScreen.OnButtonPress();
+      settingsScreen.OnButtonPress();
       settingsScreen.Update();
       break;
     case HOME:

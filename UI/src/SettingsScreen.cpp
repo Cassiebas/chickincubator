@@ -15,6 +15,10 @@ void SettingsScreen::Update()
   display.Clear();
   switch(state) {
     case SETTINGS:
+      if (currentSettingIndex < settingNames.size())
+        display.Print(settingNames.at(currentSettingIndex), 3, 11);
+      if (currentSettingIndex + 1 < settingNames.size())
+        display.Print(settingNames.at(currentSettingIndex + 1), 3, 24);
       if (cursor == 0)
         display.Draw(backArrowSelected);
       else
@@ -22,10 +26,6 @@ void SettingsScreen::Update()
         display.Draw(backArrow);
         display.Draw(textBox, 0, 9);
       }
-      if (currentSettingIndex < settingNames.size())
-        display.Print(settingNames.at(currentSettingIndex), 3, 11);
-      if (currentSettingIndex + 1 < settingNames.size())
-        display.Print(settingNames.at(currentSettingIndex + 1), 3, 24);
       break;
     case SETTING:
 
@@ -61,6 +61,7 @@ void SettingsScreen::OnButtonPress() {
     default:
       break;
   }
+  std::cout << "Button pressed in settings\n";
 }
 
 void SettingsScreen::OnLeft() {
@@ -75,6 +76,7 @@ void SettingsScreen::OnLeft() {
     default:
       break;
   }
+  std::cout << "Turned left in settings\n";
 }
 
 void SettingsScreen::OnRight() {
@@ -89,6 +91,7 @@ void SettingsScreen::OnRight() {
     default:
       break;
   }
+  std::cout << "Turned right in settings\n";
 }
 
 std::string SettingsScreen::RequestedScreen() {

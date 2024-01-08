@@ -1,6 +1,10 @@
 {
-    "PID" : [30,0.1,2666],
-    "setTemperature" : 37.5,
-    "turnAngle" : 360,
-    "turnInterval" : 0.1
+    "temperature": "37.5",
+    "turnAngle": "360",
+    "turnInterval": "0.20000000000000001",
+    "PID": {
+        "d": "2666",
+        "i": "0.10000000000000001",
+        "p": "30"
+    }
 }
