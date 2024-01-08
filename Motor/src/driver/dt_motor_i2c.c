@@ -170,12 +170,19 @@ static ssize_t my_write(struct file *File, const char *user_buffer, size_t count
     printk("Invalid input: at least 1 byte required!\n");
     return -EINVAL; // Return an error code
   }
-
-  // Seperate the two values
-  if (sscanf(received, "%d %hhd", &command, &voltage) != 2) {
-    printk("Error parsing command and value.\n");
-    return -EINVAL;
+  else if(count >= 3)
+  {
+    // Seperate the two values
+    if (sscanf(received, "%d %hhd", &command, &voltage) != 2) {
+      printk("Error parsing command and value.\n");
+      return -EINVAL;
+    }
   }
+  else
+  {
+    command = simple_strtol(received, NULL, 10);
+  }
+
 
   // char pwm[4]; 
 
