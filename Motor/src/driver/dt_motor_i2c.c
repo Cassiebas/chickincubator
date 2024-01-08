@@ -139,8 +139,8 @@ static int write_config(void)
     return -1;
   }
 
-  config_data[0] = config_registers[0].value;                             // CONTROL registry
-  config_data[1] = config_registers[1].value | config_registers[4].value; // 3.3v and brakes
+  config_data[0] = config_registers[0].value;                                 // CONTROL registry
+  config_data[1] = voltage_data[35].binary_value | config_registers[4].value; // 3.3v and brakes
 
   if (i2c_master_send(motor_driver_client, config_data, 2) < 0)
   {
@@ -156,84 +156,56 @@ static int write_config(void)
  */
 static ssize_t my_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs)
 {
-  char pwm_str[3];
   int percentage, index;
 
   u8 voltage;
   u8 data[2] = {0x00, 0x00};
-  // Dynamically allocate memory for command
-  char *command = kmalloc(count + 1, GFP_KERNEL);
+
+  int command = user_buffer[0] - '0';
   // Check if allocation was successful
   if (!command)
   {
-      printk("Error allocating memory for command.\n");
-      return -ENOMEM;
+    printk("Error allocating memory for command.\n");
+    return -ENOMEM;
   }
+
+  // char pwm[4]; 
+
+  // copy_from_user(&pwm, user_buffer + 2, 3);
+  // pwm[4] = '\0';
   
-  // Copy user buffer data to kernel buffer until the first whitespace
-  size_t i;
-  for (i = 0; i < count && !isspace(user_buffer[i]); ++i)
-  {
-    if (copy_from_user(&command[i], &user_buffer[i], 1) != 0)
-    {
-      printk("Error copying data from user space.\n");
-      kfree(command);  // Free the allocated memory
-      return -EFAULT;
-    }
-  }
-
-  // Null-terminate the command string
-  command[i] = '\0';
-
-  // Extract the PWM value from the user buffer
-  if (copy_from_user(pwm_str, command + 1, 3) != 0)
-  {
-    printk("Error copying data from user space.\n");
-    return -EFAULT;
-  }
-  // Null-terminate the PWM string
-  pwm_str[3] = '\0';
-
-  // Convert PWM string to an integer if available
-  if (strlen(pwm_str) > 0)
-  {
-    percentage = simple_strtol(pwm_str, NULL, 10);
-    index = (percentage_scale * percentage);
-    voltage = voltage_data[index - 1].binary_value;
-  }
-  else
-  {
-    // No PWM value provided, set default values
-    percentage = 0;  
-    voltage = 0;     
-  }
+  // // Convert PWM string to an integer if available
+  // if (strlen(pwm) > 0)
+  // {
+  //   percentage = simple_strtol(pwm, NULL, 10);
+  //   index = (percentage_scale * percentage);
+  //   voltage = voltage_data[index - 1].binary_value;
+  // }
+  // else
+  // {
+  //   // No PWM value provided, set default values
+  //   percentage = 0;  
+  //   voltage = 0;     
+  // }
 
   printk("Motor command: %s, voltage selected: %d\n", command, voltage);
   //Forward
-  if (strcasecmp(command, config_registers[2].name) == 0)
-  { 
-    data[1] = voltage | config_registers[2].value;
-    i2c_master_send(motor_driver_client, data, sizeof(data));
-  }
-  //Backward
-  else if (strcasecmp(command, config_registers[3].name) == 0)
-  {
-    data[1] = voltage | config_registers[3].value;
-    i2c_master_send(motor_driver_client, data, sizeof(data));
-  }
-  //Brake
-  else if (strcasecmp(command, config_registers[4].name) == 0)
-  {
-    data[1] = config_registers[4].value;
-    i2c_master_send(motor_driver_client, data, sizeof(data));
-  }
-  else
-  {
-    printk("Invalid command. Please enter either 'forward' or 'backward'.\n");
-    return -EINVAL;
+  // Use a switch statement based on the command number
+  switch (command) {
+    case 0:  // Forward
+      data[1] = config_registers[2].value; // | voltage
+      break;
+    case 1:  // Backward
+      data[1] = config_registers[3].value; // | voltage
+      break;
+    case 2:  // Brake
+      data[1] = config_registers[4].value;
+      break;
+    default:
+      printk("Invalid command number. Please enter 0, 1, or 2.\n");
+      return -EINVAL;
   }
 
-  kfree(command);
   return count;
 }
 

@@ -17,9 +17,9 @@ Motor::~Motor()
 }
 
 bool Motor::Forward() {
-  std::string data = std::string("forward") + " " + std::to_string(40);
-
-  if (write(fd, data.c_str(), data.length()) != data.length()) {
+  char command = '0';
+  // send PWM value if needed
+  if (write(fd, &command , 1) < 1) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return false;
   }
@@ -27,9 +27,9 @@ bool Motor::Forward() {
 }
 
 bool Motor::Backward() {
-  std::string data = std::string("backward") + " " +std::to_string(40);
-
-  if (write(fd, data.c_str(), data.length()) != data.length()) {
+  char command = '1';
+  // send PWM value if needed
+  if (write(fd, &command , 1) < 1) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return false;
   }
@@ -37,9 +37,8 @@ bool Motor::Backward() {
 }
 
 bool Motor::Brake() {
-  std::string data = std::string("brake");
-
-  if (write(fd, data.c_str(), data.length()) != data.length()) {
+  char command = '2';
+  if (write(fd, &command , 1) < 1) {
     std::cerr << "Error writing to the i2c bus." << std::endl;
     return false;
   }
