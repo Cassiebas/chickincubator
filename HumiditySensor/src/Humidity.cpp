@@ -33,7 +33,13 @@ unsigned int Humidity::Read()
     return humidity;
   }
 
-  // Assuming buffer contains the humidity data in the desired format
-  humidity = std::stoi(buffer);
+  try {
+    humidity = std::stoi(buffer);
+  } catch (const std::invalid_argument& e) {
+    std::cerr << "Error converting string to integer: " << e.what() << std::endl;
+    std::cerr << "Buffer content: " << buffer << std::endl;
+    humidity = 0;
+  }
+
   return humidity;
 }
