@@ -124,9 +124,9 @@ int Display::Print(std::string message, uint8_t x, uint8_t y) {
 }
 
 int Display::Update() {
-  if (oled)
-    CloseSSD1306(oled);
-  else
-   oled = OpenSSD1306(filename, i2c_address, 128, 32);
+  // if (oled)
+  //   CloseSSD1306(oled);
+  // else
+ //  oled = OpenSSD1306(filename, i2c_address, 128, 32);
   return UpdateDisplay(oled, fbp);
 }

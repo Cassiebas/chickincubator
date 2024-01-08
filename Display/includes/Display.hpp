@@ -12,7 +12,7 @@ class Display
 {
   private:
     const char *filename;
-    const int i2c_address;
+    const uint8_t i2c_address;
     int fd;
     ssd1306_i2c_t* oled;
     ssd1306_framebuffer_t *fbp;

@@ -551,13 +551,13 @@ int RunCommand(ssd1306_i2c_t *oled, ssd1306_i2c_cmd_t cmd, uint8_t *data, size_t
     printf(" to device fd %d\n", oled->fd);
     return -1;
   }
-  //printf("INFO: Wrote %zd bytes of cmd ", nb);
-  for (size_t idx = 0; idx < cmd_sz; ++idx)
-  {
-    printf("%c0x%02x%c", (idx == 0) ? '[' : ' ',
-           cmd_buf[idx], (idx == (cmd_sz - 1)) ? ']' : ',');
-  }
-  //printf(" to device fd %d\n", oled->fd);
+  // printf("INFO: Wrote %zd bytes of cmd ", nb);
+  // for (size_t idx = 0; idx < cmd_sz; ++idx)
+  // {
+  //   printf("%c0x%02x%c", (idx == 0) ? '[' : ' ',
+  //          cmd_buf[idx], (idx == (cmd_sz - 1)) ? ']' : ',');
+  // }
+  // printf(" to device fd %d\n", oled->fd);
   return 0;
 }
 
