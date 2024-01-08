@@ -14,7 +14,7 @@ void HomeScreen::Update()
   display.Update();
 }
 
-void HomeScreen::OnButtonPressed() {
+void HomeScreen::OnButtonPress() {
 
 }
 

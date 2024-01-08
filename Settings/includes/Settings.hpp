@@ -5,6 +5,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <iostream>
+#include <map>
 
 #define DEFAULT_SETTINGS_PATH "../settings/settings.json"
 
@@ -20,10 +22,14 @@ class Settings {
         ~Settings();
         void Read();
         void Write();
+        bool IsNested(std::string settingName);
+        std::vector<std::string> List(std::string settingName = ""); 
         template <typename T> void Set(std::string settingName, T value);
         template <typename T> void Set(std::string settingName, std::vector<T> values);
+        template <typename T> void Set(std::string settingName, std::map<std::string, T> values);
         template <typename T> void Get(std::string settingName, T& value);
         template <typename T> void Get(std::string settingName, std::vector<T>& values);
+        template <typename T> void Get(std::string settingName, std::map<std::string, T>& values);
 };
 
 #endif

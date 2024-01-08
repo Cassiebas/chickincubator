@@ -6,7 +6,12 @@
 #include <math.h>
 
 PWM::PWM(unsigned int dutyCycle, double period, std::function<void()> OnFunction, std::function<void()> OffFunction) :
-  dutyCycle(dutyCycle), period(period), On(OnFunction), Off(OffFunction), timer(new Timer([this]() { this->OnTick(); }, this->period/100.0)) {
+  dutyCycle(dutyCycle),
+  period(period),
+  On(OnFunction),
+  Off(OffFunction),
+  timer(new Timer([this]() { this->OnTick(); }, this->period/100.0)) 
+{
   
 }
 

@@ -6,6 +6,7 @@ OBJS := ../../obj/Log.o
 OBJS += ../../obj/SSD1306.o
 OBJS += ../../obj/Display.o
 OBJS += ../../obj/BootScreen.o
+OBJS += ../../obj/Settings.o
 OBJS += ../../obj/SettingsScreen.o
 OBJS += ../../obj/HomeScreen.o
 OBJS += ../../obj/UI.o
@@ -15,6 +16,7 @@ TARGET := bin/UITest
 
 INCLUDES := $(addprefix -I, $(wildcard ../../Log/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Display/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../Settings/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../UI/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../RotaryEncoder/includes))
@@ -36,9 +38,10 @@ $(TARGET): $(OBJS)
 modules:
 	$(MAKE) -C ../../Log
 	$(MAKE) -C ../../Display
+	$(MAKE) -C ../../Settings
+	$(MAKE) -C ../../RotaryEncoder
 	$(MAKE) -C ../../UI
 	$(MAKE) -C ../../GPIO
-	$(MAKE) -C ../../RotaryEncoder
 
 clean:
 	rm -f $(TARGET) $(OBJS) $(LOCAL_OBJS)

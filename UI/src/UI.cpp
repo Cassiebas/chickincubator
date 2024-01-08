@@ -1,10 +1,11 @@
 #include "UI.hpp"
 
-UI::UI()
+UI::UI() 
 {
   currentScreen = BOOT;
   threadRunning = true;
   uiThread = std::thread(&UI::ThreadCycle, this);
+  rotary([this]() { this->OnLeft(); }, [this]() { this->OnRight(); }, [this]() { this->OnButtonPress(); });
 }
 
 UI::~UI()
@@ -27,6 +28,7 @@ void UI::ThreadCycle()
       break;
     case SETTINGS:
       settingsScreen.Update();
+      SwitchScreen(settingsScreen.RequestedScreen());
       break;
     case HOME:
       homeScreen.Update();
@@ -37,16 +39,16 @@ void UI::ThreadCycle()
   }
 }
 
-void UI::OnButtonPressed()
+void UI::OnButtonPress()
 {
   switch (currentScreen)
   {
     case SETTINGS:
-      homeScreen.OnButtonPressed();
+      homeScreen.OnButtonPress();
       settingsScreen.Update();
       break;
     case HOME:
-      homeScreen.OnButtonPressed();
+      homeScreen.OnButtonPress();
       homeScreen.Update();
       break;
     default:
@@ -83,5 +85,21 @@ void UI::OnLeft() {
       break;
     default:
       break;
+  }
+}
+
+void UI::SwitchScreen(UI::Screen screen) {
+  currentScreen = screen;
+}
+
+void UI::SwitchScreen(std::string screen) {
+  if (screen == "boot") {
+    currentScreen = BOOT;
+  }
+  else if (screen == "home") {
+    currentScreen = HOME;
+  }
+  else if (screen == "settings") {
+    currentScreen = SETTINGS;
   }
 }
