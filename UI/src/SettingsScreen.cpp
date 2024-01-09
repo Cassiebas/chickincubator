@@ -12,6 +12,7 @@ SettingsScreen::~SettingsScreen()
 
 void SettingsScreen::Update()
 {
+  std::string value;
   display.Clear();
   switch(state) {
     case SETTINGS:
@@ -24,14 +25,17 @@ void SettingsScreen::Update()
       else
       {
         display.Draw(backArrow);
-        display.Draw(textBoxVerticalLine, 0, 9);
-        display.Draw(textBoxVerticalLine, 127, 9);
-        display.Draw(textBoxHorizontalLine, 0, 9);
-        display.Draw(textBoxHorizontalLine, 0, 22);
+        display.DrawLine(0, 9, 127, 9);
+        display.DrawLine(0, 22, 127, 22);
+        display.DrawLine(0, 9, 0, 22);
+        display.DrawLine(127, 9, 127, 22);
       }
       break;
     case SETTING:
-
+      display.Draw(backArrowSelected);
+      display.Print(settingNames.at(currentSettingIndex), 3, 11);
+      settings.Get(settingPath, settingValue);
+      display.Print(std::to_string(settingValue), 3, 24);
       break;
     default:
       break;
@@ -52,21 +56,32 @@ void SettingsScreen::OnButtonPress() {
           cursor = 1;
         }
       } else {   
-        if (settings.IsNested(settingNames.at(currentSettingIndex))) {
+        if (parentSetting == "")
+          settingPath = settingNames.at(currentSettingIndex); //"PID"
+        else {
+          if (settingPath != settingNames.at(currentSettingIndex)) {
+            settingPath = settingPath + "." + settingNames.at(currentSettingIndex); //"PID.D.X" etc
+          } else {
+            settingPath = parentSetting + "." + settingNames.at(currentSettingIndex); //"PID.D"
+          }
+        }
+        if (settings.IsNested(settingPath)) {
+          std::cout << settingPath << " is nested\n";
           parentSetting = settingNames.at(currentSettingIndex);
-          settingNames = settings.List(settingNames.at(currentSettingIndex));
+          settingNames = settings.List(settingPath);
+          currentSettingIndex = 0;
         } else {
           state = SETTING;
         }
       }
       break;
     case SETTING:
-
+      settings.Write();
+      state = SETTINGS;
       break;
     default:
       break;
   }
-  std::cout << "Button pressed in settings\n";
 }
 
 void SettingsScreen::OnLeft() {
@@ -80,11 +95,12 @@ void SettingsScreen::OnLeft() {
       }
       break;
     case SETTING:
+      settingValue = settingValue - settingValue * INCREMENT_FACTOR;
+      settings.Set(settingPath, settingValue);
       break;
     default:
       break;
   }
-  std::cout << "Turned left in settings\n";
 }
 
 void SettingsScreen::OnRight() {
@@ -96,12 +112,12 @@ void SettingsScreen::OnRight() {
         currentSettingIndex++;
       break;
     case SETTING:
-
+      settingValue = settingValue + settingValue * INCREMENT_FACTOR;
+      settings.Set(settingPath, settingValue); //TODO: log settings that have changed
       break;
     default:
       break;
   }
-  std::cout << "Turned right in settings\n";
 }
 
 std::string SettingsScreen::RequestedScreen() {
