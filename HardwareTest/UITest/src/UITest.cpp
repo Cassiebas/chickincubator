@@ -4,7 +4,8 @@
 
 int main() {
     UI ui;
-    sleep(3);
+    sleep(5);
     ui.SwitchScreen(UI::SETTINGS);
+    while(1);
     return 0;
 }
