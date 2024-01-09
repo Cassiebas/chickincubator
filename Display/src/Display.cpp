@@ -131,6 +131,32 @@ int Display::Print(std::string message, uint8_t x, uint8_t y) {
   return 0;
 }
 
+int Display::DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
+{
+  // Handle vertical line
+  if (x0 == x1) {
+    uint8_t start_y = (y0 < y1) ? y0 : y1;
+    uint8_t end_y = (y0 < y1) ? y1 : y0;
+    for (uint8_t y = start_y; y <= end_y; y++) {
+      PutPixel(x0, y, true);
+    }
+    return 0;
+  }
+
+  // Handle horizontal line
+  if (y0 == y1) {
+      uint8_t start_x = (x0 < x1) ? x0 : x1;
+      uint8_t end_x = (x0 < x1) ? x1 : x0;
+      for (uint8_t x = start_x; x <= end_x; x++) {
+        PutPixel(x, y0, true);
+      }
+      return 0;
+  }
+
+  // For non-vertical and non-horizontal lines, return -1
+  return -1;
+}
+
 int Display::Update() {
   int result;
   // oled = OpenSSD1306(filename, i2c_address, 128, 32);

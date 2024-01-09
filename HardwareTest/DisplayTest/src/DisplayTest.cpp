@@ -40,32 +40,44 @@ const std::vector<std::vector<bool>> drawing = {
 };
 
 int main() {
-  Display display1;
-  Display display2;
-  Display display3;
+  Display display;
 
   // Display 1: Draw a simple shape
-  display1.Draw(drawing);
-  display1.Update();
-  sleep(5);
+  display.Draw(drawing);
+  display.Update();
+  sleep(2);
 
-  // Display 2: Print "Hello World!"
-  display2.Print("Hello world!");
-  display2.Update();
-  sleep(5);
+  display.Clear();
+  display.Update();
+  // Display2: Print "Hello World!"
+  display.Print("Hello world!");
+  display.Update();
+  sleep(2);
 
-  // Display 3: Print a long test string
-  display3.Print("TESTESTTETSETSTESTESTESTESESTTESTESTESTTESTESTESTESTESTESTESTSETESTESTESTESTESTESTESTSETESTETESTETESTESTESTSETETESSTETESTESTESTESTESTESTESTSEETTESESTESTESTSETESTESTESTESTESTESTESTESTESTESTESTSETEST");
-  display3.Update();
-  sleep(5);
+  // Display3: Print a line
 
-  // Clear all displays
-  display1.Clear();
-  display1.Update();
-  display2.Clear();
-  display2.Update();
-  display3.Clear();
-  display3.Update();
+  //horizontal
+  display.DrawLine(0, 0, display.GetBufferData()->width-1, 0);
+  display.Update();
+  sleep(2);
+
+  //vertical
+  display.DrawLine(0, 0, 0, display.GetBufferData()->height-1);
+  display.Update();
+  sleep(2);
+
+  // Horizontal
+  display.DrawLine(0, display.GetBufferData()->height-1, display.GetBufferData()->width-1, display.GetBufferData()->height-1);
+  display.Update();
+  sleep(2);
+
+  // Vertical
+  display.DrawLine(display.GetBufferData()->width-1, 0, display.GetBufferData()->width-1, display.GetBufferData()->height-1);
+  display.Update();
+  sleep(2);
+  // Clear all display
+  display.Clear();
+  display.Update();
 
   return 0;
 }
