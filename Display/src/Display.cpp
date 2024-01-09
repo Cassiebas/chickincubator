@@ -26,7 +26,7 @@ Display::Display():
   if (oled) {
     //Create framebuffer to send data with
     fbp = CreateBuffer(oled->width, oled->height);
-    CloseSSD1306(oled);
+    // CloseSSD1306(oled);
   }
 }
 
@@ -37,8 +37,8 @@ Display::~Display()
 
 ssd1306_i2c_t* Display::GetOledData()
 {
-  oled = OpenSSD1306(filename, i2c_address, 128, 32);
-  CloseSSD1306(oled);
+  // oled = OpenSSD1306(filename, i2c_address, 128, 32);
+  // CloseSSD1306(oled);
   return oled;
 }
 
@@ -65,9 +65,11 @@ int Display::PutPixel(uint8_t x, uint8_t y, bool pixelState)
   }
   else
   {
-    // if (!((fbp->buffer[bufferIndex] & (uint8_t)(1 << (y & 7))) == (uint8_t)(1 << (y & 7)))) { //if chosen pixel is already off
-    fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7)); //0b11101111
-    // }
+    if (!((fbp->buffer[bufferIndex] & (uint8_t)(1 << (y & 7))) == (uint8_t)(1 << (y & 7)))) { //if chosen pixel is already off
+      fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7)); //0b11101111
+    } else {
+      fbp->buffer[bufferIndex] |= (uint8_t)(1 << (y & 7));
+    }
   }
   return 0;
 }
@@ -131,8 +133,8 @@ int Display::Print(std::string message, uint8_t x, uint8_t y) {
 
 int Display::Update() {
   int result;
-  oled = OpenSSD1306(filename, i2c_address, 128, 32);
+  // oled = OpenSSD1306(filename, i2c_address, 128, 32);
   result = UpdateDisplay(oled, fbp);
-  CloseSSD1306(oled);
+  // CloseSSD1306(oled);
   return result;
 }

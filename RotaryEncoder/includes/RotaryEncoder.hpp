@@ -1,7 +1,7 @@
 #ifndef ROTARY_ENCODER_HPP
 #define ROTARY_ENCODER_HPP
 
-#include "GPIO.hpp"
+// #include "GPIO.hpp"
 #include "Log.hpp"
 
 #include <iostream>
@@ -19,6 +19,7 @@ class RotaryEncoder {
     std::thread rotaryThread;
     bool left, right, buttonPressed;
     Log log;
+    std::string path;
 
     void RotaryThreadFunction();
 
@@ -29,6 +30,8 @@ class RotaryEncoder {
     bool IsLeft() const; 
     bool IsRight() const; 
     bool IsButtonPressed() const;
+    void writeGPIO(const std::string filename, const std::string value);
+    int readGPIO(std::string pin);
 
     void operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress);
     void SetOnLeft(std::function<void()> onLeft);

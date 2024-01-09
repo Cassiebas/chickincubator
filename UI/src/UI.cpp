@@ -4,8 +4,8 @@ UI::UI()
 {
   currentScreen = BOOT;
   threadRunning = true;
-  uiThread = std::thread(&UI::ThreadCycle, this);
   rotary([this]() { this->OnLeft(); }, [this]() { this->OnRight(); }, [this]() { this->OnButtonPress(); });
+  uiThread = std::thread(&UI::ThreadCycle, this);
 }
 
 UI::~UI()
@@ -19,8 +19,9 @@ UI::~UI()
 
 void UI::ThreadCycle()
 {
-  if (threadRunning)
+  while (threadRunning)
   {
+    // std::cout << "currentScreen: " << currentScreen << "\n";
     switch (currentScreen)
     {
     case BOOT:
@@ -89,6 +90,7 @@ void UI::OnLeft() {
 }
 
 void UI::SwitchScreen(UI::Screen screen) {
+  std::cout << "Switching screen to: " << screen << "\n";
   currentScreen = screen;
 }
 
@@ -96,10 +98,10 @@ void UI::SwitchScreen(std::string screen) {
   if (screen == "boot") {
     currentScreen = BOOT;
   }
-  else if (screen == "home") {
+  if (screen == "home") {
     currentScreen = HOME;
   }
-  else if (screen == "settings") {
+  if (screen == "settings") {
     currentScreen = SETTINGS;
   }
 }

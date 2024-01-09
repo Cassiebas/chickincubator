@@ -24,7 +24,10 @@ void SettingsScreen::Update()
       else
       {
         display.Draw(backArrow);
-        display.Draw(textBox, 0, 9);
+        display.Draw(textBoxVerticalLine, 0, 9);
+        display.Draw(textBoxVerticalLine, 127, 9);
+        display.Draw(textBoxHorizontalLine, 0, 9);
+        display.Draw(textBoxHorizontalLine, 0, 22);
       }
       break;
     case SETTING:
@@ -41,15 +44,17 @@ void SettingsScreen::OnButtonPress() {
     case SETTINGS:
       if (cursor == 0) {
         if (parentSetting == "") {
+          std::cout << "Going back to home screen...\n";
           requestedScreen = "home";
         } else {
-          settingNames = settings.List(parentSetting);
+          settingNames = settings.List();
           parentSetting = "";
           cursor = 1;
         }
       } else {   
         if (settings.IsNested(settingNames.at(currentSettingIndex))) {
           parentSetting = settingNames.at(currentSettingIndex);
+          settingNames = settings.List(settingNames.at(currentSettingIndex));
         } else {
           state = SETTING;
         }
@@ -67,11 +72,14 @@ void SettingsScreen::OnButtonPress() {
 void SettingsScreen::OnLeft() {
   switch(state) {
     case SETTINGS:
-      if (cursor > 0)
-        cursor--;
+      if (currentSettingIndex > 0)
+        currentSettingIndex--;
+      else {
+        if (cursor > 0)
+          cursor--;
+      }
       break;
     case SETTING:
-
       break;
     default:
       break;
@@ -84,6 +92,8 @@ void SettingsScreen::OnRight() {
     case SETTINGS:
       if (cursor < 1)
         cursor++;
+      else if (currentSettingIndex + 1 < settingNames.size())
+        currentSettingIndex++;
       break;
     case SETTING:
 

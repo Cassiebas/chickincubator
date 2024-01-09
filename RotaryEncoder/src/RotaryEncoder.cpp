@@ -1,8 +1,50 @@
 #include "RotaryEncoder.hpp"
 #include <unistd.h>
+#include <fstream>
 
-RotaryEncoder::RotaryEncoder() : threadRunning(true), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true))
+void RotaryEncoder::writeGPIO(const std::string filename, const std::string value)
 {
+  std::ofstream file((path + filename).c_str());
+
+  if (!file)
+  {
+    std::cerr << "Unable to open file: " + (path + filename) << std::endl;
+    return;
+  }
+  file << value;
+  file.close();
+}
+
+int RotaryEncoder::readGPIO(std::string pin) {
+    // Read the GPIO pin state
+    std::ifstream valueFile("/sys/class/gpio/gpio" + pin + "/value");
+    if (!valueFile.is_open()) {
+        throw std::runtime_error("Failed to open GPIO value file.");
+    }
+    int value;
+    valueFile >> value;
+
+    return value;
+}
+
+RotaryEncoder::RotaryEncoder() : threadRunning(true), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true)), path("/sys/class/gpio/")
+{
+  // Export the pin
+  writeGPIO("export", "11");
+  sleep(1);
+  // Set the pin as an output
+  writeGPIO("gpio11/direction", "in");
+  // Export the pin
+  writeGPIO("export", "10");
+  sleep(1);
+  // Set the pin as an output
+  writeGPIO("gpio10/direction", "in");
+  // Export the pin
+  writeGPIO("export", "9");
+  sleep(1);
+  // Set the pin as an output
+  writeGPIO("gpio9/direction", "in");
+
   rotaryThread = std::thread(&RotaryEncoder::RotaryThreadFunction, this);
 }
 
@@ -15,20 +57,23 @@ RotaryEncoder::~RotaryEncoder()
 
 void RotaryEncoder::RotaryThreadFunction()
 {
-  GPIO gpio;
-  gpio.SetMode(GPIO_11, INPUT);
-  gpio.SetMode(GPIO_9, INPUT);
+  // GPIO gpio;
+  // gpio.SetMode(GPIO_11, INPUT);
+  // gpio.SetMode(GPIO_9, INPUT);
   uint8_t sequence = 0x00;
   while (threadRunning) {
-    A = (uint8_t)gpio.Get(GPIO_11);
-    B = (uint8_t)gpio.Get(GPIO_9);
+    // A = (uint8_t)gpio.Get(GPIO_11);
+    // B = (uint8_t)gpio.Get(GPIO_9);
+    A = readGPIO("11");
+    B = readGPIO("9");
     // if (A != prevA || B != prevB) {
     sequence <<= 1;
     sequence |= (uint8_t)A;
     sequence <<= 1;
     sequence |= (uint8_t)B;
     // }
-    Button = (uint8_t)gpio.Get(GPIO_10);
+    // Button = (uint8_t)gpio.Get(GPIO_10);
+    Button = readGPIO("10");
     left = false;
     right = false;
     buttonPressed = false;
@@ -58,10 +103,12 @@ void RotaryEncoder::RotaryThreadFunction()
       log(Severity::info, "Rotary encoder is pressed.");
       std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
+    if (prevA != A && prevB != B) {
+      std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
+      std::cout << "sequence : "  << std::to_string(sequence) << "\n";
+    }
     prevA = A;
     prevB = B;
-    // std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
-    // std::cout << "sequence : "  << std::to_string(sequence) << "\n";
   }
 }
 

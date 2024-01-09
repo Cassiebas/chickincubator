@@ -19,7 +19,7 @@ int main() {
 
     settings.Set("turnInterval", 0.2);
 
-    std::map<std::string, double> PID = { {"p", 30}, {"i", 0.1}, {"d", 2666}};
+    std::map<std::string, double> PID = { {"P", 30}, {"I", 0.1}, {"D", 2666}};
     settings.Set("PID", PID);
 
     PID.clear();
