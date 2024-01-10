@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <cstddef>
 #include <string>
-
+#include <vector>
 #include "SSD1306.h"
 
 using Bitmap = std::vector<std::vector<bool>>;
