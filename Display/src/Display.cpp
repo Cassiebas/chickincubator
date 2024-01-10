@@ -3,13 +3,10 @@
 
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <sys/uio.h>
-#include <unistd.h>
-#include <vector>
 #include <cstring>
 
 Display::Display():
@@ -37,8 +34,6 @@ Display::~Display()
 
 ssd1306_i2c_t* Display::GetOledData()
 {
-  // oled = OpenSSD1306(filename, i2c_address, 128, 32);
-  // CloseSSD1306(oled);
   return oled;
 }
 
@@ -145,12 +140,12 @@ int Display::DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 
   // Handle horizontal line
   if (y0 == y1) {
-      uint8_t start_x = (x0 < x1) ? x0 : x1;
-      uint8_t end_x = (x0 < x1) ? x1 : x0;
-      for (uint8_t x = start_x; x <= end_x; x++) {
-        PutPixel(x, y0, true);
-      }
-      return 0;
+    uint8_t start_x = (x0 < x1) ? x0 : x1;
+    uint8_t end_x = (x0 < x1) ? x1 : x0;
+    for (uint8_t x = start_x; x <= end_x; x++) {
+      PutPixel(x, y0, true);
+    }
+    return 0;
   }
 
   // For non-vertical and non-horizontal lines, return -1
@@ -158,9 +153,5 @@ int Display::DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 }
 
 int Display::Update() {
-  int result;
-  // oled = OpenSSD1306(filename, i2c_address, 128, 32);
-  result = UpdateDisplay(oled, fbp);
-  // CloseSSD1306(oled);
-  return result;
+  return UpdateDisplay(oled, fbp);
 }

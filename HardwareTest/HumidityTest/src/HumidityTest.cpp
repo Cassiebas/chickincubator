@@ -3,13 +3,9 @@
 
 int main()
 {
-  Humidity humiditySensor;
+  Humidity humidity;
 
-  while (true)
-  {
-    std::cout << "Humidity Readings: " << humiditySensor.Read() << "\n";
-    sleep(1);
-  }
+  std::cout << "RH: "<< humidity.Read() << std::endl;
 
   return 0;
 }

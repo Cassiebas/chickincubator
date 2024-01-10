@@ -1,5 +1,6 @@
 #include "Humidity.hpp"
 #include <string>
+#include <algorithm>
 
 Humidity::Humidity() :
   filename("/dev/i2c-1")
@@ -16,6 +17,8 @@ Humidity::Humidity() :
     fd = -1;
   }
   humidity = 0;
+  std::fill(rxBuffer, rxBuffer + 5, 0);
+  std::fill(txBuffer, txBuffer + 5, 0);
 }
 
 Humidity::~Humidity()
@@ -23,23 +26,30 @@ Humidity::~Humidity()
   close(fd);
 }
 
-unsigned int Humidity::Read()
+float Humidity::Read()
 {
-  const int bufferSize = 3;
-  char buffer[bufferSize] = {0};
 
-  if (read(fd, buffer, sizeof(buffer)) != sizeof(buffer)) {
-    std::cerr << "Error reading from I2C." << std::endl;
-    return humidity;
+  if(write(fd, txBuffer , 1))
+  {
+    std::cerr << "no ACK bit!" << std::endl;
   }
 
-  try {
-    humidity = std::stoi(buffer);
-  } catch (const std::invalid_argument& e) {
-    std::cerr << "Error converting string to integer: " << e.what() << std::endl;
-    std::cerr << "Buffer content: " << buffer << std::endl;
-    humidity = 0;
-  }
+  int ready;
+  do
+  {
+    // Read the humidity data (4 bytes) from the sensor
+    result = read(fd, rxBuffer, 4);
+
+    // Check the status bits in the first byte to see if the data is ready
+    ready = ((rxBuffer[0] & 0xC0 == 0) ? 1 : 0);
+  } while (!ready);
+
+  float HumidH = (rxBuffer[0] & 0b00111111);
+  float HumidL = rxBuffer[1];
+  humidity = ((HumidH * 256 + HumidL) / 16384) * 100;
+  //int unfiltHumidity = ((rxBuffer[0] & 0x3f) << 8) + (rxBuffer[1] & 0xff);
+  //int unfiltTemp = (((rxBuffer[2] & 0xff) << 8) + (rxBuffer[3] & 0xfc)) >> 2;
+ //temp_d = ((unfiltTemp/16384.0) * 165.0) - 40.0; 
 
   return humidity;
 }

@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <cstddef>
-#include <vector>
 #include <string>
 
 #include "SSD1306.h"

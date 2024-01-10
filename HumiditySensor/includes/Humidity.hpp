@@ -13,13 +13,16 @@ class Humidity
     // Use the appropriate I2C bus number
     const char *filename;
     int fd;
+    uint8_t rxBuffer[5];  // receive buffer
+    uint8_t txBuffer[5];  // transmit buffer
+    ssize_t result;
 
-    unsigned int humidity;
+    float humidity;
 
   public:
     Humidity();
     ~Humidity();  
-    unsigned int Read();
+    float Read();
 };
 
 #endif
