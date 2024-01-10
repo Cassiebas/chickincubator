@@ -28,8 +28,8 @@ Humidity::~Humidity()
 
 float Humidity::Read()
 {
-
-  if(write(fd, txBuffer , 1))
+  txBuffer[0] = 0x00;
+  if(write(fd, txBuffer , 1) != 1)
   {
     std::cerr << "no ACK bit!" << std::endl;
   }
