@@ -8,6 +8,7 @@ OBJS += ../../obj/Display.o
 OBJS += ../../obj/BootScreen.o
 OBJS += ../../obj/Settings.o
 OBJS += ../../obj/SettingsScreen.o
+OBJS += ../../obj/WarningScreen.o
 OBJS += ../../obj/HomeScreen.o
 OBJS += ../../obj/UI.o
 OBJS += ../../obj/GPIO.o

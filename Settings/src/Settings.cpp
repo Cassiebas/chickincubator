@@ -14,7 +14,13 @@ Settings::~Settings() {
     Write();
 }
 
+void Settings::SetPath(std::string path) {
+    filePath = path;
+    Read();
+}
+
 void Settings::Read() {
+    data.clear();
     pt::read_json(filePath, data);
 }
 

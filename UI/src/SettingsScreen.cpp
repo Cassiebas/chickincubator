@@ -1,8 +1,8 @@
 #include "SettingsScreen.hpp"
 
-SettingsScreen::SettingsScreen() : settingNames(settings.List())
+SettingsScreen::SettingsScreen() : settingNames(settings.List()) 
 {
-
+  increments.SetPath("../settings/increments.json");
 }
 
 SettingsScreen::~SettingsScreen()
@@ -30,12 +30,15 @@ void SettingsScreen::Update()
         display.DrawLine(0, 9, 0, 22);
         display.DrawLine(127, 9, 127, 22);
       }
+      updateEggAnimation();
       break;
     case SETTING:
       display.Draw(backArrowSelected);
       display.Print(settingNames.at(currentSettingIndex), 3, 11);
       settings.Get(settingPath, settingValue);
+      increments.Get(settingPath, settingIncrement);
       display.Print(std::to_string(settingValue), 3, 24);
+      updateEggAnimation();
       break;
     default:
       break;
@@ -53,6 +56,10 @@ void SettingsScreen::OnButtonPress() {
         } else {
           settingNames = settings.List();
           parentSetting = "";
+          if (settingPath != "") {
+            if (settingPath.rfind(".") != std::string::npos) //if string contains .
+              settingPath.erase(settingPath.rfind("."));
+          }
           cursor = 1;
         }
       } else {   
@@ -95,7 +102,7 @@ void SettingsScreen::OnLeft() {
       }
       break;
     case SETTING:
-      settingValue = settingValue - settingValue * INCREMENT_FACTOR;
+      settingValue = settingValue - settingIncrement;
       settings.Set(settingPath, settingValue);
       break;
     default:
@@ -112,7 +119,7 @@ void SettingsScreen::OnRight() {
         currentSettingIndex++;
       break;
     case SETTING:
-      settingValue = settingValue + settingValue * INCREMENT_FACTOR;
+      settingValue = settingValue + settingIncrement;
       settings.Set(settingPath, settingValue); //TODO: log settings that have changed
       break;
     default:
@@ -122,4 +129,14 @@ void SettingsScreen::OnRight() {
 
 std::string SettingsScreen::RequestedScreen() {
   return requestedScreen;
+}
+
+void SettingsScreen::updateEggAnimation() {
+  display.Draw(eggAnimation.at(eggCounter), eggCoordinates.at(0), eggCoordinates.at(1));
+  eggCounter++;
+  eggCoordinates.at(0) += 4;
+  if (eggCounter == eggAnimation.size())
+    eggCounter = 0;
+  if (eggCoordinates.at(0) >= 120) //screenWidth - eggAnimation.at(0).size()
+    eggCoordinates.at(0) = 17;
 }

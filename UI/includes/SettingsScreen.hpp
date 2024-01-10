@@ -4,7 +4,6 @@
 #include "Display.hpp"
 #include "Settings.hpp"
 
-using Bitmap = std::vector<std::vector<bool>>;
 const Bitmap backArrow = {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
   {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
@@ -26,6 +25,89 @@ const Bitmap backArrowSelected = {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
+const std::vector<Bitmap> eggAnimation = {
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,1,1,0,0,0},
+    {0,0,1,1,1,1,0,0},
+    {0,0,1,1,1,1,0,0},
+    {0,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,0},
+    {0,0,1,1,1,1,0,0},
+    {0,0,0,0,0,0,0,0}
+  },
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,1,1,1,0,0},
+    {0,1,1,1,1,1,1,0},
+    {1,1,1,1,1,1,1,0},
+    {1,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,0,0},
+    {0,0,1,1,1,1,0,0},
+    {0,0,0,1,1,0,0,0}
+  },
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,1,1,0,0,0,0},
+    {0,1,1,1,1,1,0,0},
+    {0,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,0,0},
+    {0,0,1,1,0,0,0,0},
+    {0,0,0,0,0,0,0,0}
+  },
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,1,1,0,0,0},
+    {0,0,1,1,1,1,0,0},
+    {0,1,1,1,1,1,0,0},
+    {1,1,1,1,1,1,1,0},
+    {1,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,0},
+    {0,0,0,1,1,1,0,0}
+  },
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,1,1,1,1,0,0},
+    {0,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,0},
+    {0,0,1,1,1,1,0,0},
+    {0,0,1,1,1,1,0,0},
+    {0,0,0,1,1,0,0,0},
+    {0,0,0,0,0,0,0,0}
+  },
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,1,1,0,0,0},
+    {0,0,1,1,1,1,0,0},
+    {0,0,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,1},
+    {0,1,1,1,1,1,1,1},
+    {0,1,1,1,1,1,1,0},
+    {0,0,1,1,1,0,0,0}
+  },
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,0,0,1,1,0,0},
+    {0,0,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,0},
+    {0,0,1,1,1,1,1,0},
+    {0,0,0,0,1,1,0,0},
+    {0,0,0,0,0,0,0,0}
+  },
+  {
+    {0,0,0,0,0,0,0,0},
+    {0,0,1,1,1,0,0,0},
+    {0,1,1,1,1,1,1,0},
+    {0,1,1,1,1,1,1,1},
+    {0,1,1,1,1,1,1,1},
+    {0,0,1,1,1,1,1,0},
+    {0,0,1,1,1,1,0,0},
+    {0,0,0,1,1,0,0,0}
+  }
+};
+
 #define INCREMENT_FACTOR 0.1
 
 class SettingsScreen
@@ -45,14 +127,20 @@ class SettingsScreen
   private:
     Display display;
     Settings settings;
+    Settings increments;
     State state = SETTINGS;
     std::vector<std::string> settingNames;
-    unsigned int currentSettingIndex = 0;
     std::string parentSetting = "";
     std::string settingPath = "";
-    unsigned int cursor = 1; //start with option selected
     std::string requestedScreen = "settings";
-    double settingValue;
+    unsigned int currentSettingIndex = 0;
+    unsigned int cursor = 1; //start with option selected
+    unsigned int eggCounter = 0;
+    std::vector<unsigned int> eggCoordinates = {17, 0}; //x, y 
+    double settingValue = 0;
+    double settingIncrement = 0;
+
+    void updateEggAnimation();
 };
 
 #endif

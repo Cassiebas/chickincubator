@@ -103,10 +103,10 @@ void RotaryEncoder::RotaryThreadFunction()
       log(Severity::info, "Rotary encoder is pressed.");
       std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
-    if (prevA != A && prevB != B) {
-      std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
-      std::cout << "sequence : "  << std::to_string(sequence) << "\n";
-    }
+    // if (prevA != A && prevB != B) {
+    //   std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
+    //   std::cout << "sequence : "  << std::to_string(sequence) << "\n";
+    // }
     prevA = A;
     prevB = B;
   }
