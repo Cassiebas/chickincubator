@@ -15,7 +15,7 @@ void HomeScreen::Update()
 }
 
 void HomeScreen::OnButtonPress() {
-
+  requestedScreen = "settings";
 }
 
 void HomeScreen::OnLeft() {
@@ -24,4 +24,8 @@ void HomeScreen::OnLeft() {
 
 void HomeScreen::OnRight() {
 
+}
+
+std::string HomeScreen::RequestedScreen() {
+  return requestedScreen;
 }

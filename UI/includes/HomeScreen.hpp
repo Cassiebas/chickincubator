@@ -7,6 +7,7 @@ class HomeScreen
 {
   private:
     Display display;
+    std::string requestedScreen = "home";
   public:
     HomeScreen();
     ~HomeScreen();
@@ -14,6 +15,7 @@ class HomeScreen
     void OnLeft();
     void OnRight();
     void Update();
+    std::string RequestedScreen();
 };
 
 #endif

@@ -6,6 +6,8 @@
 #include "BootScreen.hpp"
 #include "SettingsScreen.hpp"
 #include "HomeScreen.hpp"
+#include "WarningScreen.hpp"
+
 #include "RotaryEncoder.hpp"
 
 class UI
@@ -15,7 +17,8 @@ class UI
     {
       BOOT,
       SETTINGS,
-      HOME
+      HOME,
+      WARNING
     };
     UI();
     ~UI();
@@ -26,6 +29,9 @@ class UI
     void OnButtonPress();
     void OnLeft();
     void OnRight();
+    void Warning(std::string message);
+    std::string ScreenToString(UI::Screen screen);
+    UI::Screen StringToScreen(std::string screen);
   private:
     Screen currentScreen;
     bool threadRunning;
@@ -33,6 +39,7 @@ class UI
     BootScreen bootScreen;
     SettingsScreen settingsScreen;
     HomeScreen homeScreen;
+    WarningScreen warningScreen;
     RotaryEncoder rotary;
   };
 

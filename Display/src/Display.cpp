@@ -9,6 +9,8 @@
 #include <sys/uio.h>
 #include <cstring>
 
+#include <iostream>
+
 Display::Display():
   filename("/dev/i2c-1"),
   // filename("/proc/SSD1306"),
@@ -60,11 +62,11 @@ int Display::PutPixel(uint8_t x, uint8_t y, bool pixelState)
   }
   else
   {
-    if (!((fbp->buffer[bufferIndex] & (uint8_t)(1 << (y & 7))) == (uint8_t)(1 << (y & 7)))) { //if chosen pixel is already off
-      fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7)); //0b11101111
-    } else {
-      fbp->buffer[bufferIndex] |= (uint8_t)(1 << (y & 7));
-    }
+    // if (!((fbp->buffer[bufferIndex] & (uint8_t)(1 << (y & 7))) == (uint8_t)(1 << (y & 7)))) { //if chosen pixel is already off
+    fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7)); //0b11101111
+    // } else {
+    //   fbp->buffer[bufferIndex] |= (uint8_t)(1 << (y & 7));
+    // }
   }
   return 0;
 }
@@ -75,11 +77,18 @@ int Display::Clear()
   return 0;
 }
 
-int Display::Draw(std::vector<std::vector<bool>> buffer, uint8_t x, uint8_t y) {
-  if (buffer.size() == 0)
+int Display::Draw(std::vector<std::vector<bool>> buffer, unsigned int x, unsigned int y) {
+  if (buffer.size() == 0) {
+    // std::cout << "y size was 0!";
     return -1;
-  for (unsigned int y_ = y; y_ < buffer.size() + y && y_ < buffer.size(); y_++) {
-    for (unsigned int x_ = x; x_ < buffer.at(0).size() + x && x_ < buffer.at(0).size(); x_++) {
+  }
+  if (buffer.at(0).size() == 0) {
+    // std::cout << "x size was 0!\n";
+    return -1;
+  }
+  for (unsigned int y_ = y; y_ < buffer.size() + y && y_ - y < buffer.size(); y_++) {
+    for (unsigned int x_ = x; x_ < buffer.at(0).size() + x && x_ - x < buffer.at(0).size(); x_++) {
+      // std::cout << "Putting pixel {" << x_ << "," << y_ << "} to: " << buffer.at(y_ - y).at(x_ - x) << "\n";
       PutPixel((uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
     }
   }
@@ -126,6 +135,14 @@ int Display::Print(std::string message, uint8_t x, uint8_t y) {
   return 0;
 }
 
+int Display::Update() {
+  int result;
+  // oled = OpenSSD1306(filename, i2c_address, 128, 32);
+  result = UpdateDisplay(oled, fbp);
+  // CloseSSD1306(oled);
+  return result;
+}
+
 int Display::DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
   // Handle vertical line
@@ -150,8 +167,4 @@ int Display::DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 
   // For non-vertical and non-horizontal lines, return -1
   return -1;
-}
-
-int Display::Update() {
-  return UpdateDisplay(oled, fbp);
 }

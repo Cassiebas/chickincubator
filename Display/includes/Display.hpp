@@ -7,6 +7,8 @@
 
 #include "SSD1306.h"
 
+using Bitmap = std::vector<std::vector<bool>>;
+
 class Display
 {
   private:
@@ -22,7 +24,7 @@ class Display
   public:
     Display();
     ~Display();
-    int Draw(std::vector<std::vector<bool>> buffer, uint8_t x = 0, uint8_t y = 0);
+    int Draw(std::vector<std::vector<bool>> buffer, unsigned int x = 0, unsigned int y = 0);
     int Print(std::string message, uint8_t x = 0, uint8_t y = 0);
     int DrawChar(uint8_t x, uint8_t y, char character);
     int DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);

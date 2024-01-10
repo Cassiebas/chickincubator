@@ -20,6 +20,7 @@ class Settings {
         Settings();
         Settings(std::string path);
         ~Settings();
+        void SetPath(std::string path);
         void Read();
         void Write();
         bool IsNested(std::string settingName);
