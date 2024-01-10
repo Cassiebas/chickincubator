@@ -17,8 +17,6 @@ Humidity::Humidity() :
     fd = -1;
   }
   humidity = 0;
-  std::fill(rxBuffer, rxBuffer + 5, 0);
-  std::fill(txBuffer, txBuffer + 5, 0);
 }
 
 Humidity::~Humidity()
@@ -28,6 +26,8 @@ Humidity::~Humidity()
 
 float Humidity::Read()
 {
+  std::fill(rxBuffer, rxBuffer + 5, 0);
+  std::fill(txBuffer, txBuffer + 5, 0);
   txBuffer[0] = 0x00;
   if(write(fd, txBuffer , 1) != 1)
   {
