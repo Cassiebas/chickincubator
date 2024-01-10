@@ -41,7 +41,7 @@ float Humidity::Read()
     result = read(fd, rxBuffer, 4);
 
     // Check the status bits in the first byte to see if the data is ready
-    ready = ((rxBuffer[0] & 0xC0 == 0) ? 1 : 0);
+    ready = ((rxBuffer[0] & 0xC0) == 0) ? 1 : 0;
   } while (!ready);
 
   float HumidH = (rxBuffer[0] & 0b00111111);
