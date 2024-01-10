@@ -53,6 +53,8 @@ void SettingsScreen::OnButtonPress() {
         if (parentSetting == "") {
           std::cout << "Going back to home screen...\n";
           requestedScreen = "home";
+          if (OnSwitchScreen != nullptr)
+            OnSwitchScreen();
         } else {
           settingNames = settings.List();
           parentSetting = "";
@@ -139,4 +141,8 @@ void SettingsScreen::updateEggAnimation() {
     eggCounter = 0;
   if (eggCoordinates.at(0) >= 120) //screenWidth - eggAnimation.at(0).size()
     eggCoordinates.at(0) = 17;
+}
+
+void SettingsScreen::SetOnSwitchScreen(std::function<void()> function) {
+  OnSwitchScreen = function;
 }

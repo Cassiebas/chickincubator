@@ -26,6 +26,7 @@ class UI
     void Show();
     void SwitchScreen(UI::Screen screen);
     void SwitchScreen(std::string screen);
+    void OnSwitchScreen();
     void OnButtonPress();
     void OnLeft();
     void OnRight();

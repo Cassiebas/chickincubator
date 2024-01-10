@@ -3,6 +3,7 @@
 
 #include "Display.hpp"
 #include "Settings.hpp"
+#include <functional>
 
 const Bitmap backArrow = {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -119,6 +120,7 @@ class SettingsScreen
     };
     SettingsScreen();
     ~SettingsScreen();
+    void SetOnSwitchScreen(std::function<void()> function);
     void OnButtonPress();
     void OnLeft();
     void OnRight();
@@ -129,6 +131,7 @@ class SettingsScreen
     Settings settings;
     Settings increments;
     State state = SETTINGS;
+    std::function<void()> OnSwitchScreen = nullptr;
     std::vector<std::string> settingNames;
     std::string parentSetting = "";
     std::string settingPath = "";

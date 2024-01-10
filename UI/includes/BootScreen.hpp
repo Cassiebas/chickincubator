@@ -2,6 +2,8 @@
 #define BOOTSCREEN_HPP
 
 #include <vector>
+#include <functional>
+#include <unistd.h>               // for sleep
 #include "Display.hpp"
 
 const Bitmap BOOTSCREEN{
@@ -42,9 +44,13 @@ class BootScreen
 { // maybe this is better to convert to inheritance from a central screen class with functionality like draw line and matrix transformations. Due to time constraints we wont implement it rn.
   private:
     Display display;
+    std::string requestedScreen = "";
+    std::function<void()> OnSwitchScreen = nullptr;
   public:
     BootScreen();
     ~BootScreen();
+    void SetOnSwitchScreen(std::function<void()> function);
+    std::string RequestedScreen();
     void Update(); // for compatibility this is named update but the boot screen is static
 };
 

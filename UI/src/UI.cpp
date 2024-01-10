@@ -5,6 +5,10 @@ UI::UI()
   currentScreen = BOOT;
   threadRunning = true;
   rotary([this]() { this->OnLeft(); }, [this]() { this->OnRight(); }, [this]() { this->OnButtonPress(); });
+  warningScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
+  bootScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
+  homeScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
+  settingsScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   uiThread = std::thread(&UI::ThreadCycle, this);
 }
 
@@ -28,15 +32,12 @@ void UI::ThreadCycle()
       break;
     case SETTINGS:
       settingsScreen.Update();
-      SwitchScreen(settingsScreen.RequestedScreen());
       break;
     case HOME:
       homeScreen.Update();
-      SwitchScreen(homeScreen.RequestedScreen());
       break;
     case WARNING:
       warningScreen.Update();
-      SwitchScreen(warningScreen.RequestedScreen());
       break;
     default:
       break;
@@ -153,4 +154,24 @@ UI::Screen UI::StringToScreen(std::string screen) {
     return WARNING;
   }
   return BOOT;
+}
+
+void UI::OnSwitchScreen() {
+  switch (currentScreen)
+  {
+  case BOOT:
+    SwitchScreen(bootScreen.RequestedScreen());
+    break;
+  case SETTINGS:
+    SwitchScreen(settingsScreen.RequestedScreen());
+    break;
+  case HOME:
+    SwitchScreen(homeScreen.RequestedScreen());
+    break;
+  case WARNING:
+    SwitchScreen(warningScreen.RequestedScreen());
+    break;
+  default:
+    break;
+  }
 }

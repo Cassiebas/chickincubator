@@ -16,6 +16,8 @@ void HomeScreen::Update()
 
 void HomeScreen::OnButtonPress() {
   requestedScreen = "settings";
+  if (OnSwitchScreen != nullptr)
+    OnSwitchScreen();
 }
 
 void HomeScreen::OnLeft() {
@@ -28,4 +30,8 @@ void HomeScreen::OnRight() {
 
 std::string HomeScreen::RequestedScreen() {
   return requestedScreen;
+}
+
+void HomeScreen::SetOnSwitchScreen(std::function<void()> function) {
+  OnSwitchScreen = function;
 }

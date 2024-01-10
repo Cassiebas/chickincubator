@@ -14,6 +14,7 @@ WarningScreen::~WarningScreen() {
 
 void WarningScreen::SetPreviousScreen(std::string prevScreen) {
   requestedScreen = prevScreen;
+  quit = false;
 }
 
 void WarningScreen::Update() {
@@ -27,8 +28,12 @@ void WarningScreen::Update() {
 void WarningScreen::OnButtonPress() {
   if (warningQueue.size() > 1)
     warningQueue.erase(warningQueue.begin());
-  else
+  else {
     quit = true;
+    if (OnSwitchScreen != nullptr) {
+      OnSwitchScreen();
+    }
+  }
 }
 
 void WarningScreen::Add(std::string warning) {
@@ -41,4 +46,8 @@ std::string WarningScreen::RequestedScreen() {
     return requestedScreen;
   }
   return "warning";
+}
+
+void WarningScreen::SetOnSwitchScreen(std::function<void()> function) {
+  OnSwitchScreen = function;
 }
