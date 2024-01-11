@@ -95,7 +95,7 @@ int Display::Draw(std::vector<std::vector<bool>> buffer, unsigned int x, unsigne
   return 0;
 }
 
-int Display::DrawChar(uint8_t x, uint8_t y, char character)
+int Display::DrawChar(uint8_t x, uint8_t y, std::string character)
 {
   uint8_t w = fbp->width;
   uint8_t h = fbp->height;
@@ -125,7 +125,7 @@ int Display::DrawChar(uint8_t x, uint8_t y, char character)
 int Display::Print(std::string message, uint8_t x, uint8_t y) {
   uint8_t x_ = x, y_ = y;
   for(char &c : message) {
-    DrawChar(x_, y_, c);
+    DrawChar(x_, y_, std::string(1, c));
     x_ += 9;
     if (x_ >= 128 - 9) {
       x_ = x;
