@@ -18,8 +18,7 @@ class Display
     ssd1306_i2c_t* oled;
     ssd1306_framebuffer_t *fbp;
 
-    const static uint8_t FONT_SIZE = 5;
-    const static unsigned char font[][FONT_SIZE];
+    int PutPixel(uint8_t x, uint8_t y, bool pixelState);
 
   public:
     Display();
@@ -28,10 +27,8 @@ class Display
     int Print(std::string message, uint8_t x = 0, uint8_t y = 0);
     int DrawChar(uint8_t x, uint8_t y, char character);
     int DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
+    
     int Update();
-
-    int PutPixel(uint8_t x, uint8_t y, bool pixelState);
-
     int Clear();
 
     ssd1306_i2c_t* GetOledData();
