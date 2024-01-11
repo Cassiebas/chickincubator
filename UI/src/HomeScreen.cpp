@@ -20,14 +20,14 @@ void HomeScreen::Update()
 {
   display.Clear();
 
-  display.Print(ip, 1, 1);
+  display.Print(ip, 2, 1);
   display.DrawLine(0, 0, 127, 0);
   display.DrawLine(0, 10, 127, 10);
   display.DrawLine(0, 0, 0, 10);
   display.DrawLine(127, 0, 127, 10);
 
-  display.Print(temperature, 1, 11);
-  display.Print(humidity, 64, 11);
+  display.Print(temperature, 2, 11);
+  display.Print(humidity, 65, 11);
   display.DrawLine(63, 10, 63, 20);
   display.DrawLine(0, 10, 0, 20);
   display.DrawLine(127, 10, 127, 20);
@@ -50,10 +50,14 @@ void HomeScreen::SetOnSwitchScreen(std::function<void()> function) {
   OnSwitchScreen = function;
 }
 
-void HomeScreen::SetTemperate(double temperature) {
-  this->temperature = std::to_string(temperature) + " C°";
+void HomeScreen::SetTemperature(double temperature) {
+  std::stringstream temp;
+  temp << std::fixed << std::setprecision(1) << temperature;
+  this->temperature = temp.str() + " C°";
 }
 
 void HomeScreen::SetHumidity(float humidity) {
-  this->humidity = std::to_string(humidity) + " %";
+  std::stringstream hum;
+  hum << std::fixed << std::setprecision(1) << humidity;
+  this->humidity = hum.str() + " %";
 }

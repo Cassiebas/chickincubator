@@ -10,7 +10,7 @@ C_SRCS := $(wildcard src/*.c)
 CPP_OBJS := $(patsubst src/%.cpp,../obj/%.o,$(CPP_SRCS))
 C_OBJS := $(patsubst src/%.c,../obj/%.o,$(C_SRCS))
 
-TARGET := ChickenIncubator
+TARGET := EggIncubator
 INCLUDES := $(addprefix -I, $(wildcard includes))
 
 all: $(CPP_OBJS) $(C_OBJS)

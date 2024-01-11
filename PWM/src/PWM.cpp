@@ -17,9 +17,6 @@ PWM::PWM(unsigned int dutyCycle, double period, std::function<void()> OnFunction
 
 PWM::~PWM() {
   Stop();  
-  if (PWMThread.joinable()) {
-    PWMThread.join();
-  }
 }
 
 void PWM::SetDutyCycle(const unsigned int dutyCycle) {
@@ -46,16 +43,16 @@ void PWM::Stop() {
 
 void PWM::OnTick() {
   if(running) {
+    // std::cout << "PWM threadcycle\n";
     if(dutyCycleCounter >= 0) {
-      dutyCycleCounter -= 1;
       On();
     }
     else {
-      dutyCycleCounter -= 1;
       Off();
       if (abs(dutyCycleCounter) + dutyCycle >= 100) {
         dutyCycleCounter = dutyCycle;
       }
     }
+    dutyCycleCounter -= 1;
   }
 }

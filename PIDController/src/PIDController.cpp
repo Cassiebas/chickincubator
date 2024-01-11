@@ -83,13 +83,14 @@ double PIDController::ToPercentPower(double pidValue) {
 }
 
 void PIDController::Do() {
+    // std::cout << "PID threadcycle\n";
     std::vector<double> temps = GetTemp();
     // error = (setTemp - ((temps.at(0) + temps.at(1)) / 2.0))/(setTemp - ambientTemp); //average temperature over both sensors, then normalize it over setPoint and ambient
     error = setTemp - ((temps.at(0) + temps.at(1)) / 2.0);
     double result = this->operator()();
-    std::cout << "Kp: " << p.kp << " Ki: " << i.ki << " Kd: " << d.kd << "\n";
-    std::cout << "PID value: " << result << "\n";
-    std::cout << "Controlling heater with: " << ToPercentPower(result) << "% power \n";
+    // std::cout << "Kp: " << p.kp << " Ki: " << i.ki << " Kd: " << d.kd << "\n";
+    // std::cout << "PID value: " << result << "\n";
+    // std::cout << "Controlling heater with: " << ToPercentPower(result) << "% power \n";
     // pidPlot.AddPoint(GetTime()/60.0, ToPercentPower(result), "Heater (%)");
     pidPlot.AddPoint(GetTime()/60.0, setTemp, "Tset (°C)");
     pidPlot.AddPoint(GetTime()/60.0, (temps.at(0) + temps.at(1)) / 2.0, "Tavg (°C)");

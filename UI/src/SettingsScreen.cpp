@@ -3,6 +3,7 @@
 SettingsScreen::SettingsScreen() : settingNames(settings.List()) 
 {
   increments.SetPath("../settings/increments.json");
+  settings.SetPath("../settings/settings.json");
 }
 
 SettingsScreen::~SettingsScreen()

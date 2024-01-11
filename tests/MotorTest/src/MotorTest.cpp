@@ -20,8 +20,7 @@ int main()
   Timer timer(&stopMotor, EGGFULLROT * (deg / 360.0));
   timer.Start();
   motor.Forward();
-  while (!braking)
-    ;
+  while (!braking);
   motor.Brake();
   // std::cout << "Forward\n";
   // while(timer.Elapsed() < 30);

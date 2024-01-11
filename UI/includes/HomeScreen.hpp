@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <iomanip>
+#include <sstream>
 
 class HomeScreen
 {
@@ -13,7 +15,7 @@ class HomeScreen
     Display display;
     std::string requestedScreen = "home";
     std::function<void()> OnSwitchScreen = nullptr;
-    std::string ip = "";
+    std::string ip = "No internet!";
     std::string temperature = "37.5 C°";
     std::string humidity = "50 %";
   public:
@@ -22,7 +24,7 @@ class HomeScreen
     void SetOnSwitchScreen(std::function<void()> function);
     void OnButtonPress();
     void Update();
-    void SetTemperate(double temperature);
+    void SetTemperature(double temperature);
     void SetHumidity(float humidity);
     void SetRunTime(unsigned int days, unsigned int hours, unsigned int minutes);
     std::string RequestedScreen();

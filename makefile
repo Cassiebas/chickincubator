@@ -1,6 +1,6 @@
 CXX := g++
 CXXFLAGS := -std=c++17 -Wall
-TARGET := bin/ChickenIncubator
+TARGET := bin/EggIncubator
 
 MAIN_SOURCE = $(wildcard src/*.cpp)
 MAIN_OBJECT = $(patsubst src/%.cpp,obj/%.o,$(MAIN_SOURCE))
@@ -8,11 +8,18 @@ MAIN_OBJECT = $(patsubst src/%.cpp,obj/%.o,$(MAIN_SOURCE))
 # Find all header directories recursively
 HEADER_DIRS := $(shell find . -type d -name includes)
 INCLUDES := $(addprefix -I, $(HEADER_DIRS))
-LIBS := $(addprefix -l, boost_iostreams)
+
+LIBS := -DBOOST_LOG_DYN_LINK
+LIBS += $(addprefix -l, boost_iostreams)
 LIBS += $(addprefix -l, boost_system)
+LIBS += $(addprefix -l, boost_thread)
 LIBS += $(addprefix -l, boost_filesystem)
+LIBS += $(addprefix -p, thread)
+LIBS += $(addprefix -l, boost_log)
+LIBS += $(addprefix -l, boost_log_setup)
 
 all: subdirs $(TARGET)
+	 ./install.sh
 
 # Simple for loop that only executes a make -C all command when a makefile is detected
 subdirs:
@@ -33,5 +40,6 @@ obj/%.o: src/%.cpp
 # Clean
 clean:
 	rm -f $(TARGET) $(wildcard obj/*.o)
+	./uninstall.sh
 
-.PHONY: all clean ChickIncubator
+.PHONY: all clean EggIncubator

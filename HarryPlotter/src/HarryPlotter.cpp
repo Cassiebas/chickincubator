@@ -132,7 +132,7 @@ void Plotter::ExportToPNG(const std::string path, const std::string filename, co
   for (std::pair<std::string, line> linePair : data)
   {
     lineNames.push_back(linePair.first);
-    std::cout << "Linename : " << linePair.first << "\n";
+    // std::cout << "Linename : " << linePair.first << "\n";
   }
   plotString << "set xrange [" << DoubleToString(abs(max.first - min.first) > 1 ? min.first : 0) << ":" << DoubleToString(max.first)
              << "]\nset yrange [" << DoubleToString(min.second - ((abs(max.second - min.second) > 1 ? abs(max.second - min.second) * 0.1 : max.second * 0.01) + max.second == 0 ? 1 : 0)) // 10 percent of max extra in y range or if 0 add one to y range
@@ -158,6 +158,6 @@ void Plotter::ExportToPNG(const std::string path, const std::string filename, co
     }
   }
   plotString << "unset output\n";
-  std::cout << plotString.str() << "\n";
+  // std::cout << plotString.str() << "\n";
   plot << plotString.str();
 }

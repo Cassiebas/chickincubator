@@ -23,10 +23,9 @@ UI::~UI()
 
 void UI::ThreadCycle()
 {
-  while (threadRunning)
-  {
-    switch (currentScreen)
-    {
+  while (threadRunning) {
+    // std::cout << "UI threadcycle\n";
+    switch (currentScreen) {
     case BOOT:
       bootScreen.Update();
       break;
@@ -168,9 +167,9 @@ void UI::OnSwitchScreen() {
   }
 }
 
-void UI::SetTemperate(double temperature)
+void UI::SetTemperature(double temperature)
 {
-  homeScreen.SetTemperate(temperature);
+  homeScreen.SetTemperature(temperature);
 }
 
 void UI::SetHumidity(float humidity)

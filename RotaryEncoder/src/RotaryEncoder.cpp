@@ -62,6 +62,7 @@ void RotaryEncoder::RotaryThreadFunction()
   // gpio.SetMode(GPIO_9, INPUT);
   uint8_t sequence = 0x00;
   while (threadRunning) {
+    // std::cout << "Rotary threadcycle\n";
     // A = (uint8_t)gpio.Get(GPIO_11);
     // B = (uint8_t)gpio.Get(GPIO_9);
     A = readGPIO("11");

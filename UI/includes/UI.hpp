@@ -31,7 +31,7 @@ class UI
     void OnLeft();
     void OnRight();
     void Warning(std::string message);
-    void SetTemperate(double temperature);
+    void SetTemperature(double temperature);
     void SetHumidity(float humidity);
     std::string ScreenToString(UI::Screen screen);
     UI::Screen StringToScreen(std::string screen);

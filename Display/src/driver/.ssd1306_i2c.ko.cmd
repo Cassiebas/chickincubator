@@ -1,0 +1,1 @@
+cmd_/home/pi/chickincubator/Display/src/driver/ssd1306_i2c.ko := ld -r -EL  -maarch64elf -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T arch/arm64/module.lds -o /home/pi/chickincubator/Display/src/driver/ssd1306_i2c.ko /home/pi/chickincubator/Display/src/driver/ssd1306_i2c.o /home/pi/chickincubator/Display/src/driver/ssd1306_i2c.mod.o;  true

@@ -69,8 +69,9 @@ double Timer::Elapsed()
   return elapsed_time.count();
 }
 
-void Timer::ThreadCycle() {    
+void Timer::ThreadCycle() { 
   while (threadRunning) {
+    // std::cout << "Timer threadcycle\n";
     if (Elapsed() >= interval) {
       OnInterrupt();
       Reset(); 

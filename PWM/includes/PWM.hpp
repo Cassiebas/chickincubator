@@ -18,7 +18,6 @@ class PWM {
     bool running;
     int dutyCycleCounter;
     Timer *timer;
-    std::thread PWMThread;
 
     void OnTick();
   public:

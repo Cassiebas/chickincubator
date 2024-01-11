@@ -2,7 +2,7 @@
 
 int main() {
     // PIDController controller(37.5, 6000, 0, 0);
-    std::cout << "Enter Kp Ki Kd: \n"; //best till now: 200 0.5 0
+    std::cout << "Enter Kp Ki Kd: \n"; //best till now: 30 0.1 2666
     double Kp = 0, Ki = 0, Kd = 0;
     std::cin >> Kp;
     std::cin >> Ki;
