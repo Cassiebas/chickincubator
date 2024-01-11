@@ -77,9 +77,7 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
     return -EINVAL;
   }
 
-  int result = i2c_master_send(display_driver_client, buffer, count);
-
-  if(result) {
+  if(i2c_master_send(display_driver_client, buffer, count)) {
     printk("Error writing received data: %s \n", buffer);
   }
 
