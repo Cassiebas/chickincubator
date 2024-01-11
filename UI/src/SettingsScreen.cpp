@@ -87,6 +87,12 @@ void SettingsScreen::OnButtonPress() {
     case SETTING:
       settings.Write();
       state = SETTINGS;
+      // settingNames = settings.List();
+      // parentSetting = "";
+      if (settingPath != "") {
+        if (settingPath.rfind(".") != std::string::npos) //if string contains .
+          settingPath.erase(settingPath.rfind("."));
+      }
       break;
     default:
       break;

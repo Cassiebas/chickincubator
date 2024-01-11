@@ -86,8 +86,8 @@ int Display::Draw(std::vector<std::vector<bool>> buffer, unsigned int x, unsigne
     // std::cout << "x size was 0!\n";
     return -1;
   }
-  for (unsigned int y_ = y; y_ < buffer.size() + y && y_ - y < buffer.size(); y_++) {
-    for (unsigned int x_ = x; x_ < buffer.at(0).size() + x && x_ - x < buffer.at(0).size(); x_++) {
+  for (unsigned int y_ = y; y_ < buffer.size() + y; y_++) {
+    for (unsigned int x_ = x; x_ < buffer.at(0).size() + x; x_++) {
       // std::cout << "Putting pixel {" << x_ << "," << y_ << "} to: " << buffer.at(y_ - y).at(x_ - x) << "\n";
       PutPixel((uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
     }

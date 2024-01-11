@@ -73,10 +73,6 @@ void UI::OnRight() {
       settingsScreen.OnRight();
       settingsScreen.Update();
       break;
-    case HOME:
-      homeScreen.OnRight();
-      homeScreen.Update();
-      break;
     default:
       break;
   }
@@ -88,10 +84,6 @@ void UI::OnLeft() {
     case SETTINGS:
       settingsScreen.OnLeft();
       settingsScreen.Update();
-      break;
-    case HOME:
-      homeScreen.OnLeft();
-      homeScreen.Update();
       break;
     default:
       break;
@@ -174,4 +166,14 @@ void UI::OnSwitchScreen() {
   default:
     break;
   }
+}
+
+void UI::SetTemperate(double temperature)
+{
+  homeScreen.SetTemperate(temperature);
+}
+
+void UI::SetHumidity(float humidity)
+{
+  homeScreen.SetHumidity(humidity);
 }

@@ -1,1 +1,1 @@
-/home/pi/eggBreeder/chickincubator/GPIO/src/driver/GPIO_Driver.o
+/home/pi/chickincubator/GPIO/src/driver/GPIO_Driver.o
