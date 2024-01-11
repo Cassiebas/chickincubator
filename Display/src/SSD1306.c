@@ -100,17 +100,17 @@ ssd1306_i2c_t *OpenSSD1306(
     {
       // printf("INFO: Opened %s at fd %d\n", dev, oled->fd);
     }
-    uint32_t addr = (uint32_t)oled->addr;
-    if (ioctl(oled->fd, I2C_SLAVE, addr) < 0) {
-        printf("ERROR: Failed to set I2C_SLAVE for %s addr 0x%02x\n",
-                dev, addr);
-        rc = -1;
-        break;
-    } else {
-        // printf("INFO: I2C_SLAVE for %s addr 0x%02x opened in RDWR mode\n",
-        //         dev, addr);
-        rc = 0;
-    }
+    // uint32_t addr = (uint32_t)oled->addr;
+    // if (ioctl(oled->fd, I2C_SLAVE, addr) < 0) {
+    //     printf("ERROR: Failed to set I2C_SLAVE for %s addr 0x%02x\n",
+    //             dev, addr);
+    //     rc = -1;
+    //     break;
+    // } else {
+    //     // printf("INFO: I2C_SLAVE for %s addr 0x%02x opened in RDWR mode\n",
+    //     //         dev, addr);
+    //     rc = 0;
+    // }
   } while (0);
   if (rc < 0)
   {

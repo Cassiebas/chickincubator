@@ -12,8 +12,8 @@
 #include <iostream>
 
 Display::Display():
-  filename("/dev/i2c-1"),
-  // filename("/proc/SSD1306"),
+  //filename("/dev/i2c-1"),
+  filename("/proc/SSD1306"),
   i2c_address(0x3C)
 {
   oled = OpenSSD1306(filename, i2c_address, 128, 32);
