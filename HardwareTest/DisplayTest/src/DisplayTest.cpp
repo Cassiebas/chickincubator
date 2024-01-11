@@ -50,7 +50,7 @@ int main() {
   display.Clear();
   display.Update();
   // Display2: Print "Hello World!"
-  display.Print("Hello world ° C");
+  display.Print("We love Eggs ° ©");
   display.Update();
   sleep(2);
 
