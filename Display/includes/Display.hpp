@@ -19,7 +19,8 @@ class Display
     ssd1306_framebuffer_t *fbp;
 
     int PutPixel(uint8_t x, uint8_t y, bool pixelState);
-
+    int utf8BytesCount(char firstByte);
+    
   public:
     Display();
     ~Display();

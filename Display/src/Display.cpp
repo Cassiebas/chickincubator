@@ -122,10 +122,30 @@ int Display::DrawChar(uint8_t x, uint8_t y, std::string character)
   return 0;
 }
 
+// Function to determine the number of bytes in a UTF-8 character based on its first byte
+int Display::utf8BytesCount(char firstByte) {
+  if ((firstByte & 0b10000000) == 0) {
+    return 1;
+  } else if ((firstByte & 0b11100000) == 0b11000000) {
+    return 2;
+  } else if ((firstByte & 0b11110000) == 0b11100000) {
+    return 3;
+  } else if ((firstByte & 0b11111000) == 0b11110000) {
+    return 4;
+  }
+  return 0;  // Invalid UTF-8 sequence
+}
+
 int Display::Print(std::string message, uint8_t x, uint8_t y) {
   uint8_t x_ = x, y_ = y;
-  for(char &c : message) {
-    DrawChar(x_, y_, std::string(1, c));
+  int charLength = utf8BytesCount(message[0]);
+  for(std::string::size_type i = 0; i < message.length(); i += charLength) {
+    int charLength = utf8BytesCount(message[i]);
+    if (charLength == 0) {
+      continue;
+    }
+    std::string character = message.substr(i, charLength);
+    DrawChar(x_, y_, character);
     x_ += 9;
     if (x_ >= 128 - 9) {
       x_ = x;

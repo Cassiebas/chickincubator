@@ -50,32 +50,32 @@ int main() {
   display.Clear();
   display.Update();
   // Display2: Print "Hello World!"
-  display.Print("Hello world!");
+  display.Print("Hello world ° C");
   display.Update();
   sleep(2);
 
-  // Display3: Print a line
+  // // Display3: Print a line
 
-  //horizontal
-  display.DrawLine(0, 0, display.GetBufferData()->width-1, 0);
-  display.Update();
-  sleep(2);
+  // //horizontal
+  // display.DrawLine(0, 0, display.GetBufferData()->width-1, 0);
+  // display.Update();
+  // sleep(2);
 
-  //vertical
-  display.DrawLine(0, 0, 0, display.GetBufferData()->height-1);
-  display.Update();
-  sleep(2);
+  // //vertical
+  // display.DrawLine(0, 0, 0, display.GetBufferData()->height-1);
+  // display.Update();
+  // sleep(2);
 
-  // Horizontal
-  display.DrawLine(0, display.GetBufferData()->height-1, display.GetBufferData()->width-1, display.GetBufferData()->height-1);
-  display.Update();
-  sleep(2);
+  // // Horizontal
+  // display.DrawLine(0, display.GetBufferData()->height-1, display.GetBufferData()->width-1, display.GetBufferData()->height-1);
+  // display.Update();
+  // sleep(2);
 
-  // Vertical
-  display.DrawLine(display.GetBufferData()->width-1, 0, display.GetBufferData()->width-1, display.GetBufferData()->height-1);
-  display.Update();
-  sleep(2);
-  // Clear all display
+  // // Vertical
+  // display.DrawLine(display.GetBufferData()->width-1, 0, display.GetBufferData()->width-1, display.GetBufferData()->height-1);
+  // display.Update();
+  // sleep(2);
+  // // Clear all display
   display.Clear();
   display.Update();
 
