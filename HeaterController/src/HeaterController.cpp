@@ -58,7 +58,8 @@ double HeaterController::GetTime() {
 }
 
 void HeaterController::ThreadCycle() {    
-    while (threadRunning) {    
+    while (threadRunning) {  
+        Do(); //must be overwritten by derived class 
         // std::cout << "A0 temperature: " << tempSensor[0].Temperature() << "°C\n";
         // std::cout << "A1 temperature: " << tempSensor[1].Temperature() << "°C\n";
         // std::cout << "Elapsed time: " << timer.Elapsed() << "s\n";
@@ -66,6 +67,6 @@ void HeaterController::ThreadCycle() {
         plot[1].AddPoint(timer.Elapsed()/60.0, tempSensor[1].Temperature());
         // log(Severity::info, "A0 : " + std::to_string(timer.Elapsed()/60.0) + " min , " + std::to_string(tempSensor[0].Temperature()) + " °C");
         // log(Severity::info, "A1 : " + std::to_string(timer.Elapsed()/60.0) + " min , " + std::to_string(tempSensor[1].Temperature()) + " °C");
-        Do(); //must be overwritten by derived class
+
     }
 }

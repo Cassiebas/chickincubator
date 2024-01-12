@@ -28,10 +28,10 @@ int main() {
   settings.Get("heating.PID.D", d);
   settings.Get("rotation.angle", turnAngle);
   settings.Get("rotation.interval", turnInterval);
+  PIDController pid(setTemp, p, i, d);  
   Timer rotateEggTimer(&RotateEgg, turnInterval * 3600);
   Timer brakeTimer; 
   rotateEggTimer.Start();
-  PIDController pid(setTemp, p, i, d);  
   pid.Start();
   while (1) {
     settings.Read();
@@ -59,7 +59,7 @@ int main() {
         motor.Brake();
     // sleep(1);
   }
-  pid.Stop();
+  // pid.Stop();
   rotateEggTimer.Stop();
   return 0;
 }

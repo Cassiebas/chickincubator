@@ -89,6 +89,7 @@ void PIDController::Do() {
     // error = (setTemp - ((temps.at(0) + temps.at(1)) / 2.0))/(setTemp - ambientTemp); //average temperature over both sensors, then normalize it over setPoint and ambient
     error = setTemp - avgTemp;
     double result = this->operator()();
+    heater((unsigned int)(ToPercentPower(result))); 
     // std::cout << "Kp: " << p.kp << " Ki: " << i.ki << " Kd: " << d.kd << "\n";
     // std::cout << "PID value: " << result << "\n";
     // std::cout << "Controlling heater with: " << ToPercentPower(result) << "% power \n";
@@ -108,7 +109,6 @@ void PIDController::Do() {
     componentPlot.ExportToPNG("plots/", "Components", "Time (min)", "Value", "T(t)"); //Line label gets ignored here since there are multiple lines
     system("sudo rm -f /var/www/eggcubator/Components.png");
     system("sudo mv plots/Components.png /var/www/eggcubator/Components.png");
-    heater((unsigned int)(ToPercentPower(result))); 
 }
 
 void PIDController::Start() {

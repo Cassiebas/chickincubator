@@ -19,7 +19,6 @@ LIBS += $(addprefix -l, boost_log)
 LIBS += $(addprefix -l, boost_log_setup)
 
 all: subdirs $(TARGET)
-	 ./install.sh
 
 # Simple for loop that only executes a make -C all command when a makefile is detected
 subdirs:
@@ -40,6 +39,5 @@ obj/%.o: src/%.cpp
 # Clean
 clean:
 	rm -f $(TARGET) $(wildcard obj/*.o)
-	./uninstall.sh
 
 .PHONY: all clean EggIncubator

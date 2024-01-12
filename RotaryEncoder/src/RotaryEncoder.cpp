@@ -27,7 +27,7 @@ int RotaryEncoder::readGPIO(std::string pin) {
     return value;
 }
 
-RotaryEncoder::RotaryEncoder() : threadRunning(true), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true)), path("/sys/class/gpio/")
+RotaryEncoder::RotaryEncoder() : threadRunning(false), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true)), path("/sys/class/gpio/")
 {
   buttonPressed = false;
   // Export the pin
@@ -99,10 +99,13 @@ void RotaryEncoder::RotaryThreadFunction()
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     if (Button) {
-      buttonPressed = true;
-      onButtonPress();
-      log(Severity::info, "Rotary encoder is pressed.");
-      std::this_thread::sleep_for(std::chrono::milliseconds(300));
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      if (readGPIO("10")) {
+        buttonPressed = true;
+        onButtonPress();
+        log(Severity::info, "Rotary encoder is pressed.");
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      }
     }
     // if (prevA != A && prevB != B) {
     //   std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
@@ -132,6 +135,7 @@ void RotaryEncoder::operator()(std::function<void()> onLeft, std::function<void(
   this->onLeft = onLeft;
   this->onRight = onRight;
   this->onButtonPress = onButtonPress;
+  threadRunning = true;
   rotaryThread = std::thread(&RotaryEncoder::RotaryThreadFunction, this);
 }
 

@@ -6,3 +6,5 @@ cd ../Motor/
 ./uninstall.sh
 cd ../GPIO/
 ./uninstall.sh
+cd ../
+make clean

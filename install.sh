@@ -6,3 +6,5 @@ cd ../Motor/
 ./install.sh
 cd ../GPIO/
 ./install.sh
+cd ../
+make
