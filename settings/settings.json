@@ -1,7 +1,7 @@
 {
     "rotation": {
         "angle": "360",
-        "interval": "0.016666666667"
+        "interval": "0.016666666666999674"
     },
     "heating": {
         "temperature": "37.5",

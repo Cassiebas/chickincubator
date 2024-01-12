@@ -86,7 +86,7 @@ void RotaryEncoder::RotaryThreadFunction()
       left = true;
       onLeft();
       log(Severity::info, "Rotary encoder is turned left. prev A, B: " + std::to_string(prevA) + ", " + std::to_string(prevB) +  " A, B: " + std::to_string(A) + ", " + std::to_string(B) + " Sequence: " + std::to_string(sequence) );
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      // std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
     // Check for right sequence: 10 -> 11 -> 01 -> 00
@@ -96,7 +96,7 @@ void RotaryEncoder::RotaryThreadFunction()
       right = true;
       onRight();
       log(Severity::info, "Rotary encoder is turned right. prev A, B: " + std::to_string(prevA) + ", " + std::to_string(prevB) +  " A, B: " + std::to_string(A) + ", " + std::to_string(B) + " Sequence: " + std::to_string(sequence) );
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      // std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     if (Button) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -107,12 +107,12 @@ void RotaryEncoder::RotaryThreadFunction()
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
     }
-    // if (prevA != A && prevB != B) {
+    if (prevA != A && prevB != B) {
     //   std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
     //   std::cout << "sequence : "  << std::to_string(sequence) << "\n";
-    // }
-    prevA = A;
-    prevB = B;
+      prevA = A;
+      prevB = B;
+    }
   }
 }
 
