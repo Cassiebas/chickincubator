@@ -6,10 +6,6 @@ Settings::Settings() {
     Read();
 }
 
-Settings::Settings(std::string path) : filePath(path) {
-    Read();
-}
-
 Settings::~Settings() {
     Write();
 }
@@ -71,27 +67,43 @@ void Settings::Set(std::string settingName, std::map<std::string, T> values) {
 
 template <typename T>
 void Settings::Get(std::string settingName, T& value) {
-    value = data.get<T>(settingName);
+    // std::cout << "Type of T is: " << typeid(T).name() << std::endl;
+    try {
+        value = data.get<T>(settingName);
+    }
+    catch (...) { //for now just ignore any exceptions
+
+    }
 }
 
 template <typename T>
 void Settings::Get(std::string settingName, std::vector<T>& values) { //list
-    for (pt::ptree::value_type &pair : data.get_child(settingName)) {
-        std::stringstream ss{pair.second.data()};
-        T tmp;
-        ss >> tmp;
-        values.push_back(tmp);
+    try {
+        for (pt::ptree::value_type &pair : data.get_child(settingName)) {
+            std::stringstream ss{pair.second.data()};
+            T tmp;
+            ss >> tmp;
+            values.push_back(tmp);
+        }
+    }
+    catch (...) { //for now just ignore any exceptions
+
     }
 }
 
 template <typename T>
 void Settings::Get(std::string settingName, std::map<std::string, T>& map) { //map
-    for (pt::ptree::value_type &pair : data.get_child(settingName)) {
-        std::stringstream ss{pair.second.data()};
-        T tmp;
-        ss >> tmp;
-        std::cout << "Key: " << pair.first << ", Value: " << tmp << "\n";
-        map[pair.first] = tmp;
+    try {
+        for (pt::ptree::value_type &pair : data.get_child(settingName)) {
+            std::stringstream ss{pair.second.data()};
+            T tmp;
+            ss >> tmp;
+            // std::cout << "Key: " << pair.first << ", Value: " << tmp << "\n";
+            map[pair.first] = tmp;
+        }
+    }
+    catch (...) { //for now just ignore any exceptions
+
     }
 }
 

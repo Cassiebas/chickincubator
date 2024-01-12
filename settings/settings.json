@@ -1,12 +1,12 @@
 {
     "rotation": {
         "angle": "360",
-        "interval": "0.01"
+        "interval": "0.016666666667"
     },
     "heating": {
-        "temperature": "37.399999999999999",
+        "temperature": "37.5",
         "PID": {
-            "D": "2666",
+            "D": "2600",
             "I": "0.1",
             "P": "30"
         }

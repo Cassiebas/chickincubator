@@ -17,13 +17,13 @@ HeaterController::~HeaterController() {
 }
 
 void HeaterController::SetTemp(double celsius) {
-    std::cout << "SetTemp(" + std::to_string(celsius) + ")\n";
+    // std::cout << "SetTemp(" + std::to_string(celsius) + ")\n";
     log(Severity::trace, "SetTemp(" + std::to_string(celsius) + ")");
     setTemp = celsius;
 }
 
 void HeaterController::SetHeaterPercent(unsigned int percentage) {
-    std::cout << "SetHeaterPercent(" + std::to_string(percentage) + ")\n";
+    // std::cout << "SetHeaterPercent(" + std::to_string(percentage) + ")\n";
     log(Severity::trace, "SetHeaterPercent(" + std::to_string(percentage) + ")");
     heaterPercent = percentage;
 }
@@ -59,13 +59,13 @@ double HeaterController::GetTime() {
 
 void HeaterController::ThreadCycle() {    
     while (threadRunning) {    
-        std::cout << "A0 temperature: " << tempSensor[0].Temperature() << "°C\n";
-        std::cout << "A1 temperature: " << tempSensor[1].Temperature() << "°C\n";
-        std::cout << "Elapsed time: " << timer.Elapsed() << "s\n";
+        // std::cout << "A0 temperature: " << tempSensor[0].Temperature() << "°C\n";
+        // std::cout << "A1 temperature: " << tempSensor[1].Temperature() << "°C\n";
+        // std::cout << "Elapsed time: " << timer.Elapsed() << "s\n";
         plot[0].AddPoint(timer.Elapsed()/60.0, tempSensor[0].Temperature());
         plot[1].AddPoint(timer.Elapsed()/60.0, tempSensor[1].Temperature());
-        log(Severity::info, "A0 : " + std::to_string(timer.Elapsed()/60.0) + " min , " + std::to_string(tempSensor[0].Temperature()) + " °C");
-        log(Severity::info, "A1 : " + std::to_string(timer.Elapsed()/60.0) + " min , " + std::to_string(tempSensor[1].Temperature()) + " °C");
+        // log(Severity::info, "A0 : " + std::to_string(timer.Elapsed()/60.0) + " min , " + std::to_string(tempSensor[0].Temperature()) + " °C");
+        // log(Severity::info, "A1 : " + std::to_string(timer.Elapsed()/60.0) + " min , " + std::to_string(tempSensor[1].Temperature()) + " °C");
         Do(); //must be overwritten by derived class
     }
 }

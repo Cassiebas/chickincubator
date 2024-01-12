@@ -76,7 +76,7 @@ void SettingsScreen::OnButtonPress() {
           }
         }
         if (settings.IsNested(settingPath)) {
-          std::cout << settingPath << " is nested\n";
+          // std::cout << settingPath << " is nested\n";
           parentSetting = settingNames.at(currentSettingIndex);
           settingNames = settings.List(settingPath);
           currentSettingIndex = 0;

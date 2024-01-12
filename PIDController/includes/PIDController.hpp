@@ -46,7 +46,7 @@ class PIDController : public HeaterController
     Plotter powerPlot;
     Plotter componentPlot;
     double error, min, max;
-    double ambientTemp;
+    double ambientTemp, avgTemp;
     double pRes, iRes, dRes;
     Log log;
 
@@ -59,6 +59,7 @@ class PIDController : public HeaterController
     void Start();
     void Stop();
     void SetTemp(double temp);
+    double GetAvgTemp();
     void ExportConstants();
 };
 

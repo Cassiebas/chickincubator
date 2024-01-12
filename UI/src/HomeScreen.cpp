@@ -37,6 +37,7 @@ void HomeScreen::Update()
 }
 
 void HomeScreen::OnButtonPress() {
+  std::cout << "Button pressed on home screen\n";
   requestedScreen = "settings";
   if (OnSwitchScreen != nullptr)
     OnSwitchScreen();

@@ -65,10 +65,10 @@ void PIDController::operator()(double Kp, double Ki, double Kd) {
     p.kp = Kp;
     i.ki = Ki;
     d.kd = Kd;
-    i.sum = 0;
-    i.lastTime = 0;
-    d.lastTime = 0;
-    d.lastError = 0;
+    // i.sum = 0;
+    // i.lastTime = 0;
+    // d.lastTime = 0;
+    // d.lastError = 0;
 }
 
 double PIDController::ToPercentPower(double pidValue) {  
@@ -85,8 +85,9 @@ double PIDController::ToPercentPower(double pidValue) {
 void PIDController::Do() {
     // std::cout << "PID threadcycle\n";
     std::vector<double> temps = GetTemp();
+    avgTemp = ((temps.at(0) + temps.at(1)) / 2.0);
     // error = (setTemp - ((temps.at(0) + temps.at(1)) / 2.0))/(setTemp - ambientTemp); //average temperature over both sensors, then normalize it over setPoint and ambient
-    error = setTemp - ((temps.at(0) + temps.at(1)) / 2.0);
+    error = setTemp - avgTemp;
     double result = this->operator()();
     // std::cout << "Kp: " << p.kp << " Ki: " << i.ki << " Kd: " << d.kd << "\n";
     // std::cout << "PID value: " << result << "\n";
@@ -107,7 +108,7 @@ void PIDController::Do() {
     componentPlot.ExportToPNG("plots/", "Components", "Time (min)", "Value", "T(t)"); //Line label gets ignored here since there are multiple lines
     system("sudo rm -f /var/www/eggcubator/Components.png");
     system("sudo mv plots/Components.png /var/www/eggcubator/Components.png");
-    heater(static_cast<unsigned int>(ToPercentPower(result))); 
+    heater((unsigned int)(ToPercentPower(result))); 
 }
 
 void PIDController::Start() {
@@ -121,6 +122,10 @@ void PIDController::Stop() {
 
 void PIDController::SetTemp(double temp) {
     setTemp = temp;
+}
+
+double PIDController::GetAvgTemp() {
+    return avgTemp;
 }
 
 void PIDController::ExportConstants() {

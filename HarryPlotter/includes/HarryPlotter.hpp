@@ -6,6 +6,8 @@
 #include <limits>
 #include <map>
 
+#define MAX_SIZE 1000
+
 using point = std::pair<double, double>;
 using line = std::vector<point>;
 using plot = std::map<std::string, line>; // name, line data
@@ -18,7 +20,6 @@ private:
   point min = {std::numeric_limits<double>::max(), std::numeric_limits<double>::max()}, max = {0, 0};
   line singularLine;
   plot data;
-  std::string DoubleToString(double value);
 
 public:
   Plotter();

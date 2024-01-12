@@ -10,13 +10,13 @@
 
 class PWM {
   private:
-    unsigned int dutyCycle;
-    double period;
-    std::function<void()> On;
-    std::function<void()> Off;
+    unsigned int dutyCycle = 0;
+    double period = 0;
+    std::function<void()> On = nullptr;
+    std::function<void()> Off = nullptr;
 
-    bool running;
-    int dutyCycleCounter;
+    bool running = false;
+    int dutyCycleCounter = 0;
     Timer *timer;
 
     void OnTick();

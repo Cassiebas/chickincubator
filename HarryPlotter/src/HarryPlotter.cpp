@@ -41,6 +41,8 @@ void Plotter::AddPoint(const point p, std::string lineName)
     max.first = p.first;
   if (p.second > max.second)
     max.second = p.second;
+  if (data.size() > MAX_SIZE)
+    data.erase(data.begin());
 }
 
 void Plotter::AddPoints(const std::vector<double> x, const std::vector<double> y, std::string lineName)
@@ -71,14 +73,6 @@ void Plotter::AddPoints(const std::vector<point> points, std::string lineName)
   {
     AddPoint(p, lineName);
   }
-}
-
-std::string Plotter::DoubleToString(double value)
-{
-  std::ostringstream origin;
-  origin << value;
-  std::string str = origin.str();
-  return str;
 }
 
 void Plotter::ExportToCSV(const std::string path, const std::string filename, const std::string lineLabel)
@@ -134,9 +128,15 @@ void Plotter::ExportToPNG(const std::string path, const std::string filename, co
     lineNames.push_back(linePair.first);
     // std::cout << "Linename : " << linePair.first << "\n";
   }
-  plotString << "set xrange [" << DoubleToString(abs(max.first - min.first) > 1 ? min.first : 0) << ":" << DoubleToString(max.first)
-             << "]\nset yrange [" << DoubleToString(min.second - ((abs(max.second - min.second) > 1 ? abs(max.second - min.second) * 0.1 : max.second * 0.01) + max.second == 0 ? 1 : 0)) // 10 percent of max extra in y range or if 0 add one to y range
-             << ":" << DoubleToString(max.second + ((abs(max.second - min.second) > 1 ? abs(max.second - min.second) * 0.1 : max.second * 0.01) + max.second == 0 ? 1 : 0)) << "]\n"
+  if ((int)min.second == (int)max.second) {
+    min.second *= 0.99;
+  }
+  if ((int)min.first == (int)max.first) {
+    max.first *= 1.01;
+  }
+  plotString << "set xrange [" << std::to_string(min.first) << ":" << std::to_string(max.first)
+             << "]\nset yrange [" << std::to_string(min.second)
+             << ":" << std::to_string(max.second) << "]\n"
              << "set xlabel '" << xLabel << "'\n"
              << "set ylabel '" << yLabel << "'\n"
              << "set term 'pngcairo'\n"

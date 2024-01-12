@@ -29,23 +29,23 @@ int RotaryEncoder::readGPIO(std::string pin) {
 
 RotaryEncoder::RotaryEncoder() : threadRunning(true), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true)), path("/sys/class/gpio/")
 {
+  buttonPressed = false;
   // Export the pin
   writeGPIO("export", "11");
-  sleep(1);
+  // sleep(1);
   // Set the pin as an output
   writeGPIO("gpio11/direction", "in");
   // Export the pin
   writeGPIO("export", "10");
-  sleep(1);
+  // sleep(1);
   // Set the pin as an output
   writeGPIO("gpio10/direction", "in");
   // Export the pin
   writeGPIO("export", "9");
-  sleep(1);
+  // sleep(1);
   // Set the pin as an output
   writeGPIO("gpio9/direction", "in");
 
-  rotaryThread = std::thread(&RotaryEncoder::RotaryThreadFunction, this);
 }
 
 RotaryEncoder::~RotaryEncoder()
@@ -126,9 +126,13 @@ bool RotaryEncoder::IsLeft() const {
 }
 
 void RotaryEncoder::operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress) {
+  if (rotaryThread.joinable()) {
+    rotaryThread.join();
+  }
   this->onLeft = onLeft;
   this->onRight = onRight;
   this->onButtonPress = onButtonPress;
+  rotaryThread = std::thread(&RotaryEncoder::RotaryThreadFunction, this);
 }
 
 void RotaryEncoder::SetOnLeft(std::function<void()> onLeft) {
