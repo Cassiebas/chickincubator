@@ -16,8 +16,9 @@ class RotaryEncoder {
     std::function<void()> onLeft;
     std::function<void()> onRight;
     std::function<void()> onButtonPress;
+    std::function<void()> onButtonHold;
     std::thread rotaryThread;
-    bool left, right, buttonPressed;
+    bool left, right, buttonPressed, buttonHeld;
     Log log;
     std::string path;
 
@@ -33,10 +34,11 @@ class RotaryEncoder {
     void writeGPIO(const std::string filename, const std::string value);
     int readGPIO(std::string pin);
 
-    void operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress);
+    void operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress, std::function<void()> onButtonHold);
     void SetOnLeft(std::function<void()> onLeft);
     void SetOnRight(std::function<void()> onRight);
     void SetOnButtonPress(std::function<void()> onButtonPress);
+    void SetOnButtonHold(std::function<void()> onButtonHold);
 };
 
 #endif

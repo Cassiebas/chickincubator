@@ -3,12 +3,12 @@
     "angle": {
       "value": "360",
       "unit": "°",
-      "increment": "1"
+      "increment": "5"
     },
     "interval" : {
-      "value": "0.016666666666999674", //1 minute
+      "value": "0.016666666666999674",
       "unit": "h",
-      "increment": "1"
+      "increment": "0.5"
     }
   },
   "heating": {

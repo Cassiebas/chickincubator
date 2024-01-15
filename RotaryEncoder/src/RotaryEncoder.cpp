@@ -61,6 +61,7 @@ void RotaryEncoder::RotaryThreadFunction()
   // gpio.SetMode(GPIO_11, INPUT);
   // gpio.SetMode(GPIO_9, INPUT);
   uint8_t sequence = 0x00;
+  bool buttonAlreadyPressed = false;
   while (threadRunning) {
     // std::cout << "Rotary threadcycle\n";
     // A = (uint8_t)gpio.Get(GPIO_11);
@@ -99,12 +100,32 @@ void RotaryEncoder::RotaryThreadFunction()
       // std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     if (Button) {
+      auto buttonPressTime = std::chrono::steady_clock::now();
+      auto currentTime = std::chrono::steady_clock::now();
+      auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - buttonPressTime).count();
+
+      if (elapsedTime >= 500) {
+        // Button held for more than 500ms
+        if (!buttonHeld) {
+          buttonHeld = true;
+          onButtonHold();
+        }
+      }
+
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      if (readGPIO("10")) {
+      if (readGPIO("10") && !buttonAlreadyPressed) {
+        buttonHeld = false;
         buttonPressed = true;
         onButtonPress();
         log(Severity::info, "Rotary encoder is pressed.");
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        buttonPressTime = std::chrono::steady_clock::now();
+
+        buttonAlreadyPressed = true;
+      }
+      else {
+        // Reset the flag when the button is not pressed
+        buttonAlreadyPressed = false;
       }
     }
     if (prevA != A && prevB != B) {
@@ -128,13 +149,14 @@ bool RotaryEncoder::IsLeft() const {
   return left; 
 }
 
-void RotaryEncoder::operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress) {
+void RotaryEncoder::operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress, std::function<void()> onButtonHold) {
   if (rotaryThread.joinable()) {
     rotaryThread.join();
   }
   this->onLeft = onLeft;
   this->onRight = onRight;
   this->onButtonPress = onButtonPress;
+  this->onButtonPress = onButtonHold;
   threadRunning = true;
   rotaryThread = std::thread(&RotaryEncoder::RotaryThreadFunction, this);
 }
@@ -151,3 +173,6 @@ void RotaryEncoder::SetOnButtonPress(std::function<void()> onButtonPress) {
   this->onButtonPress = onButtonPress;
 }
 
+void RotaryEncoder::SetOnButtonHold(std::function<void()> onButtonHold) {
+  this->onButtonHold = onButtonHold;
+}
