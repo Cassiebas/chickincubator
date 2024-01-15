@@ -8,6 +8,7 @@ TARGET := EggIncubator
 INCLUDES := $(addprefix -I, $(wildcard includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Log/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../GPIO/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../Timer/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../RotaryEncoder/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Display/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Settings/includes))
