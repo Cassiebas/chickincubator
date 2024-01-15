@@ -26,6 +26,7 @@ Timer::Timer(std::function<void()> OnInterrupt, double intervalS) : //interval i
 
 void Timer::Start()
 {
+  timerRunning = true;
   start = std::chrono::steady_clock::now();
   switch (timerType) {
     case Type::INTERRUPT:
@@ -35,6 +36,7 @@ void Timer::Start()
     default:
       break;
   }
+
 }
 
 void Timer::Reset()
@@ -43,7 +45,8 @@ void Timer::Reset()
 }
 
 void Timer::Stop()
-{  
+{ 
+  timerRunning = false;
   end = std::chrono::steady_clock::now();
   duration = end - start;
   switch (timerType) {
@@ -65,6 +68,8 @@ double Timer::Duration()
 
 double Timer::Elapsed()
 {
+  if(!timerRunning)
+    return 0;
   elapsed_time = std::chrono::steady_clock::now() - start;
   return elapsed_time.count();
 }

@@ -3,6 +3,7 @@
 
 // #include "GPIO.hpp"
 #include "Log.hpp"
+#include "Timer.hpp"
 
 #include <iostream>
 #include <functional>
@@ -21,6 +22,7 @@ class RotaryEncoder {
     bool left, right, buttonPressed, buttonHeld;
     Log log;
     std::string path;
+    Timer timerButton;
 
     void RotaryThreadFunction();
 
@@ -34,7 +36,7 @@ class RotaryEncoder {
     void writeGPIO(const std::string filename, const std::string value);
     int readGPIO(std::string pin);
 
-    void operator()(std::function<void()> onLeft, std::function<void()> onRight, std::function<void()> onButtonPress, std::function<void()> onButtonHold);
+    void operator()(std::function<void()> onLeft = nullptr, std::function<void()> onRight = nullptr, std::function<void()> onButtonPress = nullptr, std::function<void()> onButtonHold = nullptr);
     void SetOnLeft(std::function<void()> onLeft);
     void SetOnRight(std::function<void()> onRight);
     void SetOnButtonPress(std::function<void()> onButtonPress);

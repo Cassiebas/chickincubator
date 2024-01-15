@@ -16,15 +16,15 @@ void RotaryEncoder::writeGPIO(const std::string filename, const std::string valu
 }
 
 int RotaryEncoder::readGPIO(std::string pin) {
-    // Read the GPIO pin state
-    std::ifstream valueFile("/sys/class/gpio/gpio" + pin + "/value");
-    if (!valueFile.is_open()) {
-        throw std::runtime_error("Failed to open GPIO value file.");
-    }
-    int value;
-    valueFile >> value;
+  // Read the GPIO pin state
+  std::ifstream valueFile("/sys/class/gpio/gpio" + pin + "/value");
+  if (!valueFile.is_open()) {
+    throw std::runtime_error("Failed to open GPIO value file.");
+  }
+  int value;
+  valueFile >> value;
 
-    return value;
+  return value;
 }
 
 RotaryEncoder::RotaryEncoder() : threadRunning(false), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true)), path("/sys/class/gpio/")
@@ -45,7 +45,6 @@ RotaryEncoder::RotaryEncoder() : threadRunning(false), onLeft(nullptr), onRight(
   // sleep(1);
   // Set the pin as an output
   writeGPIO("gpio9/direction", "in");
-
 }
 
 RotaryEncoder::~RotaryEncoder()
@@ -61,7 +60,6 @@ void RotaryEncoder::RotaryThreadFunction()
   // gpio.SetMode(GPIO_11, INPUT);
   // gpio.SetMode(GPIO_9, INPUT);
   uint8_t sequence = 0x00;
-  bool buttonAlreadyPressed = false;
   while (threadRunning) {
     // std::cout << "Rotary threadcycle\n";
     // A = (uint8_t)gpio.Get(GPIO_11);
@@ -85,7 +83,8 @@ void RotaryEncoder::RotaryThreadFunction()
       prevA = 0;
       prevB = 0;
       left = true;
-      onLeft();
+      if(onLeft != nullptr)
+        onLeft();
       log(Severity::info, "Rotary encoder is turned left. prev A, B: " + std::to_string(prevA) + ", " + std::to_string(prevB) +  " A, B: " + std::to_string(A) + ", " + std::to_string(B) + " Sequence: " + std::to_string(sequence) );
       // std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
@@ -95,38 +94,39 @@ void RotaryEncoder::RotaryThreadFunction()
       prevA = 0;
       prevB = 0;
       right = true;
-      onRight();
+      if(onRight != nullptr)
+        onRight();
       log(Severity::info, "Rotary encoder is turned right. prev A, B: " + std::to_string(prevA) + ", " + std::to_string(prevB) +  " A, B: " + std::to_string(A) + ", " + std::to_string(B) + " Sequence: " + std::to_string(sequence) );
       // std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    if (Button) {
-      auto buttonPressTime = std::chrono::steady_clock::now();
-      auto currentTime = std::chrono::steady_clock::now();
-      auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - buttonPressTime).count();
-
-      if (elapsedTime >= 500) {
-        // Button held for more than 500ms
-        if (!buttonHeld) {
-          buttonHeld = true;
-          onButtonHold();
-        }
-      }
-
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      if (readGPIO("10") && !buttonAlreadyPressed) {
-        buttonHeld = false;
-        buttonPressed = true;
-        onButtonPress();
+    if (Button && timerButton.Elapsed() == 0) {
+      timerButton.Start();
+    }
+    else if(Button && timerButton.Elapsed() > 0.2){
+      buttonPressed = true;
+    }
+    else if(Button && timerButton.Elapsed() > 0.6){
+      buttonPressed = false;
+      buttonHeld = true;
+    } 
+    
+    if(!Button)
+    {
+      if(buttonPressed){
         log(Severity::info, "Rotary encoder is pressed.");
+        if(onButtonPress != nullptr)
+          onButtonPress();
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        buttonPressTime = std::chrono::steady_clock::now();
-
-        buttonAlreadyPressed = true;
       }
-      else {
-        // Reset the flag when the button is not pressed
-        buttonAlreadyPressed = false;
+      if(buttonHeld){
+        log(Severity::info, "Rotary encoder was held.");
+        if(onButtonHold != nullptr)
+          onButtonHold();
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
+      buttonHeld = false;
+      buttonPressed = false;
+      timerButton.Stop();
     }
     if (prevA != A && prevB != B) {
     //   std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";
@@ -135,7 +135,7 @@ void RotaryEncoder::RotaryThreadFunction()
       prevB = B;
     }
   }
-}
+} 
 
 bool RotaryEncoder::IsButtonPressed() const {
   return buttonPressed; 
@@ -156,7 +156,7 @@ void RotaryEncoder::operator()(std::function<void()> onLeft, std::function<void(
   this->onLeft = onLeft;
   this->onRight = onRight;
   this->onButtonPress = onButtonPress;
-  this->onButtonPress = onButtonHold;
+  this->onButtonHold = onButtonHold;
   threadRunning = true;
   rotaryThread = std::thread(&RotaryEncoder::RotaryThreadFunction, this);
 }
