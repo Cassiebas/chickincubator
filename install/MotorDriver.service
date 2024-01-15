@@ -1,0 +1,10 @@
+[Unit]
+Description=Motor driver for the egg breeding machine
+After=MotorDTO.service
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/insmod $(pwd)/dt_motor_i2c.ko
+
+[Install]
+WantedBy=multi-user.target

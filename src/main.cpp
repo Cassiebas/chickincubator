@@ -4,7 +4,6 @@
 #include "Motor.hpp"
 #include "Humidity.hpp"
 #include "Settings.hpp"
-#include "Thermistor.hpp"
 #include "Timer.hpp"
 
 #define EGGFULLROT 7.58473625144 // seconds to rotate egg for 360 degrees, theoretical value with 1:1 relationship of how much the big gear spins and the egg spins and not accounting for backlash

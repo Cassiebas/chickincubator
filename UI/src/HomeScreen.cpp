@@ -2,14 +2,7 @@
 
 HomeScreen::HomeScreen()
 {
-  system("ip -4 addr show wlan0 | grep -oP '(?<=inet\\s)\\d+(\\.\\d+){3}' >ip.txt"); //put only the needed ip in a tmp txt file
-  std::fstream inFile;
-  inFile.open("ip.txt", std::ios::in);
-  if (inFile.is_open()){ 
-    getline(inFile, ip);
-    inFile.close();
-  }
-  system("rm ip.txt");
+  UpdateIP();
 }
 
 HomeScreen::~HomeScreen()
@@ -18,6 +11,10 @@ HomeScreen::~HomeScreen()
 
 void HomeScreen::Update()
 {
+  if (ip == NO_INET_STR) {
+    UpdateIP();
+  }
+  
   display.Clear();
 
   display.Print(ip, 2, 1);
@@ -61,4 +58,17 @@ void HomeScreen::SetHumidity(float humidity) {
   std::stringstream hum;
   hum << std::fixed << std::setprecision(1) << humidity;
   this->humidity = hum.str() + " %";
+}
+
+void HomeScreen::UpdateIP() {
+  system("ip -4 addr show wlan0 | grep -oP '(?<=inet\\s)\\d+(\\.\\d+){3}' >ip.txt"); //put only the needed ip in a tmp txt file
+  std::fstream inFile;
+  inFile.open("ip.txt", std::ios::in);
+  if (inFile.is_open()) { 
+    getline(inFile, ip);
+    inFile.close();
+  }
+  system("rm ip.txt");
+  if (ip == "")
+    ip = NO_INET_STR;
 }

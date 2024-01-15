@@ -10,4 +10,5 @@ sudo insmod GPIO_Driver.ko
 # Set permissions on the device file
 sudo chmod 666 /dev/gpio_driver_egg_incubator
 
+
 cd ../..

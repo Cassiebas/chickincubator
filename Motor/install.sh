@@ -10,4 +10,5 @@ sudo dtoverlay motor.dtbo
 # Load the kernel module
 sudo insmod dt_motor_i2c.ko
 
+
 cd ../..

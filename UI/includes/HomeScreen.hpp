@@ -9,15 +9,18 @@
 #include <iomanip>
 #include <sstream>
 
+#define NO_INET_STR "No internet!"
+
 class HomeScreen
 {
   private:
     Display display;
     std::string requestedScreen = "home";
     std::function<void()> OnSwitchScreen = nullptr;
-    std::string ip = "No internet!";
+    std::string ip = NO_INET_STR;
     std::string temperature = "37.5 C°";
     std::string humidity = "50 %";
+    void UpdateIP();
   public:
     HomeScreen();
     ~HomeScreen();

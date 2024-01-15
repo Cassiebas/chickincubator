@@ -1,0 +1,10 @@
+[Unit]
+Description=GPIO driver for the egg breeding machine
+After=DisplayDriver.service
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/insmod $(pwd)/GPIO_Driver.ko
+
+[Install]
+WantedBy=multi-user.target

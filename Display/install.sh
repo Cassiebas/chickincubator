@@ -10,4 +10,5 @@ sudo dtoverlay display.dtbo
 # Load the kernel module
 sudo insmod ssd1306_i2c.ko
 
+
 cd ../..
