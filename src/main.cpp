@@ -21,12 +21,12 @@ int main() {
   Humidity humidity;
   Settings settings;
   double setTemp = 0, p = 0, i = 0, d = 0, turnInterval = 0;
-  settings.Get("heating.temperature", setTemp);
-  settings.Get("heating.PID.P", p);
-  settings.Get("heating.PID.I", i);
-  settings.Get("heating.PID.D", d);
-  settings.Get("rotation.angle", turnAngle);
-  settings.Get("rotation.interval", turnInterval);
+  settings.Get("heating.temperature.value", setTemp);
+  settings.Get("heating.PID.P.value", p);
+  settings.Get("heating.PID.I.value", i);
+  settings.Get("heating.PID.D.value", d);
+  settings.Get("rotation.angle.value", turnAngle);
+  settings.Get("rotation.interval.value", turnInterval);
   PIDController pid(setTemp, p, i, d);  
   Timer rotateEggTimer(&RotateEgg, turnInterval * 3600);
   Timer brakeTimer; 
@@ -34,12 +34,12 @@ int main() {
   pid.Start();
   while (1) {
     settings.Read();
-    settings.Get("heating.temperature", setTemp);
-    settings.Get("heating.PID.P", p);
-    settings.Get("heating.PID.I", i);
-    settings.Get("heating.PID.D", d);
-    settings.Get("rotation.angle", turnAngle);
-    settings.Get("rotation.interval", turnInterval);
+    settings.Get("heating.temperature.value", setTemp);
+    settings.Get("heating.PID.P.value", p);
+    settings.Get("heating.PID.I.value", i);
+    settings.Get("heating.PID.D.value", d);
+    settings.Get("rotation.angle.value", turnAngle);
+    settings.Get("rotation.interval.value", turnInterval);
     pid(p, i, d);
     pid.SetTemp(setTemp);
     ui.SetTemperature(pid.GetAvgTemp());

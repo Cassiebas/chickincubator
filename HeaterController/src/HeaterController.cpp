@@ -20,21 +20,9 @@ void HeaterController::SetTemp(double celsius) {
   log(Severity::trace, "SetTemp(" + std::to_string(celsius) + ")");
   setTemp = celsius;
 }
-void HeaterController::SetTemp(double celsius)
-{
-  std::cout << "SetTemp(" + std::to_string(celsius) + ")\n";
-  log(Severity::trace, "SetTemp(" + std::to_string(celsius) + ")");
-  setTemp = celsius;
-}
 
 void HeaterController::SetHeaterPercent(unsigned int percentage) {
   // std::cout << "SetHeaterPercent(" + std::to_string(percentage) + ")\n";
-  log(Severity::trace, "SetHeaterPercent(" + std::to_string(percentage) + ")");
-  heaterPercent = percentage;
-}
-void HeaterController::SetHeaterPercent(unsigned int percentage)
-{
-  std::cout << "SetHeaterPercent(" + std::to_string(percentage) + ")\n";
   log(Severity::trace, "SetHeaterPercent(" + std::to_string(percentage) + ")");
   heaterPercent = percentage;
 }

@@ -15,28 +15,22 @@ cd ../GPIO/
 cd ../
 make
 
-#make drivers and c++ program start on boot:
-sudo cp install/DisplayDTO.service /etc/systemd/system/DisplayDTO.service
-sudo systemctl daemon-reload
-sudo systemctl enable DisplayDTO.service
+sudo echo "
+[Unit]
+Description=Egg breeding machine
+After=GPIODriver.service
 
-sudo cp install/DisplayDriver.service /etc/systemd/system/DisplayDriver.service
-sudo systemctl daemon-reload
-sudo systemctl enable DisplayDriver.service
+[Service]
+ExecStart=$(pwd)/bin/EggIncubator
+WorkingDirectory=$(pwd)/bin
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
 
-sudo cp install/GPIODriver.service /etc/systemd/system/GPIODriver.service
-sudo systemctl daemon-reload
-sudo systemctl enable GPIODriver.service
-
-sudo cp install/MotorDTO.service /etc/systemd/system/MotorDTO.service
-sudo systemctl daemon-reload
-sudo systemctl enable MotorDTO.service
-
-sudo cp install/MotorDriver.service /etc/systemd/system/MotorDriver.service
-sudo systemctl daemon-reload
-sudo systemctl enable MotorDriver.service
-
-sudo cp install/EggIncubator.service /etc/systemd/system/EggIncubator.service
+[Install]
+WantedBy=multi-user.target
+" > /etc/systemd/system/EggIncubator.service
 sudo systemctl daemon-reload
 sudo systemctl enable EggIncubator.service
 
