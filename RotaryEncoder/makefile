@@ -8,6 +8,7 @@ TARGET := EggIncubator
 INCLUDES := $(addprefix -I, $(wildcard includes))
 INCLUDES += $(addprefix -I, $(wildcard ../GPIO/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Log/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../Timer/includes))
 
 LIBS := -DBOOST_LOG_DYN_LINK
 LIBS += $(addprefix -l, boost_iostreams)
