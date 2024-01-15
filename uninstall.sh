@@ -8,12 +8,12 @@ cd ../GPIO/
 ./uninstall.sh
 cd ../
 make clean
-sudo systemctl stop /etc/systemd/system/EggIncubator.service
-sudo systemctl stop /etc/systemd/system/GPIODriver.service
-sudo systemctl stop /etc/systemd/system/DisplayDTO.service
-sudo systemctl stop /etc/systemd/system/DisplayDriver.service
-sudo systemctl stop /etc/systemd/system/MotorDTO.service
-sudo systemctl stop /etc/systemd/system/MotorDriver.service
+sudo systemctl stop EggIncubator
+sudo systemctl stop GPIODriver
+sudo systemctl stop DisplayDTO
+sudo systemctl stop DisplayDriver
+sudo systemctl stop MotorDTO
+sudo systemctl stop MotorDriver
 sudo rm -f /etc/systemd/system/EggIncubator.service
 sudo rm -f /etc/systemd/system/GPIODriver.service
 sudo rm -f /etc/systemd/system/DisplayDTO.service

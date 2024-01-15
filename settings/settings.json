@@ -1,38 +1,38 @@
 {
-  "rotation": {
-    "angle": {
-      "value": "360",
-      "unit": "°",
-      "increment": "1"
+    "rotation": {
+        "angle": {
+            "value": "360",
+            "unit": "°",
+            "increment": "1"
+        },
+        "interval": {
+            "value": "0.016666666666999674",
+            "unit": "h",
+            "increment": "1"
+        }
     },
-    "interval" : {
-      "value": "0.016666666666999674", //1 minute
-      "unit": "h",
-      "increment": "1"
+    "heating": {
+        "temperature": {
+            "value": "37.5",
+            "unit": "C°",
+            "increment": "0.1"
+        },
+        "PID": {
+            "D": {
+                "value": "2665",
+                "unit": "",
+                "increment": "5"
+            },
+            "I": {
+                "value": "0.1",
+                "unit": "",
+                "increment": "0.01"
+            },
+            "P": {
+                "value": "30",
+                "unit": "",
+                "increment": "1"
+            }
+        }
     }
-  },
-  "heating": {
-    "temperature": {
-      "value": "37.5",
-      "unit": "C°",
-      "increment": "0.1"
-    },
-    "PID": {
-      "D" : {
-        "value": "2665",
-        "unit": "",
-        "increment": "5"
-      },
-      "I" : {
-        "value": "0.1",
-        "unit": "",
-        "increment": "0.01"
-      },
-      "P" : {
-        "value": "30",
-        "unit": "",
-        "increment": "1"
-      }
-    }
-  }
 }
