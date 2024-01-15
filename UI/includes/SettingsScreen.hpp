@@ -129,7 +129,6 @@ class SettingsScreen
   private:
     Display display;
     Settings settings;
-    Settings increments;
     State state = SETTINGS;
     std::function<void()> OnSwitchScreen = nullptr;
     std::vector<std::string> settingNames;
