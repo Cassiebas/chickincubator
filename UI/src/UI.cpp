@@ -4,12 +4,14 @@ UI::UI()
 {
   currentScreen = BOOT;
   threadRunning = true;
-  rotary([this]() { this->OnLeft(); }, [this]() { this->OnRight(); }, [this]() { this->OnButtonPress(); });
+  rotary([this]() { this->OnLeft(); }, [this]() { this->OnRight(); }, [this]() { this->OnButtonPress(); }, [this]() { this->OnButtonHold(); });
   warningScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   bootScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   homeScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   settingsScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   quitScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
+  machineSettings.SetPath("../settings/machinesettings.json");
+  runtime.Start();
   uiThread = std::thread(&UI::ThreadCycle, this);
 }
 
@@ -24,6 +26,7 @@ UI::~UI()
 
 void UI::ThreadCycle()
 {
+  double time;
   while (threadRunning) {
     // std::cout << "UI threadcycle\n";
     switch (currentScreen) {
@@ -44,6 +47,13 @@ void UI::ThreadCycle()
       break;
     default:
       break;
+    }
+    if (runtime.Elapsed() > 1 && !QuitCalled()) {
+      machineSettings.Read();
+      machineSettings.Get("runtime", time);
+      machineSettings.Set("runtime", time + runtime.Elapsed());
+      runtime.Reset();
+      machineSettings.Write();
     }
   }
 }
@@ -67,6 +77,20 @@ void UI::OnButtonPress()
     case QUIT:
       quitScreen.OnButtonPress();
       quitScreen.Update();
+      break;
+    default:
+      break;
+  }
+}
+
+void UI::OnButtonHold()
+{
+  switch (currentScreen)
+  {
+    case HOME:
+      homeScreen.OnButtonHold();
+      homeScreen.Update();
+      break;
       break;
     default:
       break;

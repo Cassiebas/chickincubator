@@ -33,13 +33,13 @@ void QuitScreen::OnButtonPress() {
 }
 
 void QuitScreen::OnLeft() {
-    if (cursor < 1)
-        cursor++;
+    if (cursor > 0)
+        cursor--;
 }
 
 void QuitScreen::OnRight() {
-    if (cursor > 0)
-        cursor--;
+    if (cursor < 1)
+        cursor++;
 }
 
 std::string QuitScreen::RequestedScreen() {

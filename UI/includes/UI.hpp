@@ -39,7 +39,7 @@ class UI
     void SetTemperature(double temperature);
     void SetHumidity(float humidity);
     std::string ScreenToString(UI::Screen screen);
-    UI::Screen StringToScreen(std::string screen); //TODO: Get quit or no quit from quitscreen to main
+    UI::Screen StringToScreen(std::string screen);
     bool QuitCalled();
   private:
     Screen currentScreen;

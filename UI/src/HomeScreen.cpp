@@ -3,6 +3,7 @@
 HomeScreen::HomeScreen()
 {
   UpdateIP();
+  machineSettings.SetPath("../settings/machinesettings.json");
 }
 
 HomeScreen::~HomeScreen()
@@ -88,7 +89,7 @@ void HomeScreen::UpdateIP() {
 }
 
 std::string HomeScreen::secondsToTime(double seconds) {
-    std::cout << "Calculating seconds to time: " << seconds << "\n";
+    // std::cout << "Calculating seconds to time: " << seconds << "\n";
     int hours = (int)(seconds / 3600);
     int minutes = ((int)seconds % 3600) / 60;
     int remainingSeconds = (int)seconds % 60;
