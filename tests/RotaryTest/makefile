@@ -2,13 +2,14 @@ CXX := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra
 
 SRCS := $(wildcard src/*.cpp)
-LOG_OBJ := ../../obj/Log.o
-GPIO_OBJ := ../../obj/GPIO.o
-ROT_OBJ := ../../obj/RotaryEncoder.o
-OBJS := $(LOG_OBJ) $(GPIO_OBJ) $(ROT_OBJ)
+OBJS := ../../obj/Log.o
+OBJS += ../../obj/GPIO.o
+OBJS += ../../obj/Timer.o
+OBJS += ../../obj/RotaryEncoder.o
 TARGET := bin/RotaryTest
 
 INCLUDES := $(addprefix -I, $(wildcard ../../Log/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../Timer/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../RotaryEncoder/includes))
 
@@ -29,6 +30,7 @@ $(TARGET): $(OBJS)
 modules:
 	$(MAKE) -C ../../Log
 	$(MAKE) -C ../../GPIO
+	$(MAKE) -C ../../Timer
 	$(MAKE) -C ../../RotaryEncoder
 
 clean:

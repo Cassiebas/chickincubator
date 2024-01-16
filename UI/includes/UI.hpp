@@ -7,8 +7,11 @@
 #include "SettingsScreen.hpp"
 #include "HomeScreen.hpp"
 #include "WarningScreen.hpp"
+#include "QuitScreen.hpp"
 
+#include "Timer.hpp"
 #include "RotaryEncoder.hpp"
+#include "Settings.hpp"
 
 class UI
 {
@@ -18,7 +21,8 @@ class UI
       BOOT,
       SETTINGS,
       HOME,
-      WARNING
+      WARNING,
+      QUIT
     };
     UI();
     ~UI();
@@ -28,13 +32,15 @@ class UI
     void SwitchScreen(std::string screen);
     void OnSwitchScreen();
     void OnButtonPress();
+    void OnButtonHold();
     void OnLeft();
     void OnRight();
     void Warning(std::string message);
     void SetTemperature(double temperature);
     void SetHumidity(float humidity);
     std::string ScreenToString(UI::Screen screen);
-    UI::Screen StringToScreen(std::string screen);
+    UI::Screen StringToScreen(std::string screen); //TODO: Get quit or no quit from quitscreen to main
+    bool QuitCalled();
   private:
     Screen currentScreen;
     bool threadRunning;
@@ -43,7 +49,10 @@ class UI
     SettingsScreen settingsScreen;
     HomeScreen homeScreen;
     WarningScreen warningScreen;
+    QuitScreen quitScreen;
     RotaryEncoder rotary;
+    Timer runtime;
+    Settings machineSettings;
   };
 
 #endif

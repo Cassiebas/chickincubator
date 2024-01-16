@@ -3,10 +3,11 @@
 void onLeft();
 void onRight();
 void onButtonPress();
+void onButtonHold();
 
 int main() {
     RotaryEncoder rotary;
-    rotary(&onLeft, &onRight, &onButtonPress);
+    rotary(&onLeft, &onRight, &onButtonPress, &onButtonHold);
     return 0;
 }
 
@@ -20,4 +21,8 @@ void onRight() {
 
 void onButtonPress() {
     std::cout << "Rotary button pressed\n";
+}
+
+void onButtonHold() {
+    std::cout << "Rotary button was held\n";
 }

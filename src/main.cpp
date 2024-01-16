@@ -33,32 +33,38 @@ int main() {
   rotateEggTimer.Start();
   pid.Start();
   while (1) {
-    settings.Read();
-    settings.Get("heating.temperature.value", setTemp);
-    settings.Get("heating.PID.P.value", p);
-    settings.Get("heating.PID.I.value", i);
-    settings.Get("heating.PID.D.value", d);
-    settings.Get("rotation.angle.value", turnAngle);
-    settings.Get("rotation.interval.value", turnInterval);
-    pid(p, i, d);
-    pid.SetTemp(setTemp);
-    ui.SetTemperature(pid.GetAvgTemp());
-    ui.SetHumidity(humidity.Read());
-    if (startBrakeTimer) {
-      brakeTimer.Start();
-      startBrakeTimer = false;
+    if (ui.QuitCalled()) {
+      pid(0,0,0);
+      ui.SetTemperature(pid.GetAvgTemp());
+      ui.SetHumidity(humidity.Read());
+    } else {
+      settings.Read();
+      settings.Get("heating.temperature.value", setTemp);
+      settings.Get("heating.PID.P.value", p);
+      settings.Get("heating.PID.I.value", i);
+      settings.Get("heating.PID.D.value", d);
+      settings.Get("rotation.angle.value", turnAngle);
+      settings.Get("rotation.interval.value", turnInterval);
+      pid(p, i, d);
+      pid.SetTemp(setTemp);
+      ui.SetTemperature(pid.GetAvgTemp());
+      ui.SetHumidity(humidity.Read());
+      if (startBrakeTimer) {
+        brakeTimer.Start();
+        startBrakeTimer = false;
+      }
+      if (brakeTimer.Elapsed() >= EGGFULLROT * (turnAngle / 360.0)) {
+        stopMotor();
+        brakeTimer.Stop();
+      }
+      if (motorTurning)
+          motor.Forward();
+      else
+          motor.Brake();
+      // sleep(1);
     }
-    if (brakeTimer.Elapsed() >= EGGFULLROT * (turnAngle / 360.0)) {
-      stopMotor();
-      brakeTimer.Stop();
-    }
-    if (motorTurning)
-        motor.Forward();
-    else
-        motor.Brake();
-    // sleep(1);
   }
-  // pid.Stop();
+  pid.Stop();
   rotateEggTimer.Stop();
   return 0;
 }

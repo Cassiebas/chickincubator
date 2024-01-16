@@ -2,6 +2,7 @@
 #define HOMESCREEN_HPP
 
 #include "Display.hpp"
+#include "Settings.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -20,12 +21,16 @@ class HomeScreen
     std::string ip = NO_INET_STR;
     std::string temperature = "37.5 C°";
     std::string humidity = "50 %";
+    double runtime = 0;
+    Settings machineSettings;
     void UpdateIP();
+    std::string secondsToTime(double seconds);
   public:
     HomeScreen();
     ~HomeScreen();
     void SetOnSwitchScreen(std::function<void()> function);
     void OnButtonPress();
+    void OnButtonHold();
     void Update();
     void SetTemperature(double temperature);
     void SetHumidity(float humidity);

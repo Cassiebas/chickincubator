@@ -76,7 +76,6 @@ void RotaryEncoder::RotaryThreadFunction()
     Button = readGPIO("10");
     left = false;
     right = false;
-    buttonPressed = false;
 
     // Check for left sequence: 01 -> 11 -> 10 -> 00
     if ((sequence & 0b00001111) == 0b00000111/*0b01111000*/) {
@@ -101,32 +100,39 @@ void RotaryEncoder::RotaryThreadFunction()
     }
     if (Button && timerButton.Elapsed() == 0) {
       timerButton.Start();
+      // std::cout << "Timer start\n";
     }
-    else if(Button && timerButton.Elapsed() > 0.2){
+    if (Button && timerButton.Elapsed() > 0.01 && timerButton.Elapsed() <= 0.5) {
       buttonPressed = true;
+      // std::cout << "Looking like the button is pressed\n";
+      // std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    else if(Button && timerButton.Elapsed() > 0.6){
+    if(Button && timerButton.Elapsed() > 0.5){
       buttonPressed = false;
       buttonHeld = true;
+      // std::cout << "Looking like the button is held\n";
     } 
     
     if(!Button)
     {
-      if(buttonPressed){
-        log(Severity::info, "Rotary encoder is pressed.");
-        if(onButtonPress != nullptr)
-          onButtonPress();
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      }
-      if(buttonHeld){
-        log(Severity::info, "Rotary encoder was held.");
-        if(onButtonHold != nullptr)
-          onButtonHold();
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      }
-      buttonHeld = false;
-      buttonPressed = false;
-      timerButton.Stop();
+        if(buttonPressed){
+          log(Severity::info, "Rotary encoder is pressed.");
+          if(onButtonPress != nullptr)
+            onButtonPress();
+          // std::this_thread::sleep_for(std::chrono::milliseconds(200));
+          std::cout << "The button is pressed\n";
+        }
+        if(buttonHeld){
+          log(Severity::info, "Rotary encoder was held.");
+          if(onButtonHold != nullptr)
+            onButtonHold();
+          std::cout << "The button is held\n";
+          // std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
+        buttonHeld = false;
+        buttonPressed = false;
+        timerButton.Stop();
+        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     if (prevA != A && prevB != B) {
     //   std::cout << "prevA,prevB,A,B : " << std::to_string(prevA) << std::to_string(prevB) << std::to_string(A) << std::to_string(B) << "\n";

@@ -14,6 +14,8 @@ void HomeScreen::Update()
   if (ip == NO_INET_STR) {
     UpdateIP();
   }
+  machineSettings.Read();
+  machineSettings.Get("runtime", runtime);
   
   display.Clear();
 
@@ -30,12 +32,24 @@ void HomeScreen::Update()
   display.DrawLine(127, 10, 127, 20);
   display.DrawLine(0, 20, 127, 20);
 
+  display.Print(secondsToTime(runtime), 2, 21);
+  display.DrawLine(0, 20, 0, 32);
+  display.DrawLine(127, 20, 127, 32);
+  display.DrawLine(0, 32, 127, 32);
+
   display.Update();
 }
 
 void HomeScreen::OnButtonPress() {
   std::cout << "Button pressed on home screen\n";
   requestedScreen = "settings";
+  if (OnSwitchScreen != nullptr)
+    OnSwitchScreen();
+}
+
+void HomeScreen::OnButtonHold() {
+  std::cout << "Button held on home screen\n";
+  requestedScreen = "quit";
   if (OnSwitchScreen != nullptr)
     OnSwitchScreen();
 }
@@ -71,4 +85,18 @@ void HomeScreen::UpdateIP() {
   system("rm ip.txt");
   if (ip == "")
     ip = NO_INET_STR;
+}
+
+std::string HomeScreen::secondsToTime(double seconds) {
+    std::cout << "Calculating seconds to time: " << seconds << "\n";
+    int hours = (int)(seconds / 3600);
+    int minutes = ((int)seconds % 3600) / 60;
+    int remainingSeconds = (int)seconds % 60;
+
+    std::ostringstream result;
+    result << std::setfill('0') << std::setw(2) << hours << ":"
+        << std::setw(2) << minutes << ":"
+        << std::setw(2) << remainingSeconds; //hh:mm:ss
+
+    return result.str();
 }

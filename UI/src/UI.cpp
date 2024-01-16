@@ -9,6 +9,7 @@ UI::UI()
   bootScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   homeScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   settingsScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
+  quitScreen.SetOnSwitchScreen([this]() { this->OnSwitchScreen(); });
   uiThread = std::thread(&UI::ThreadCycle, this);
 }
 
@@ -38,6 +39,9 @@ void UI::ThreadCycle()
     case WARNING:
       warningScreen.Update();
       break;
+    case QUIT:
+      quitScreen.Update();
+      break;
     default:
       break;
     }
@@ -60,6 +64,10 @@ void UI::OnButtonPress()
       warningScreen.OnButtonPress();
       warningScreen.Update();
       break;
+    case QUIT:
+      quitScreen.OnButtonPress();
+      quitScreen.Update();
+      break;
     default:
       break;
   }
@@ -72,6 +80,10 @@ void UI::OnRight() {
       settingsScreen.OnRight();
       settingsScreen.Update();
       break;
+    case QUIT:
+      quitScreen.OnRight();
+      quitScreen.Update();
+      break;
     default:
       break;
   }
@@ -83,6 +95,10 @@ void UI::OnLeft() {
     case SETTINGS:
       settingsScreen.OnLeft();
       settingsScreen.Update();
+      break;
+    case QUIT:
+      quitScreen.OnLeft();
+      quitScreen.Update();
       break;
     default:
       break;
@@ -125,6 +141,9 @@ std::string UI::ScreenToString(UI::Screen screen) {
     case WARNING:
       return "warning";
       break;
+    case QUIT:
+      return "quit";
+      break;
     default:
       break;
   }
@@ -144,6 +163,9 @@ UI::Screen UI::StringToScreen(std::string screen) {
   if (screen == "warning") {
     return WARNING;
   }
+  if (screen == "quit") {
+    return QUIT;
+  }
   return BOOT;
 }
 
@@ -162,6 +184,9 @@ void UI::OnSwitchScreen() {
   case WARNING:
     SwitchScreen(warningScreen.RequestedScreen());
     break;
+  case QUIT:
+    SwitchScreen(quitScreen.RequestedScreen());
+    break;
   default:
     break;
   }
@@ -175,4 +200,8 @@ void UI::SetTemperature(double temperature)
 void UI::SetHumidity(float humidity)
 {
   homeScreen.SetHumidity(humidity);
+}
+
+bool UI::QuitCalled() {
+  return quitScreen.SelectedOption();
 }
