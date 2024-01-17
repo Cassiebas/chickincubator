@@ -46,15 +46,15 @@ ssd1306_framebuffer_t* Display::GetBufferData()
 
 int Display::PutPixel(uint8_t x, uint8_t y, bool pixelState)
 {
-  uint8_t w = fbp->width;
-  uint8_t h = fbp->height;
+  const uint8_t w = fbp->width;
+  const uint8_t h = fbp->height;
 
   // based on the page arrangement in GDDRAM as per the datasheet
   if (!(x < w && y < h))
     return -1;
 
   // Calculate the index in the buffer based on the page arrangement in GDDRAM
-  int bufferIndex = (int)(x + (y / 8) * w);
+  const int bufferIndex = (int)(x + (y / 8) * w);
 
   if (pixelState)
   {
@@ -62,11 +62,7 @@ int Display::PutPixel(uint8_t x, uint8_t y, bool pixelState)
   }
   else
   {
-    // if (!((fbp->buffer[bufferIndex] & (uint8_t)(1 << (y & 7))) == (uint8_t)(1 << (y & 7)))) { //if chosen pixel is already off
     fbp->buffer[bufferIndex] &= (uint8_t)~(1 << (y & 7)); //0b11101111
-    // } else {
-    //   fbp->buffer[bufferIndex] |= (uint8_t)(1 << (y & 7));
-    // }
   }
   return 0;
 }
@@ -88,7 +84,6 @@ int Display::Draw(std::vector<std::vector<bool>> buffer, unsigned int x, unsigne
   }
   for (unsigned int y_ = y; y_ < buffer.size() + y; y_++) {
     for (unsigned int x_ = x; x_ < buffer.at(0).size() + x; x_++) {
-      // std::cout << "Putting pixel {" << x_ << "," << y_ << "} to: " << buffer.at(y_ - y).at(x_ - x) << "\n";
       PutPixel((uint8_t)x_, (uint8_t)y_, buffer.at(y_ - y).at(x_ - x));
     }
   }
@@ -97,8 +92,8 @@ int Display::Draw(std::vector<std::vector<bool>> buffer, unsigned int x, unsigne
 
 int Display::DrawChar(uint8_t x, uint8_t y, std::string character)
 {
-  uint8_t w = fbp->width;
-  uint8_t h = fbp->height;
+  const uint8_t w = fbp->width;
+  const uint8_t h = fbp->height;
 
   // Check if the coordinates are within bounds
   if (x < w && y < h)
@@ -157,9 +152,7 @@ int Display::Print(std::string message, uint8_t x, uint8_t y) {
 
 int Display::Update() {
   int result;
-  // oled = OpenSSD1306(filename, i2c_address, 128, 32);
   result = UpdateDisplay(oled, fbp);
-  // CloseSSD1306(oled);
   return result;
 }
 
@@ -167,8 +160,8 @@ int Display::DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
   // Handle vertical line
   if (x0 == x1) {
-    uint8_t start_y = (y0 < y1) ? y0 : y1;
-    uint8_t end_y = (y0 < y1) ? y1 : y0;
+    const uint8_t start_y = (y0 < y1) ? y0 : y1;
+    const int8_t end_y = (y0 < y1) ? y1 : y0;
     for (uint8_t y = start_y; y <= end_y; y++) {
       PutPixel(x0, y, true);
     }
@@ -177,8 +170,8 @@ int Display::DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 
   // Handle horizontal line
   if (y0 == y1) {
-    uint8_t start_x = (x0 < x1) ? x0 : x1;
-    uint8_t end_x = (x0 < x1) ? x1 : x0;
+    const uint8_t start_x = (x0 < x1) ? x0 : x1;
+    const uint8_t end_x = (x0 < x1) ? x1 : x0;
     for (uint8_t x = start_x; x <= end_x; x++) {
       PutPixel(x, y0, true);
     }
