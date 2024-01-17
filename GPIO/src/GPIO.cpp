@@ -38,6 +38,11 @@ bool GPIO::SetMode(char gpioPin, char ioValue)
   return SetMode(std::string(1, gpioPin), ioValue);
 }
 
+bool GPIO::SetMode(int gpioPin, char ioValue)
+{
+  return SetMode(std::to_string(gpioPin), ioValue);
+}
+
 bool GPIO::Set(const std::string &gpioPin, bool setValue)
 {
   std::string buffer = gpioPin + (setValue ? "1" : "0");
@@ -58,6 +63,11 @@ bool GPIO::Set(char gpioPin, bool setValue)
   return Set(std::string(1, gpioPin), setValue);
 }
 
+bool GPIO::Set(int gpioPin, bool setValue)
+{
+  return Set(std::to_string(gpioPin), setValue);
+}
+
 int GPIO::Get(const std::string &gpioPin)
 {
   // Reading from the device file
@@ -76,4 +86,9 @@ int GPIO::Get(char gpioPin)
 {
   char *tmp = &gpioPin;
   return Get(tmp);
+}
+
+int GPIO::Get(int gpioPin)
+{
+  return Get(std::to_string(gpioPin));
 }

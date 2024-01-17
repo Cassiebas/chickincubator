@@ -17,7 +17,12 @@ void Settings::SetPath(std::string path) {
 
 void Settings::Read() {
     data.clear();
-    pt::read_json(filePath, data);
+    try {
+        pt::read_json(filePath, data);
+    } 
+    catch (...) {
+        
+    }
 }
 
 void Settings::Write() {

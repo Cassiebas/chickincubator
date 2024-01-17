@@ -22,7 +22,6 @@ class RotaryEncoder {
     std::thread rotaryThread;
     bool left, right, buttonPressed, buttonHeld;
     Log log;
-    std::string path;
     Timer timerButton;
     GPIO gpio;
     
@@ -35,8 +34,6 @@ class RotaryEncoder {
     bool IsLeft() const; 
     bool IsRight() const; 
     bool IsButtonPressed() const;
-    void writeGPIO(const std::string filename, const std::string value);
-    int readGPIO(std::string pin);
 
     void operator()(std::function<void()> onLeft = nullptr, std::function<void()> onRight = nullptr, std::function<void()> onButtonPress = nullptr, std::function<void()> onButtonHold = nullptr);
     void SetOnLeft(std::function<void()> onLeft);

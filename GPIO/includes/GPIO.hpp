@@ -45,14 +45,17 @@ class GPIO
     // Set GPIO IO state
     bool SetMode(const std::string &gpioPin, char ioValue);
     bool SetMode(char gpioPin, char ioValue);
+    bool SetMode(int gpioPin, char ioValue);
     
     // Set GPIO Input state
     bool Set(const std::string &gpioPin, bool setValue); 
     bool Set(char gpioPin, bool setValue);
+    bool Set(int gpioPin, bool setValue);
 
     // Get GPIO state
     int Get(const std::string &gpioPin);
     int Get(char gpioPin);
+    int Get(int gpioPin);
 };
 
 #endif

@@ -16,11 +16,15 @@ void RotateEgg();
 void stopMotor();
 
 int main() {
+  double setTemp = 0, p = 0, i = 0, d = 0, turnInterval = 0;
+  double runtime = 0, hum = 0, temp = 0;
   UI ui;
   Motor motor;
   Humidity humidity;
   Settings settings;
-  double setTemp = 0, p = 0, i = 0, d = 0, turnInterval = 0;
+  Settings machineSettings;
+  machineSettings.SetPath(("../settings/machinesettings.json"));
+  machineSettings.Get("runtime", runtime);
   settings.Get("heating.temperature.value", setTemp);
   settings.Get("heating.PID.P.value", p);
   settings.Get("heating.PID.I.value", i);
@@ -33,11 +37,17 @@ int main() {
   rotateEggTimer.Start();
   pid.Start();
   while (1) {
+    temp = pid.GetAvgTemp();
+    hum = humidity.Read();
     if (ui.QuitCalled()) {
       pid(0,0,0);
-      ui.SetTemperature(pid.GetAvgTemp());
-      ui.SetHumidity(humidity.Read());
+      ui.SetTemperature(temp);
+      ui.SetHumidity(hum);
+
     } else {
+      //Get settings:
+      machineSettings.Read();
+      machineSettings.Get("runtime", runtime);
       settings.Read();
       settings.Get("heating.temperature.value", setTemp);
       settings.Get("heating.PID.P.value", p);
@@ -45,10 +55,12 @@ int main() {
       settings.Get("heating.PID.D.value", d);
       settings.Get("rotation.angle.value", turnAngle);
       settings.Get("rotation.interval.value", turnInterval);
+      //Update values:
       pid(p, i, d);
       pid.SetTemp(setTemp);
-      ui.SetTemperature(pid.GetAvgTemp());
-      ui.SetHumidity(humidity.Read());
+      ui.SetTemperature(temp);
+      ui.SetHumidity(hum);
+      //Control motor:
       if (startBrakeTimer) {
         brakeTimer.Start();
         startBrakeTimer = false;

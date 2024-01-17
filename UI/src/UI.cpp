@@ -54,6 +54,101 @@ void UI::ThreadCycle()
       machineSettings.Set("runtime", time + runtime.Elapsed());
       runtime.Reset();
       machineSettings.Write();
+            //Humidity values change after the warning for it
+      if (messagesOnTrigger.at(5).triggered) {  
+        messagesOnTrigger.at(2).value = 75; //reset humidity limits
+        messagesOnTrigger.at(3).value = 65;
+      }
+      //Check for message triggers
+      int days = (int)((time + runtime.Elapsed()) / 86400);
+      for (unsigned int i = 0; i < messagesOnTrigger.size(); i++) {
+        MessageOnTrigger &messageOnTrigger = messagesOnTrigger.at(i);
+        if (messageOnTrigger.triggered) { 
+          if (messageOnTrigger.timeout > 0) {
+            if (msgTimer[i].Elapsed() == 0) {
+              msgTimer[i].Start();
+            }
+            if (msgTimer[i].Elapsed()/60 > messageOnTrigger.timeout) {
+              msgTimer[i].Stop();
+              messageOnTrigger.triggered = false;
+            }
+          }
+          continue; //skip triggered messages
+        }
+        if (messageOnTrigger.trigger == "day") {
+          if (messageOnTrigger.operation == ">") {
+            if (days > (int)messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+          if (messageOnTrigger.operation == "<") {
+            if (days < (int)messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+          if (messageOnTrigger.operation == "=") {
+            if (days == (int)messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+        }
+        if (messageOnTrigger.trigger == "humidity") {
+          if (messageOnTrigger.operation == ">") {
+            if (hum > messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+          if (messageOnTrigger.operation == "<") {
+            if (hum < messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+          if (messageOnTrigger.operation == "=") {
+            if (hum == messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+        }
+        if (messageOnTrigger.trigger == "temperature") {
+          if (messageOnTrigger.operation == ">") {
+            if (temp > messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+          if (messageOnTrigger.operation == "<") {
+            if (temp < messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+          if (messageOnTrigger.operation == "=") {
+            if (temp == messageOnTrigger.value) {
+              Warning(messageOnTrigger.message);
+              messageOnTrigger.triggered = true;
+            }
+          }
+        }
+      }
+    }
+    if (QuitCalled()) {
+      machineSettings.Set("runtime", 0);
+      machineSettings.Write();
+      runtime.Reset();
+      eggHatched = false;
+      for (unsigned int i = 0; i < messagesOnTrigger.size(); i++) {
+        MessageOnTrigger &messageOnTrigger = messagesOnTrigger.at(i);
+        msgTimer[i].Reset();
+        messageOnTrigger.triggered = false;
+      }
+      messagesOnTrigger.at(2).value = 55; //reset humidity limits
+      messagesOnTrigger.at(3).value = 45;
     }
   }
 }
@@ -218,11 +313,13 @@ void UI::OnSwitchScreen() {
 
 void UI::SetTemperature(double temperature)
 {
+  temp = temperature;
   homeScreen.SetTemperature(temperature);
 }
 
 void UI::SetHumidity(float humidity)
 {
+  hum = humidity;
   homeScreen.SetHumidity(humidity);
 }
 

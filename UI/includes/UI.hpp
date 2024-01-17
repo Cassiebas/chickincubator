@@ -13,6 +13,16 @@
 #include "RotaryEncoder.hpp"
 #include "Settings.hpp"
 
+struct MessageOnTrigger {
+  std::string message;
+  std::string trigger;
+  std::string operation; 
+  double value;
+  double timeout = -1; //in minutes, how long to wait for to reset the message
+  bool triggered = false;
+};
+
+
 class UI
 {
   public:
@@ -53,6 +63,18 @@ class UI
     RotaryEncoder rotary;
     Timer runtime;
     Settings machineSettings;
+    bool eggHatched = false;
+    double temp, hum;
+    std::vector<MessageOnTrigger> messagesOnTrigger = { //keep this order, otherwise the .at calls have the wrong message
+      {"Temperature is too high for the eggs!", "temperature", ">", 40.5, 10}, //TODO: look into why the timeout is not accurate
+      {"Temperature is too low for the eggs!", "temperature", "<", 35, 10},
+      {"Humidity is too high for the eggs!", "humidity", ">", 55, 30},
+      {"Humidity is too low for the eggs!", "humidity", "<", 45, 30},
+      {"Eggs should have hatched now!", "day", "=", 21},
+      {"Humidity should now be held at 65-75%", "day", "=", 18},
+      {"Change flooring to a non-slip surface", "day", "=", 18}
+    };
+    Timer msgTimer[7]; //7 messages
   };
 
 #endif

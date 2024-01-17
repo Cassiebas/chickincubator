@@ -90,12 +90,15 @@ void HomeScreen::UpdateIP() {
 
 std::string HomeScreen::secondsToTime(double seconds) {
     // std::cout << "Calculating seconds to time: " << seconds << "\n";
+    int days = (int)(seconds / 86400);
     int hours = (int)(seconds / 3600);
     int minutes = ((int)seconds % 3600) / 60;
     int remainingSeconds = (int)seconds % 60;
 
     std::ostringstream result;
-    result << std::setfill('0') << std::setw(2) << hours << ":"
+    result << std::setfill('0') 
+        << std::setw(2) << days << "d " 
+        << std::setw(2) << hours << ":"
         << std::setw(2) << minutes << ":"
         << std::setw(2) << remainingSeconds; //hh:mm:ss
 
