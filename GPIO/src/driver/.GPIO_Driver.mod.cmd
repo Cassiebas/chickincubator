@@ -1,1 +1,0 @@
-cmd_/home/pi/chickincubator/GPIO/src/driver/GPIO_Driver.mod := printf '%s\n'   GPIO_Driver.o | awk '!x[$$0]++ { print("/home/pi/chickincubator/GPIO/src/driver/"$$0) }' > /home/pi/chickincubator/GPIO/src/driver/GPIO_Driver.mod

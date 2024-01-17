@@ -2,6 +2,32 @@
 #include <unistd.h>
 #include <fstream>
 
+RotaryEncoder::RotaryEncoder() :
+  threadRunning(false),
+  onLeft(nullptr),
+  onRight(nullptr),
+  onButtonPress(nullptr),
+  log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true)),
+  path("/dev/gpio_driver_egg_incubator")
+{
+  buttonPressed = false;
+  // // Export the pin
+  // writeGPIO("export", "11");
+  // // sleep(1);
+  // // Set the pin as an output
+  // writeGPIO("gpio11/direction", "in");
+  // // Export the pin
+  // writeGPIO("export", "10");
+  // // sleep(1);
+  // // Set the pin as an output
+  // writeGPIO("gpio10/direction", "in");
+  // // Export the pin
+  // writeGPIO("export", "9");
+  // // sleep(1);
+  // // Set the pin as an output
+  // writeGPIO("gpio9/direction", "in");
+}
+
 void RotaryEncoder::writeGPIO(const std::string filename, const std::string value)
 {
   std::ofstream file((path + filename).c_str());
@@ -27,26 +53,6 @@ int RotaryEncoder::readGPIO(std::string pin) {
   return value;
 }
 
-RotaryEncoder::RotaryEncoder() : threadRunning(false), onLeft(nullptr), onRight(nullptr), onButtonPress(nullptr), log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true)), path("/sys/class/gpio/")
-{
-  buttonPressed = false;
-  // Export the pin
-  writeGPIO("export", "11");
-  // sleep(1);
-  // Set the pin as an output
-  writeGPIO("gpio11/direction", "in");
-  // Export the pin
-  writeGPIO("export", "10");
-  // sleep(1);
-  // Set the pin as an output
-  writeGPIO("gpio10/direction", "in");
-  // Export the pin
-  writeGPIO("export", "9");
-  // sleep(1);
-  // Set the pin as an output
-  writeGPIO("gpio9/direction", "in");
-}
-
 RotaryEncoder::~RotaryEncoder()
 {
   if (rotaryThread.joinable()) {
@@ -56,9 +62,9 @@ RotaryEncoder::~RotaryEncoder()
 
 void RotaryEncoder::RotaryThreadFunction()
 {
-  // GPIO gpio;
-  // gpio.SetMode(GPIO_11, INPUT);
-  // gpio.SetMode(GPIO_9, INPUT);
+  gpio.SetMode(GPIO_11, INPUT);
+  gpio.SetMode(GPIO_10, INPUT);
+  gpio.SetMode(GPIO_9, INPUT);
   uint8_t sequence = 0x00;
   while (threadRunning) {
     // std::cout << "Rotary threadcycle\n";

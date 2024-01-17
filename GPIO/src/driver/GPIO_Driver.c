@@ -3,7 +3,7 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/uaccess.h>
-#include <linux/gpio.h>
+#include <linux/gpio/consumer.h>
 #include <linux/kernel.h>
 
 /* Meta Information */
@@ -24,37 +24,30 @@ static struct cdev my_device;
  */
 static ssize_t driver_read(struct file *File, char *user_buffer, size_t count, loff_t *offs)
 {
-  int not_copied, delta, pin_value_int;
-  char tmp = '0';
+  int not_copied, delta, tmp;
   char gpio_pin[3] = {0};
+  struct gpio_desc *desc;
 
   /* Copy data from user_buffer */
   not_copied = copy_from_user(gpio_pin, user_buffer, count > 1 ? 2 : 1);
   gpio_pin[count > 1 ? 2 : 1] = '\0'; // Null-terminate the string
 
-  if(count > 1) {
-    printk("a string\n");
-    // string is sent
-    pin_value_int = simple_strtol(gpio_pin, NULL, 10);
-  }
+  if(count > 1)
+    printk("GPIO pin to read: %s\n", gpio_pin);
   else
-  {
-    printk("a char\n");
-    // char is sent
-    pin_value_int = gpio_pin[0] - '0';
-  }
-  printk("GPIO pin to read: %d\n", pin_value_int);
+    printk("GPIO pin to read: %s\n", gpio_pin);
 
-  /* Check if the GPIO pin is valid */
-  if (!gpio_is_valid(pin_value_int))
-  {
-    printk("GPIO pin %d is not valid!\n", pin_value_int);
-    return -EINVAL; // Return an error code
+  /* Obtain a GPIO descriptor */
+  desc = gpiod_get(NULL, gpio_pin, GPIOD_IN);
+
+  if (IS_ERR(desc)) {
+    printk("Failed to get GPIO descriptor for pin %s\n", gpio_pin);
+    return PTR_ERR(desc);
   }
 
-  printk("%d's value is %d\n", pin_value_int, gpio_get_value(pin_value_int));
-  tmp = gpio_get_value(pin_value_int) + '0';
-
+  tmp = gpiod_get_value(desc);
+  printk("%s's value is %u\n", gpio_pin, tmp);
+  
   /* Copy data to user_buffer */
   if (copy_to_user(user_buffer, &tmp, 1)) {
     printk("Failed to copy data to user_buffer\n");
@@ -71,9 +64,11 @@ static ssize_t driver_read(struct file *File, char *user_buffer, size_t count, l
  */
 static ssize_t driver_write(struct file *File, const char *user_buffer, size_t count, loff_t *offs)
 {
-  int not_copied, delta, pin_value_int, set_value_int;
+  int not_copied, delta;
+  char set_value_int = 0;
   char io_set_value = 0;
   char gpio_pin[3] = {0};
+  struct gpio_desc *desc;
 
   /* Ensure there is at least one byte to copy */
   if (count < 1)
@@ -86,14 +81,12 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
   not_copied = copy_from_user(gpio_pin, user_buffer, count > 1 ? 2 : 1);
   gpio_pin[count > 1 ? 2 : 1] = '\0'; // Null-terminate the string
 
-  pin_value_int = simple_strtol(gpio_pin, NULL, 10);
   if (count == 2) {
     printk("A char was sent\n");
-    pin_value_int = gpio_pin[0] - '0';
     if (!(gpio_pin[1] == 'O' || gpio_pin[1] == 'I'))
     {
-      set_value_int = gpio_pin[1] - '0';
-      printk("You are sending an output state:%d \n", set_value_int);
+      set_value_int = gpio_pin[1];
+      printk("You are sending an output state:%c \n", set_value_int);
     }
     else
     {
@@ -103,58 +96,48 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
   else
   {
     printk("A string was sent\n");
-    pin_value_int = simple_strtol(gpio_pin, NULL, 10);
     not_copied += copy_from_user(&io_set_value, user_buffer + 2, 1);
     if (!(io_set_value == 'O' || io_set_value == 'I'))
     {
-      set_value_int = io_set_value - '0';
-      printk("You are sending an output state:%d \n", set_value_int);
+      set_value_int = io_set_value;
+      printk("You are sending an output state:%c \n", set_value_int);
     }
   }
 
-  // Check if the GPIO pin is already valid and requested
-  if (!gpio_is_valid(pin_value_int))
+  desc = gpiod_get(NULL, gpio_pin, GPIOD_ASIS);
+  if (IS_ERR(desc))
   {
-    printk("GPIO pin %d is not valid!\n", pin_value_int);
-    return -1;
-  }
-
-  if (gpio_request(pin_value_int, "rpi-gpio"))
-  {
-    printk("Can not allocate pin %d\n", pin_value_int);
-    goto GpioError;
+    printk("Error obtaining GPIO descriptor: %ld\n", PTR_ERR(desc));
   }
 
   if (io_set_value == 'I')
   {
-    if (gpio_direction_input(pin_value_int))
+    if (gpiod_direction_input(desc))
     {
-      printk("GPIO pin %d is already set to input!\n", pin_value_int);
-      goto GpioError;
+      printk("GPIO pin %s is already set to input!\n", gpio_pin);
     }
-    printk("GPIO pin %d, set as Input\n", pin_value_int);
+    printk("GPIO pin %s, set as Input\n", gpio_pin);
   }
   else if (io_set_value == 'O')
   {
-    if (gpio_direction_output(pin_value_int, 0))
+    if (gpiod_direction_output(desc, 0))
     {
-      printk("GPIO pin %d is already set to output!\n", pin_value_int);
-      goto GpioError;
+      printk("GPIO pin %s is already set to output!\n", gpio_pin);
     }
-    printk("GPIO pin %d, set as output\n", pin_value_int);
+    printk("GPIO pin %s, set as output\n", gpio_pin);
   }
 
 	switch(set_value_int) {
 		case 0:
-        if(!(io_set_value == 'O' || io_set_value == 'I'))
-        {
-          printk("Setting pin output LOW\n");
-          gpio_set_value(pin_value_int, 0);
-        }
+      if(!(io_set_value == 'O' || io_set_value == 'I'))
+      {
+        printk("Setting pin output LOW\n");
+        gpiod_set_value(desc, 0);
+      }
 			break;
 		case 1:
-    printk("Setting pin output HIGH\n");
-			gpio_set_value(pin_value_int, 1);
+      printk("Setting pin output HIGH\n");
+      gpiod_set_value(desc, 1);
 			break;
 		default:
 			printk("Invalid Input!\n");
@@ -163,9 +146,6 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
 
   /* Calculate data */
   delta = min(count, sizeof(gpio_pin) + sizeof(io_set_value)) - not_copied;
-
-GpioError:
-	gpio_free(pin_value_int);
 
   return delta;
 }
@@ -249,9 +229,6 @@ ClassError:
  */
 static void __exit ModuleExit(void)
 {
-  gpio_set_value(4, 0);
-  gpio_free(17);
-  gpio_free(4);
   cdev_del(&my_device);
   device_destroy(my_class, my_device_nr);
   class_destroy(my_class);

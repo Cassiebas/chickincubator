@@ -4,6 +4,7 @@
 // #include "GPIO.hpp"
 #include "Log.hpp"
 #include "Timer.hpp"
+#include "GPIO.hpp"
 
 #include <iostream>
 #include <functional>
@@ -23,7 +24,8 @@ class RotaryEncoder {
     Log log;
     std::string path;
     Timer timerButton;
-
+    GPIO gpio;
+    
     void RotaryThreadFunction();
 
   public:
