@@ -18,7 +18,7 @@ After=DisplayDriver.service
 
 [Service]
 Type=oneshot
-ExecStart=dtoverlay $(pwd)/GPIO.dtbo
+ExecStart=dtoverlay $(pwd)/gpio.dtbo
 
 [Install]
 WantedBy=multi-user.target
@@ -33,7 +33,7 @@ After=GPIODTO.service
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/insmod $(pwd)/ssd1306_i2c.ko
+ExecStart=/sbin/insmod $(pwd)/GPIO_Driver.ko
 
 [Install]
 WantedBy=multi-user.target
