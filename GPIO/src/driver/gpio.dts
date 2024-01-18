@@ -1,0 +1,43 @@
+/dts-v1/;
+/plugin/;
+/ {
+	compatible = "brcm,bcm2835";
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			my_device {
+				compatible = "gpio,mygpiodev";
+				status = "okay";
+				label = "Test";
+				my_value = <12>;
+                0-gpio = <&gpio 0 0>;
+				1-gpio = <&gpio 1 0>;
+				2-gpio = <&gpio 2 0>;
+				3-gpio = <&gpio 3 0>;
+				4-gpio = <&gpio 4 0>;
+				5-gpio = <&gpio 5 0>;
+				6-gpio = <&gpio 6 0>;
+				7-gpio = <&gpio 7 0>;
+				8-gpio = <&gpio 8 0>;
+				9-gpio = <&gpio 9 0>;
+				10-gpio = <&gpio 10 0>;
+				11-gpio = <&gpio 11 0>;
+				12-gpio = <&gpio 12 0>;
+				13-gpio = <&gpio 13 0>;
+				14-gpio = <&gpio 14 0>;
+				15-gpio = <&gpio 15 0>;
+				16-gpio = <&gpio 16 0>;
+				17-gpio = <&gpio 17 0>;
+				18-gpio = <&gpio 18 0>;
+				19-gpio = <&gpio 19 0>;
+				20-gpio = <&gpio 20 0>;
+                21-gpio = <&gpio 21 0>;
+                22-gpio = <&gpio 22 0>;
+                23-gpio = <&gpio 23 0>;
+                24-gpio = <&gpio 24 0>;
+                25-gpio = <&gpio 25 0>;
+                26-gpio = <&gpio 26 0>;     
+			};
+		};
+	};
+};
