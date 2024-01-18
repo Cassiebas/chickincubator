@@ -7,7 +7,6 @@ TARGET := EggIncubator
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
 INCLUDES += $(addprefix -I, ../Timer/includes)
-INCLUDES += $(addprefix -I, ../HeatingElement/includes)
 
 all: $(OBJS)
 

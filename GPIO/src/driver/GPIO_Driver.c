@@ -113,7 +113,10 @@ static ssize_t driver_write(struct file *File, const char *user_buffer, size_t c
 
     gpio_pin[2] = '\0'; // Null-terminate the string
   }
-  kstrtol(gpio_pin, 10, &gpio_pin_int);
+  if (kstrtol(gpio_pin, 10, &gpio_pin_int)) {
+    printk("Failed to convert GPIO pin to integer\n");
+    return -EINVAL; // Return an error code
+  }
 
   printk("GPIO_PIN send : %ld\n", gpio_pin_int);
   printk("GPIO_PIN state : %c\n", io_set_value);

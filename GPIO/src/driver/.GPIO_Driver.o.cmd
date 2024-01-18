@@ -920,6 +920,8 @@ deps_/home/pi/chickincubator/GPIO/src/driver/GPIO_Driver.o := \
     $(wildcard include/config/HAVE_MOD_ARCH_SPECIFIC) \
     $(wildcard include/config/MODULES_USE_ELF_REL) \
     $(wildcard include/config/MODULES_USE_ELF_RELA) \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/proc_fs.h \
+    $(wildcard include/config/PROC_PID_ARCH_STATUS) \
   /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/cdev.h \
   /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/device.h \
     $(wildcard include/config/GENERIC_MSI_IRQ_DOMAIN) \
@@ -962,10 +964,35 @@ deps_/home/pi/chickincubator/GPIO/src/driver/GPIO_Driver.o := \
   /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/device/driver.h \
   /usr/src/linux-headers-6.1.0-rpi7-common-rpi/arch/arm64/include/asm/device.h \
   /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/pm_wakeup.h \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/property.h \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/fwnode.h \
   /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/gpio/consumer.h \
     $(wildcard include/config/GPIOLIB) \
     $(wildcard include/config/OF_GPIO) \
     $(wildcard include/config/GPIO_SYSFS) \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/mod_devicetable.h \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/of_device.h \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/cpu.h \
+    $(wildcard include/config/PM_SLEEP_SMP) \
+    $(wildcard include/config/PM_SLEEP_SMP_NONZERO_CPU) \
+    $(wildcard include/config/ARCH_HAS_CPU_FINALIZE_INIT) \
+    $(wildcard include/config/HOTPLUG_SMT) \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/node.h \
+    $(wildcard include/config/HMEM_REPORTING) \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/cpuhotplug.h \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/platform_device.h \
+    $(wildcard include/config/SUSPEND) \
+    $(wildcard include/config/HIBERNATE_CALLBACKS) \
+    $(wildcard include/config/SUPERH) \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/of_platform.h \
+    $(wildcard include/config/OF_ADDRESS) \
+    $(wildcard include/config/OF_DYNAMIC) \
+  /usr/src/linux-headers-6.1.0-rpi7-common-rpi/include/linux/of.h \
+    $(wildcard include/config/SPARC) \
+    $(wildcard include/config/OF_PROMTREE) \
+    $(wildcard include/config/OF_KOBJ) \
+    $(wildcard include/config/OF_NUMA) \
+    $(wildcard include/config/OF_OVERLAY) \
 
 /home/pi/chickincubator/GPIO/src/driver/GPIO_Driver.o: $(deps_/home/pi/chickincubator/GPIO/src/driver/GPIO_Driver.o)
 

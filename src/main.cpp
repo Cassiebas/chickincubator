@@ -43,7 +43,6 @@ int main() {
       pid(0,0,0);
       ui.SetTemperature(temp);
       ui.SetHumidity(hum);
-
     } else {
       //Get settings:
       machineSettings.Read();

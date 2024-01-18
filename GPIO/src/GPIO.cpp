@@ -19,7 +19,7 @@ GPIO::~GPIO()
   close(fd);
 }
 
-bool GPIO::SetMode(const std::string &gpioPin, char ioValue)
+bool GPIO::SetMode(const std::string gpioPin, char ioValue)
 {
   std::string buffer = gpioPin + ioValue;
   // Writing to GPIO driver
@@ -28,7 +28,7 @@ bool GPIO::SetMode(const std::string &gpioPin, char ioValue)
   {
     printf("Error writing to the device file\n");
     close(fd);
-    return -1;
+    return false;
   }
   return true; // Placeholder return value
 }
@@ -43,7 +43,7 @@ bool GPIO::SetMode(int gpioPin, char ioValue)
   return SetMode(std::to_string(gpioPin), ioValue);
 }
 
-bool GPIO::Set(const std::string &gpioPin, bool setValue)
+bool GPIO::Set(const std::string gpioPin, bool setValue)
 {
   std::string buffer = gpioPin + (setValue ? "1" : "0");
 
@@ -63,35 +63,32 @@ bool GPIO::Set(char gpioPin, bool setValue)
   return Set(std::string(1, gpioPin), setValue);
 }
 
-int GPIO::Get(const char *gpioPin)
+bool GPIO::Set(int gpioPin, bool setValue)
+{
+  return Set(std::to_string(gpioPin), setValue);
+}
+
+int GPIO::Get(const std::string gpioPin)
 {
   // Reading from the device file
-  char read_buffer[3] = {0};
-  sprintf(read_buffer, "%s", gpioPin);
-  printf("Read character: %s\n", read_buffer);
-  retVal = read(fd, read_buffer, sizeof(read_buffer));
+  char buffer[3] = {0}; 
+  sprintf(buffer, "%s", gpioPin.c_str());
+  retVal = read(fd, buffer, sizeof(buffer));
   if (retVal < 0)
   {
     printf("Error reading from the device file\n");
     close(fd);
     return -1;
   }
-  return read_buffer[0] - '0';
+  return buffer[0] - '0';
 }
 
 int GPIO::Get(char gpioPin)
 {
-  // Reading from the device file
-  char read_buffer[2] = {0};
-  read_buffer[0] = gpioPin;
-  printf("Read character: %c\n", read_buffer[0]);
-  
-  retVal = read(fd, read_buffer, sizeof(read_buffer));
-  if (gpioPin < 0)
-  {
-    printf("Error reading from the device file\n");
-    close(fd);
-    return -1;
-  }
-  return read_buffer[0] - '0';
+  return Get(std::to_string(gpioPin));
+}
+
+int GPIO::Get(int gpioPin)
+{
+  return Get(std::to_string(gpioPin));
 }

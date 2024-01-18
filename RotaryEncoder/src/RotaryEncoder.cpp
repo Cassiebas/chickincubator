@@ -10,50 +10,10 @@ RotaryEncoder::RotaryEncoder() :
   log(Log("../logs/", "eggcubator.log", "RotaryEncoder", true))
 {
   buttonPressed = false;
-  gpio.SetMode(GPIO_11, INPUT);
-  gpio.SetMode(GPIO_10, INPUT);
-  gpio.SetMode(GPIO_9, INPUT);
-  // // Export the pin
-  // writeGPIO("export", "11");
-  // // sleep(1);
-  // // Set the pin as an output
-  // writeGPIO("gpio11/direction", "in");
-  // // Export the pin
-  // writeGPIO("export", "10");
-  // // sleep(1);
-  // // Set the pin as an output./b 
-  // writeGPIO("gpio10/direction", "in");
-  // // Export the pin
-  // writeGPIO("export", "9");
-  // // sleep(1);
-  // // Set the pin as an output
-  // writeGPIO("gpio9/direction", "in");
+  gpio.SetMode(11, INPUT);
+  gpio.SetMode(10, INPUT);
+  gpio.SetMode(9, INPUT);
 }
-
-// void RotaryEncoder::writeGPIO(const std::string filename, const std::string value)
-// {
-//   std::ofstream file((path + filename).c_str());
-
-//   if (!file)
-//   {
-//     std::cerr << "Unable to open file: " + (path + filename) << std::endl;
-//     return;
-//   }
-//   file << value;
-//   file.close();
-// }
-
-// int RotaryEncoder::readGPIO(std::string pin) {
-//   // Read the GPIO pin state
-//   std::ifstream valueFile("/sys/class/gpio/gpio" + pin + "/value");
-//   if (!valueFile.is_open()) {
-//     throw std::runtime_error("Failed to open GPIO value file.");
-//   }
-//   int value;
-//   valueFile >> value;
-
-//   return value;
-// }
 
 RotaryEncoder::~RotaryEncoder()
 {
@@ -69,8 +29,8 @@ void RotaryEncoder::RotaryThreadFunction()
     // std::cout << "Rotary threadcycle\n";
     // A = (uint8_t)gpio.Get(GPIO_11);
     // B = (uint8_t)gpio.Get(GPIO_9);
-    A = gpio.Get("11");
-    B = gpio.Get("9");
+    A = gpio.Get(11);
+    B = gpio.Get(9);
     // if (A != prevA || B != prevB) {
     sequence <<= 1;
     sequence |= (uint8_t)A;
@@ -78,7 +38,7 @@ void RotaryEncoder::RotaryThreadFunction()
     sequence |= (uint8_t)B;
     // }
     // Button = (uint8_t)gpio.Get(GPIO_10);
-    Button = gpio.Get("10");
+    Button = gpio.Get(10);
     left = false;
     right = false;
 
@@ -125,13 +85,13 @@ void RotaryEncoder::RotaryThreadFunction()
           if(onButtonPress != nullptr)
             onButtonPress();
           // std::this_thread::sleep_for(std::chrono::milliseconds(200));
-          std::cout << "The button is pressed\n";
+          // std::cout << "The button is pressed\n";
         }
         if(buttonHeld){
           log(Severity::info, "Rotary encoder was held.");
           if(onButtonHold != nullptr)
             onButtonHold();
-          std::cout << "The button is held\n";
+          // std::cout << "The button is held\n";
           // std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
         buttonHeld = false;

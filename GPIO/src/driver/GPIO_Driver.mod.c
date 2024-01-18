@@ -30,28 +30,29 @@ MODULE_INFO(retpoline, "Y");
 static const struct modversion_info ____versions[]
 __used __section("__versions") = {
 	{ 0x92997ed8, "_printk" },
-	{ 0xe3ec2f2b, "alloc_chrdev_region" },
-	{ 0x23d20fbd, "__class_create" },
-	{ 0x255a40b1, "device_create" },
-	{ 0x4f2b3590, "cdev_init" },
-	{ 0x12567b45, "cdev_add" },
-	{ 0xedadcbe4, "device_destroy" },
-	{ 0x48be46d6, "class_destroy" },
-	{ 0x6091b333, "unregister_chrdev_region" },
-	{ 0x9d8130b9, "cdev_del" },
-	{ 0x12a4e128, "__arch_copy_from_user" },
-	{ 0xdcb764ad, "memset" },
+	{ 0x410a7f31, "__platform_driver_register" },
+	{ 0x5fbdcc10, "gpiod_put" },
+	{ 0xa7196f80, "proc_remove" },
+	{ 0x656e4a6e, "snprintf" },
 	{ 0x8025af77, "gpiod_get" },
+	{ 0x79819bc7, "proc_create" },
+	{ 0x8da6585d, "__stack_chk_fail" },
+	{ 0xd4e60229, "platform_driver_unregister" },
+	{ 0xdcb764ad, "memset" },
+	{ 0x12a4e128, "__arch_copy_from_user" },
+	{ 0x3854774b, "kstrtoll" },
+	{ 0x7682ba4e, "__copy_overflow" },
 	{ 0x6f978cf7, "gpiod_get_value" },
 	{ 0x6cbbfc54, "__arch_copy_to_user" },
-	{ 0x8da6585d, "__stack_chk_fail" },
 	{ 0xa30ddf9b, "gpiod_direction_input" },
-	{ 0x1e747a3d, "gpiod_direction_output" },
 	{ 0xb516d99f, "gpiod_set_value" },
+	{ 0x1e747a3d, "gpiod_direction_output" },
 	{ 0xf7038a43, "module_layout" },
 };
 
 MODULE_INFO(depends, "");
 
+MODULE_ALIAS("of:N*T*Cgpio,mygpiodev");
+MODULE_ALIAS("of:N*T*Cgpio,mygpiodevC*");
 
-MODULE_INFO(srcversion, "4D726131F08C5C372061181");
+MODULE_INFO(srcversion, "4BD21C59B25A685093767CE");
