@@ -1,1 +1,0 @@
-cmd_/home/pi/chickincubator/Display/src/driver/ssd1306_i2c.mod := printf '%s\n'   ssd1306_i2c.o | awk '!x[$$0]++ { print("/home/pi/chickincubator/Display/src/driver/"$$0) }' > /home/pi/chickincubator/Display/src/driver/ssd1306_i2c.mod

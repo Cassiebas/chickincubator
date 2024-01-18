@@ -24,7 +24,7 @@ class RotaryEncoder {
     Log log;
     Timer timerButton;
     GPIO gpio;
-    
+
     void RotaryThreadFunction();
 
   public:

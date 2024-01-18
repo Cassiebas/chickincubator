@@ -53,7 +53,7 @@ class GPIO
     bool Set(int gpioPin, bool setValue);
 
     // Get GPIO state
-    int Get(const std::string &gpioPin);
+    int Get(const char *gpioPin);
     int Get(char gpioPin);
     int Get(int gpioPin);
 };

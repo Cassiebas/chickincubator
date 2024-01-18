@@ -1,1 +1,0 @@
-cmd_/home/pi/chickincubator/Motor/src/driver/Module.symvers :=  sed 's/ko$$/o/'  /home/pi/chickincubator/Motor/src/driver/modules.order | scripts/mod/modpost -m -a    -o /home/pi/chickincubator/Motor/src/driver/Module.symvers -e -i Module.symvers -T - 

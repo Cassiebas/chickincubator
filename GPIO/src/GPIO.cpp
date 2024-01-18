@@ -7,7 +7,7 @@
 
 GPIO::GPIO()
 {
-  fd = open("/dev/gpio_driver_egg_incubator", O_RDWR); //TODO: should be done in c++ style to get support for namespaces
+  fd = open("/proc/gpio_driver", O_RDWR); //TODO: should be done in c++ style to get support for namespaces
   if (fd < 0)
   {
     printf("Error opening the device driver\n");
@@ -51,9 +51,9 @@ bool GPIO::Set(const std::string &gpioPin, bool setValue)
   retVal = write(fd, buffer.c_str(), buffer.size());
   if (retVal < 0)
   {
-      std::cerr << "Error writing to the device file" << std::endl;
-      close(fd);
-      return false;
+    std::cerr << "Error writing to the device file" << std::endl;
+    close(fd);
+    return false;
   }
   return true;
 }
@@ -63,32 +63,35 @@ bool GPIO::Set(char gpioPin, bool setValue)
   return Set(std::string(1, gpioPin), setValue);
 }
 
-bool GPIO::Set(int gpioPin, bool setValue)
-{
-  return Set(std::to_string(gpioPin), setValue);
-}
-
-int GPIO::Get(const std::string &gpioPin)
+int GPIO::Get(const char *gpioPin)
 {
   // Reading from the device file
-  std::string read_buffer = gpioPin;
-  retVal = read(fd, read_buffer.data(), read_buffer.size());
+  char read_buffer[3] = {0};
+  sprintf(read_buffer, "%s", gpioPin);
+  printf("Read character: %s\n", read_buffer);
+  retVal = read(fd, read_buffer, sizeof(read_buffer));
   if (retVal < 0)
   {
     printf("Error reading from the device file\n");
     close(fd);
     return -1;
   }
-  return std::stoi(read_buffer);
+  return read_buffer[0] - '0';
 }
 
 int GPIO::Get(char gpioPin)
 {
-  char *tmp = &gpioPin;
-  return Get(tmp);
-}
-
-int GPIO::Get(int gpioPin)
-{
-  return Get(std::to_string(gpioPin));
+  // Reading from the device file
+  char read_buffer[2] = {0};
+  read_buffer[0] = gpioPin;
+  printf("Read character: %c\n", read_buffer[0]);
+  
+  retVal = read(fd, read_buffer, sizeof(read_buffer));
+  if (gpioPin < 0)
+  {
+    printf("Error reading from the device file\n");
+    close(fd);
+    return -1;
+  }
+  return read_buffer[0] - '0';
 }
