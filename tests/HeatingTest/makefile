@@ -9,7 +9,8 @@ TIMER_OBJ := ../../obj/Timer.o
 HARRY_PLOTTER := ../../obj/HarryPlotter.o
 Display := ../../obj/Display.o
 PWM := ../../obj/PWM.o
-OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(PWM) $(HARRY_PLOTTER)
+GPIO := ../../obj/GPIO.o
+OBJS := $(HEATING_ELEMENT_OBJ) $(THERMISTOR_OBJ) $(TIMER_OBJ) $(PWM) $(HARRY_PLOTTER) $(GPIO)
 TARGET := bin/HeatingTest
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
@@ -18,6 +19,7 @@ INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Thermistor/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Timer/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HarryPlotter/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
 
 LIBS := $(addprefix -l, boost_iostreams)
 LIBS += $(addprefix -l, boost_system)
@@ -34,6 +36,7 @@ modules:
 	$(MAKE) -C ../../HeatingElement
 	$(MAKE) -C ../../Thermistor
 	$(MAKE) -C ../../HarryPlotter
+	$(MAKE) -C ../../GPIO
 
 clean:
 	rm -f $(TARGET) $(OBJS)

@@ -1,11 +1,11 @@
 #/bin/bash
 
-cd Display/
-./uninstall.sh
-cd ../Motor/
-./uninstall.sh
+cd Motor/
+sudo ./uninstall.sh
+cd ../Display/
+sudo ./uninstall.sh
 cd ../GPIO/
-./uninstall.sh
+sudo ./uninstall.sh
 cd ../
 make clean
 sudo systemctl stop EggIncubator

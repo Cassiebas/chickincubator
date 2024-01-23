@@ -1,17 +1,18 @@
 #/bin/bash
 
 #install needed packages
-sudo apt-get update
-sudo apt-get -y upgrade
-sudo apt-get -y install gnuplot libgnuplot-iostream-dev libboost-all-dev nginx
+# sudo apt-get update
+# sudo apt-get -y upgrade
+# sudo apt-get -y install gnuplot libgnuplot-iostream-dev libboost-all-dev nginx
 
 #install drivers and build c++ program
-cd Display/
-./install.sh
-cd ../Motor/
-./install.sh
+
+cd Motor/
+sudo ./install.sh
+cd ../Display/
+sudo ./install.sh
 cd ../GPIO/
-./install.sh
+sudo ./install.sh
 cd ../
 make
 

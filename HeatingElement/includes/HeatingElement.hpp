@@ -3,6 +3,7 @@
 
 #include "Timer.hpp"
 #include "PWM.hpp"
+#include "GPIO.hpp"
 
 #include <string>
 #include <thread>
@@ -12,6 +13,7 @@ class HeatingElement {
     std::string pin;
     std::string path;
     Timer timer;
+    GPIO gpio;
     PWM *pwm;
     
     bool writeGPIO(const std::string filename, const std::string value);

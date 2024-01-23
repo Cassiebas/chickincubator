@@ -10,7 +10,8 @@ THERMISTOR_OBJ := ../../obj/Thermistor.o
 PLOTTER_OBJ := ../../obj/HarryPlotter.o
 HEATERCONTROLLER_OBJ := ../../obj/HeaterController.o
 LOG_OBJ := ../../obj/Log.o
-OBJS := $(ONOFFCONTROLLER_OBJ) $(TIMER_OBJ) $(PWM_OBJ) $(HEATINGELEMENT_OBJ) $(THERMISTOR_OBJ) $(PLOTTER_OBJ) $(HEATERCONTROLLER_OBJ) $(LOG_OBJ)
+GPIO_OBJ := ../../obj/GPIO.o
+OBJS := $(ONOFFCONTROLLER_OBJ) $(TIMER_OBJ) $(PWM_OBJ) $(HEATINGELEMENT_OBJ) $(THERMISTOR_OBJ) $(PLOTTER_OBJ) $(HEATERCONTROLLER_OBJ) $(LOG_OBJ) $(GPIO_OBJ)
 TARGET := bin/PIDTest
 
 INCLUDES := $(addprefix -I, $(wildcard ../../HeaterController/includes))
@@ -21,6 +22,7 @@ INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HarryPlotter/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Thermistor/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Log/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
 
 LIBS := -DBOOST_LOG_DYN_LINK
 LIBS += $(addprefix -l, boost_iostreams)
@@ -45,6 +47,7 @@ modules:
 	$(MAKE) -C ../../HeaterController
 	$(MAKE) -C ../../PIDController
 	$(MAKE) -C ../../Log
+	$(MAKE) -C ../../GPIO
 
 clean:
 	rm -f $(TARGET) $(OBJS) $(LOCAL_OBJS)

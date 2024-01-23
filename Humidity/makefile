@@ -6,6 +6,7 @@ OBJS := $(patsubst src/%.cpp,../obj/%.o,$(SRCS))
 TARGET := EggIncubator
 
 INCLUDES := $(addprefix -I, $(wildcard includes))
+INCLUDES += $(addprefix -I, $(wildcard ../GPIO/includes))
 
 all: $(OBJS)
 

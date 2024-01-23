@@ -13,6 +13,7 @@ INCLUDES += $(addprefix -I, $(wildcard ../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../HarryPlotter/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Thermistor/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Log/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../GPIO/includes))
 
 LIBS := -DBOOST_LOG_DYN_LINK
 LIBS += $(addprefix -l, boost_iostreams)
