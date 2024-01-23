@@ -12,9 +12,6 @@
 				my_value = <12>;
                 0-gpio = <&gpio 0 0>;
 				1-gpio = <&gpio 1 0>;
-				2-gpio = <&gpio 2 0>;
-				3-gpio = <&gpio 3 0>;
-				4-gpio = <&gpio 4 0>;
 				5-gpio = <&gpio 5 0>;
 				6-gpio = <&gpio 6 0>;
 				7-gpio = <&gpio 7 0>;
