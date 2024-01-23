@@ -10,6 +10,7 @@ OBJS += ../../obj/HeatingElement.o
 OBJS += ../../obj/Thermistor.o
 OBJS += ../../obj/HarryPlotter.o
 OBJS += ../../obj/HeaterController.o
+OBJS += ../../obj/GPIO.o
 TARGET := bin/OnOffTest
 
 INCLUDES := $(addprefix -I, $(wildcard ../../Log/includes))
@@ -20,6 +21,7 @@ INCLUDES += $(addprefix -I, $(wildcard ../../Timer/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../HarryPlotter/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../../Thermistor/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../../GPIO/includes))
 
 LIBS := -DBOOST_LOG_DYN_LINK
 LIBS += $(addprefix -l, boost_iostreams)
@@ -44,6 +46,7 @@ modules:
 	$(MAKE) -C ../../HarryPlotter
 	$(MAKE) -C ../../HeaterController
 	$(MAKE) -C ../../OnOffController
+	$(MAKE) -C ../../GPIO
 
 clean:
 	rm -f $(TARGET) $(OBJS) $(LOCAL_OBJS)

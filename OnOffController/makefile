@@ -13,6 +13,7 @@ INCLUDES += $(addprefix -I, $(wildcard ../Timer/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../HeatingElement/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../HarryPlotter/includes))
 INCLUDES += $(addprefix -I, $(wildcard ../Thermistor/includes))
+INCLUDES += $(addprefix -I, $(wildcard ../GPIO/includes))
 
 all: $(OBJS)
 
