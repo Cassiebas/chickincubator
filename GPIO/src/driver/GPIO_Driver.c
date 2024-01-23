@@ -169,14 +169,19 @@ static int dt_probe(struct platform_device *pdev) {
 	/* Init GPIO */
   for (i = 0; i < 26; ++i) {
     char label[3];
-    snprintf(label, sizeof(label), "%d", i);
-    //printk("%s", label);
-    gpio_descs[i] = gpiod_get(dev, label, GPIOD_ASIS);
+      if(!(i > 1 && i <= 4)){
+      snprintf(label, sizeof(label), "%d", i);
+      
+      printk("%s", label);
+      gpio_descs[i] = gpiod_get(dev, label, GPIOD_ASIS);
 
-    if (IS_ERR(gpio_descs[i])) {
-      pr_err("Error obtaining GPIO descriptor for pin %d: %ld\n", i, PTR_ERR(gpio_descs[i]));
-      gpio_descs[i] = NULL;  // Set to NULL to indicate failure
+      if (IS_ERR(gpio_descs[i])) {
+        pr_err("Error obtaining GPIO descriptor for pin %d: %ld\n", i, PTR_ERR(gpio_descs[i]));
+        gpio_descs[i] = NULL;  // Set to NULL to indicate failure
+      }
     }
+    else
+      gpio_descs[i] = NULL;
   }
 
 	/* Creating procfs file */
