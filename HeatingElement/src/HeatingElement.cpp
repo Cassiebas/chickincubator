@@ -8,7 +8,7 @@
 HeatingElement::HeatingElement(const std::string pin_number) :
   pin(pin_number)
 {
-  gpio.SetMode(pin, OUTPUT);
+  gpio.SetMode(pin_number, OUTPUT);
   pwm = new PWM(100, 10, [this]() { this->On(); }, [this]() { this->Off(); }); //pass those methods baby
 
   //make sure heater is off

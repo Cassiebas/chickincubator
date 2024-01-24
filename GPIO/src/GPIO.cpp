@@ -4,33 +4,51 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
+#include <fstream>
 
 GPIO::GPIO()
 {
-  fd = open("/proc/gpio_driver", O_RDWR); //TODO: should be done in c++ style to get support for namespaces
-  if (fd < 0)
-  {
-    printf("Error opening the device driver\n");
-  }
+  // fd = open("/sys/class/gpio/", O_RDWR); //TODO: should be done in c++ style to get support for namespaces
+  // if (fd < 0)
+  // {
+  //   printf("Error opening the device driver\n");
+  // }
 }
 
 GPIO::~GPIO() 
 {
-  close(fd);
+  // close(fd);
+}
+
+bool GPIO::writeGPIO(const std::string filename, const std::string value)
+{
+  std::string path = "/sys/class/gpio/";
+  std::ofstream file((path + filename).c_str());
+
+  if (file.is_open())
+  {
+    file << value;
+    file.close();
+    return 1;
+  }
+  else{
+    std::cerr << "Unable to open file: " + (path + filename) << std::endl;
+    return -1;
+  }
 }
 
 bool GPIO::SetMode(const std::string gpioPin, char ioValue)
 {
-  std::string buffer = gpioPin + ioValue;
-  // Writing to GPIO driver
-  retVal = write(fd, buffer.data(), buffer.size());
-  if (retVal < 0)
-  {
-    printf("Error writing to the device file\n");
-    close(fd);
-    return false;
+  // Export the pin
+  writeGPIO("export", gpioPin);
+  sleep(1);
+  
+  // Set the pin as an output
+  if (ioValue == INPUT) {
+    return writeGPIO("gpio" + gpioPin + "/direction", "in");
+  } else {
+    return writeGPIO("gpio" + gpioPin + "/direction", "out");
   }
-  return true; // Placeholder return value
 }
 
 bool GPIO::SetMode(char gpioPin, char ioValue)
@@ -45,17 +63,11 @@ bool GPIO::SetMode(int gpioPin, char ioValue)
 
 bool GPIO::Set(const std::string gpioPin, bool setValue)
 {
-  std::string buffer = gpioPin + (setValue ? "1" : "0");
-
-  // Writing to GPIO driver
-  retVal = write(fd, buffer.c_str(), buffer.size());
-  if (retVal < 0)
-  {
-    std::cerr << "Error writing to the device file" << std::endl;
-    close(fd);
-    return false;
+  if (setValue) {
+    return writeGPIO("gpio" + gpioPin + "/value", "1");
+  } else {
+    return writeGPIO("gpio" + gpioPin + "/value", "0");
   }
-  return true;
 }
 
 bool GPIO::Set(char gpioPin, bool setValue)
@@ -68,19 +80,17 @@ bool GPIO::Set(int gpioPin, bool setValue)
   return Set(std::to_string(gpioPin), setValue);
 }
 
-int GPIO::Get(const std::string gpioPin)
+bool GPIO::Get(const std::string gpioPin)
 {
-  // Reading from the device file
-  char buffer[3] = {0}; 
-  sprintf(buffer, "%s", gpioPin.c_str());
-  retVal = read(fd, buffer, sizeof(buffer));
-  if (retVal < 0)
-  {
-    printf("Error reading from the device file\n");
-    close(fd);
-    return -1;
+  // Read the GPIO pin state
+  std::ifstream valueFile("/sys/class/gpio/gpio" + gpioPin + "/value");
+  if (!valueFile.is_open()) {
+      throw std::runtime_error("Failed to open GPIO value file.");
   }
-  return buffer[0] - '0';
+  int value;
+  valueFile >> value;
+
+  return (bool)value;
 }
 
 int GPIO::Get(char gpioPin)

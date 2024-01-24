@@ -42,6 +42,8 @@ class GPIO
   public:
     GPIO();
     ~GPIO();
+
+    bool writeGPIO(const std::string filename, const std::string value);
     // Set GPIO IO state
     bool SetMode(const std::string gpioPin, char ioValue);
     bool SetMode(char gpioPin, char ioValue);
@@ -53,7 +55,7 @@ class GPIO
     bool Set(int gpioPin, bool setValue);
 
     // Get GPIO state
-    int Get(const std::string gpioPin);
+    bool Get(const std::string gpioPin);
     int Get(char gpioPin);
     int Get(int gpioPin);
 };
